@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameController : MonoBehaviour 
+public class GameController : MonoBehaviour
 {
+    public GameObject[] Players;
 
 	protected void Start () 
     {
@@ -11,6 +12,8 @@ public class GameController : MonoBehaviour
 	
 	protected void Update () 
     {
-	
+	    
 	}
+
+
 }
