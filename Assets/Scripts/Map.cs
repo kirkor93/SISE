@@ -2,6 +2,15 @@
 using UnityEngine;
 using System.Collections;
 
+#region Enums
+
+public enum FieldType
+{
+    Normal, WithFood, WithWood, WithCorpose
+}
+
+#endregion
+
 public class Map : MonoBehaviour
 {
 
@@ -34,22 +43,18 @@ public class Map : MonoBehaviour
 
     public void SetTrap(Vector2 field)
     {
-        
+
     }
 
     public void RemoveTrap(Vector2 field)
     {
-        
+
+    }
+
+    public MapState GetMapState()
+    {
+        throw new NotImplementedException();
     }
     
-    #endregion
-
-    #region Enums
-
-    public enum FieldType
-    {
-        Normal, WithFood, WithWood, WithCorpose 
-    }
-
     #endregion
 }

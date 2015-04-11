@@ -4,6 +4,8 @@ using UnityEditorInternal;
 
 public abstract class Bot : MonoBehaviour
 {
+    public IQueueController Controller;
+
     protected Player PlayerScript;
 
     protected virtual void Start()
@@ -11,5 +13,5 @@ public abstract class Bot : MonoBehaviour
         PlayerScript = gameObject.GetComponent<Player>();
     }
 
-    public abstract void StartTurn();
+    public abstract void Play();
 }

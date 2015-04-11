@@ -1,6 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+#region EnumForActionDirection
+public enum ActionDirection
+{
+    Up = 1,
+    Right,
+    Down,
+    Left
+}
+#endregion
+
 public class Player : MonoBehaviour
 {
 
@@ -36,23 +46,17 @@ public class Player : MonoBehaviour
     }
 
     // Use this for initialization
-	void Start () {
+	void Start () 
+    {
 	
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
-    }
-    #endregion
-
-    #region EnumForActionDirection
-    public enum ActionDirection
+	void Update () 
     {
-        Up = 1,
-        Right,
-        Down,
-        Left
+
     }
     #endregion
+
+
 }
