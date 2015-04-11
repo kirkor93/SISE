@@ -1,15 +1,55 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
-public class Map : MonoBehaviour {
+public class Map : MonoBehaviour
+{
 
-	// Use this for initialization
-	void Start () {
+    #region Methods
+    #region MonoBehaviour
+
+    // Use this for initialization
+	void Start () 
+    {
 	
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
+	void Update () 
+    {
+
+    }
+
+    #endregion
+
+    public FieldType GetFieldType(Vector2 position)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ChangeFieldType(FieldType newFieldType)
+    {
+        
+    }
+
+    public void SetTrap(Vector2 field)
+    {
+        
+    }
+
+    public void RemoveTrap(Vector2 field)
+    {
+        
+    }
+    
+    #endregion
+
+    #region Enums
+
+    public enum FieldType
+    {
+        Normal, WithFood, WithWood, WithCorpose 
+    }
+
+    #endregion
 }
