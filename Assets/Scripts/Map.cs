@@ -92,13 +92,13 @@ public class Map : MonoBehaviour
         if (bitmap.width != MAP_SIZE || bitmap.height != MAP_SIZE)
             throw new InvalidOperationException("Bitmap size is not 50x50");
 
-        Color col;
+        Color32 col;
         int colInt;
-        for(int y = 0; y < MAP_SIZE; ++y)
+        for(int x = 0; x < MAP_SIZE; ++x)
         {
-            for(int x = 0; x < MAP_SIZE; ++x)
+            for(int y = 0; y < MAP_SIZE; ++y)
             {
-                col = bitmap.GetPixel(x, y);
+                col = bitmap.GetPixel(x, MAP_SIZE - y - 1);
                 colInt = ColorToInt(col);
 
                 for(int i = 0; i < FIELD_TYPES; ++i)
