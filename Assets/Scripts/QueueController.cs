@@ -216,7 +216,7 @@ public class QueueController : MonoBehaviour, IQueueController
 
     public MapState GetMapState()
     {
-        return CurrentMap.GetMapState();
+        return CurrentMap.GetCurrentMapState();
     }
 
     public void EndTurn()
