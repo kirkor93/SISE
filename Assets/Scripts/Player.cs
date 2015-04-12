@@ -11,12 +11,11 @@ public enum ActionDirection
 }
 #endregion
 
-public class Player : MonoBehaviour
+public class Player : Bot
 {
 
     #region Variables
 
-    
     #endregion
 
     #region Properties
@@ -25,37 +24,11 @@ public class Player : MonoBehaviour
 
     #region Methods
 
-    public void Move(ActionDirection dir)
+    public override void Play()
     {
-        
+        Debug.Log("Playing");
     }
 
-    public void KindleFire()
-    {
-
-    }
-
-    public void SetTrap(ActionDirection dir)
-    {
-
-    }
-
-    public void ThrowSpear(Vector2 target)
-    {
-
-    }
-
-    // Use this for initialization
-	void Start () 
-    {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-
-    }
     #endregion
 
 

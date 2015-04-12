@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public interface IQueueController
 {
@@ -9,4 +10,21 @@ public interface IQueueController
     bool ThrowSpear(Vector2 target);
     MapState GetMapState();
     void EndTurn();
+    int ActionPointsLeft { get; }
+    int HitPoints { get; }
+    int PsychicalCondition { get; }
+    int NormalMoveCost { get; }
+    int FoodMoveCost { get; }
+    int FoodMoveHpRegen { get; }
+    int WoodMoveCost { get; }
+    int WoodCollectedOnMove { get; }
+    int KindleFireActionPointsCost { get; }
+    int KindleFireWoodCost { get; }
+    int SetTrapActionPointsCost { get; }
+    int SetTrapWoodCost { get; }
+    int ThrowSpearActionPointsCost { get; }
+    int ThrowSpearWoodCost { get; }
+    int EatCorposeActionPointsCost { get; }
+    int EatCorposePsychicalCost { get; }
+    int EatCorposeHpRegen { get; }
 }
