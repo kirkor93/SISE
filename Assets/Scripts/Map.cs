@@ -89,9 +89,6 @@ public class Map : MonoBehaviour
     {
         CreateNewMapState(out currentState);
 
-        if (bitmap.width != MAP_SIZE || bitmap.height != MAP_SIZE)
-            throw new InvalidOperationException("Bitmap size is not 50x50");
-
         Color32 col;
         int colInt;
         for(int x = 0; x < MAP_SIZE; ++x)
