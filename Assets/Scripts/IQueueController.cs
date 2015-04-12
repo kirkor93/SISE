@@ -13,6 +13,7 @@ public interface IQueueController
     int ActionPointsLeft { get; }
     int HitPoints { get; }
     int PsychicalCondition { get; }
+    int WoodCount { get; }
     int NormalMoveCost { get; }
     int FoodMoveCost { get; }
     int FoodMoveHpRegen { get; }

@@ -4,6 +4,16 @@ using System.Collections;
 using System.Linq;
 using Random = UnityEngine.Random;
 
+#region EnumForActionDirection
+public enum ActionDirection
+{
+    Up = 1,
+    Right,
+    Down,
+    Left
+}
+#endregion
+
 public class QueueController : MonoBehaviour, IQueueController
 {
     #region Variables
@@ -120,6 +130,11 @@ public class QueueController : MonoBehaviour, IQueueController
     public int PsychicalCondition
     {
         get { return _playerPsychicalPoints[_activePlayer]; }
+    }
+
+    public int WoodCount
+    {
+        get { return _playerWoodCount[_activePlayer]; }
     }
 
     #endregion
