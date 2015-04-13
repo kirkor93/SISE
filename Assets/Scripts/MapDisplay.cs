@@ -12,6 +12,7 @@ public class MapDisplay : MonoBehaviour
     public Sprite FoodFieldSprite;
     public Sprite WoodFieldSprite;
     public Sprite CorpseFieldSprite;
+    public Sprite TrapFieldSprite;
 
     private MapState mapState;
     private Field[,] fields = new Field[50, 50];
@@ -37,19 +38,19 @@ public class MapDisplay : MonoBehaviour
                 switch (this.mapState.MapArray[i, j])
                 {
                     case FieldType.CORPSE:
-                        sprite = CorpseFieldSprite;
+                        sprite = this.CorpseFieldSprite;
                         break;
                     case FieldType.EMPTY:
-                        sprite = EmptyFieldSprite;
+                        sprite = this.EmptyFieldSprite;
                         break;
                     case FieldType.FOOD:
-                        sprite = FoodFieldSprite;
+                        sprite = this.FoodFieldSprite;
                         break;
                     case FieldType.TRAP:
-                        sprite = EmptyFieldSprite;
+                        sprite = this.TrapFieldSprite;
                         break;
                     case FieldType.WOOD:
-                        sprite = WoodFieldSprite;
+                        sprite = this.WoodFieldSprite;
                         break;
                 }
                 this.fields[i, j].SetSprite(sprite);
@@ -74,19 +75,19 @@ public class MapDisplay : MonoBehaviour
                 switch (this.mapState.MapArray[i, j])
                 {
                     case FieldType.CORPSE:
-                        sprite = CorpseFieldSprite;
+                        sprite = this.CorpseFieldSprite;
                         break;
                     case FieldType.EMPTY:
-                        sprite = EmptyFieldSprite;
+                        sprite = this.EmptyFieldSprite;
                         break;
                     case FieldType.FOOD:
-                        sprite = FoodFieldSprite;
+                        sprite = this.FoodFieldSprite;
                         break;
                     case FieldType.TRAP:
-                        sprite = EmptyFieldSprite;
+                        sprite = this.TrapFieldSprite;
                         break;
                     case FieldType.WOOD:
-                        sprite = WoodFieldSprite;
+                        sprite = this.WoodFieldSprite;
                         break;
                 }
                 this.fields[i, j].SetSprite(sprite);

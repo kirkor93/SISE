@@ -30,6 +30,9 @@ public class Field : MonoBehaviour
 
     public void SetSprite(Sprite _sprite)
     {
-        this.spriteRenderer.sprite = _sprite;
+        if(this.spriteRenderer.sprite != _sprite)
+        {
+            this.spriteRenderer.sprite = _sprite;
+        }
     }
 }
