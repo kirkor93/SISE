@@ -22,6 +22,7 @@ public class QueueController : MonoBehaviour, IQueueController
     public int InitHitPoints = 15;
     public int InitPsychicalPoints = 15;
     public Map CurrentMap;
+    public Action OnEndTurn;
 
     private const int _normalMoveCost = 1;
     private const int _foodMoveCost = 3;
@@ -226,6 +227,11 @@ public class QueueController : MonoBehaviour, IQueueController
         _activePlayer %= ActivePlayers.Length;
 
         ActivePlayers[_activePlayer].Play();
+
+        if(OnEndTurn != null)
+        {
+            OnEndTurn();
+        }
     }
 
     #endregion
