@@ -46,7 +46,7 @@ public class QueueController : MonoBehaviour, IQueueController
     private int[] _playerHitPoints;
     private int[] _playerPsychicalPoints;
     private int[] _playerWoodCount;
-    private IntVector2[] _playerPosition;
+    public IntVector2[] _playerPosition;
     #endregion
 
     #region Properties

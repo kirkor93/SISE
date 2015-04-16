@@ -87,7 +87,7 @@ public class MapDisplay : MonoBehaviour
         }
         for(int i = 0; i < QueueControllerInstance.ActivePlayers.Length; ++i)
         {
-            //Set players position
+            this.QueueControllerInstance.ActivePlayers[i].transform.position = new Vector3((this.QueueControllerInstance._playerPosition[i].x - 25) * 2, (25 - this.QueueControllerInstance._playerPosition[i].y) * 2, 0.0f);
         }
 	}
 	
@@ -154,6 +154,10 @@ public class MapDisplay : MonoBehaviour
 
                 this.fields[i, j].SetSprite(sprite);
             }
+        }
+        for(int i = 0; i < QueueControllerInstance.ActivePlayers.Length; ++i)
+        {
+            this.QueueControllerInstance.ActivePlayers[i].transform.position = new Vector3((this.QueueControllerInstance._playerPosition[i].x - 25) * 2, (25 - this.QueueControllerInstance._playerPosition[i].y) * 2, 0.0f);
         }
     }
 
