@@ -35,7 +35,7 @@ public class MapDisplay : MonoBehaviour
                 this.fields[i, j] = prefabInstantiated.GetComponent<Field>();
                 Sprite sprite = EmptyFieldSprite;
 
-                switch (this.mapState.MapArray[i, j])
+                switch (this.mapState.MapArray[i, j].Type)
                 {
                     case FieldType.CORPSE:
                         sprite = this.CorpseFieldSprite;
@@ -46,13 +46,14 @@ public class MapDisplay : MonoBehaviour
                     case FieldType.FOOD:
                         sprite = this.FoodFieldSprite;
                         break;
-                    case FieldType.TRAP:
-                        sprite = this.TrapFieldSprite;
-                        break;
                     case FieldType.WOOD:
                         sprite = this.WoodFieldSprite;
                         break;
                 }
+
+                if (this.mapState.MapArray[i, j].isTrapped)
+                    sprite = this.TrapFieldSprite;
+
                 this.fields[i, j].SetSprite(sprite);
             }
         }
@@ -72,7 +73,7 @@ public class MapDisplay : MonoBehaviour
             for(int j = 0; j < 50; ++j)
             {
                 Sprite sprite = EmptyFieldSprite;
-                switch (this.mapState.MapArray[i, j])
+                switch (this.mapState.MapArray[i, j].Type)
                 {
                     case FieldType.CORPSE:
                         sprite = this.CorpseFieldSprite;
@@ -83,13 +84,14 @@ public class MapDisplay : MonoBehaviour
                     case FieldType.FOOD:
                         sprite = this.FoodFieldSprite;
                         break;
-                    case FieldType.TRAP:
-                        sprite = this.TrapFieldSprite;
-                        break;
                     case FieldType.WOOD:
                         sprite = this.WoodFieldSprite;
                         break;
                 }
+
+                if (this.mapState.MapArray[i, j].isTrapped)
+                    sprite = this.TrapFieldSprite;
+
                 this.fields[i, j].SetSprite(sprite);
             }
         }

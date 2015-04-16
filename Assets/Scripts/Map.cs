@@ -4,9 +4,21 @@ using System.Collections;
 
 #region Enums
 
+public class FieldT
+{
+    public FieldType Type;
+    public bool isTrapped;
+
+    public FieldT()
+    {
+        Type = FieldType.EMPTY;
+        isTrapped = false;
+    }
+}
+
 public enum FieldType
 {
-    EMPTY, FOOD, WOOD, CORPSE, TRAP
+    EMPTY, FOOD, WOOD, CORPSE
 }
 
 #endregion
@@ -16,7 +28,7 @@ public class Map : MonoBehaviour
     #region Constants
 
     public const int MAP_SIZE = 50;
-    private const int FIELD_TYPES = 5;
+    private const int FIELD_TYPES = 4;
 
     #endregion
 
@@ -28,7 +40,6 @@ public class Map : MonoBehaviour
         new int[] {0x000000FF, (int)FieldType.FOOD},
         new int[] {0x0000FF00, (int)FieldType.WOOD},
         new int[] {0x00FF0000, (int)FieldType.CORPSE},
-        new int[] {0x0000FFFF, (int)FieldType.TRAP}
     };
 
     #endregion
@@ -102,7 +113,7 @@ public class Map : MonoBehaviour
                 {
                     if(colInt == colorFieldTypeAssignment[i][0])
                     {
-                        currentState.MapArray[x, y] = (FieldType)colorFieldTypeAssignment[i][1];
+                        currentState.MapArray[x, y].Type = (FieldType)colorFieldTypeAssignment[i][1];
                         continue;
                     }
                     
@@ -113,7 +124,14 @@ public class Map : MonoBehaviour
 
     private void CreateNewMapState(out MapState state)
     {
-        state.MapArray = new FieldType[MAP_SIZE, MAP_SIZE];
+        state.MapArray = new FieldT[MAP_SIZE, MAP_SIZE];
+        for(int i = 0; i < MAP_SIZE; ++i)
+        {
+            for(int j = 0; j < MAP_SIZE; ++j)
+            {
+                state.MapArray[i, j] = new FieldT();
+            }
+        }
     }
 
     public int[] SetPlayerStartPosition(int activePlayers)

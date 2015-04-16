@@ -8,7 +8,7 @@ public struct MapState
 {
     #region variables
 
-    public FieldType[,] MapArray;
+    public FieldT[,] MapArray;
 
     #endregion
 }

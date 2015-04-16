@@ -231,7 +231,25 @@ public class QueueController : MonoBehaviour, IQueueController
         if (move.y < 0 || move.y > 50)
             return false;
         move += _playerPosition[_activePlayer];
-        switch(CurrentMap.GetCurrentMapState().MapArray[move.x,move.y])
+
+        if (CurrentMap.GetCurrentMapState().MapArray[move.x, move.y].isTrapped)
+        {
+            if(_playerActionPoints[_activePlayer] >= NormalMoveCost)
+                {
+                    _playerActionPoints[_activePlayer] -= NormalMoveCost;
+                    GetPhysicalDmg(_trapEnterDamage);
+                    MapUpdate.ChangeFieldOnMap(move, FieldType.EMPTY);
+                    OnPlayerAction();
+                    _playerPosition[_activePlayer] = move;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+        }
+
+        switch(CurrentMap.GetCurrentMapState().MapArray[move.x,move.y].Type)
         {
             case FieldType.EMPTY:
                 if (_playerActionPoints[_activePlayer] >= NormalMoveCost)
@@ -288,20 +306,6 @@ public class QueueController : MonoBehaviour, IQueueController
                 {
                     return false;
                 }
-            case FieldType.TRAP:
-                if(_playerActionPoints[_activePlayer] >= NormalMoveCost)
-                {
-                    _playerActionPoints[_activePlayer] -= NormalMoveCost;
-                    GetPhysicalDmg(_trapEnterDamage);
-                    MapUpdate.ChangeFieldOnMap(move, FieldType.EMPTY);
-                    OnPlayerAction();
-                    _playerPosition[_activePlayer] = move;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             default:
                 return false;
         }
@@ -341,7 +345,7 @@ public class QueueController : MonoBehaviour, IQueueController
 
         }
         move += _playerPosition[_activePlayer];
-        MapUpdate.ChangeFieldOnMap(move, FieldType.TRAP);
+        MapUpdate.SetTrapOnField(move);
         return false;
     }
 
