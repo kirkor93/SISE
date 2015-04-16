@@ -12,11 +12,13 @@ public class MapDisplay : MonoBehaviour
     public Sprite FoodFieldSprite;
     public Sprite WoodFieldSprite;
     public Sprite CorpseFieldSprite;
+    public Sprite FoodFieldWithTrapSprite;
+    public Sprite WoodFieldWithTrapSprite;
+    public Sprite CorpseFieldWithTrapSprite;
     public Sprite TrapFieldSprite;
 
     private MapState mapState;
     private Field[,] fields = new Field[50, 50];
-    private Bot[] players;
 
     #endregion
 
@@ -25,7 +27,6 @@ public class MapDisplay : MonoBehaviour
     {
         QueueControllerInstance.OnEndTurn += this.OnEndTurn;
         this.mapState = QueueControllerInstance.CurrentMap.GetCurrentMapState();
-        this.players = QueueControllerInstance.ActivePlayers;
         for (int i = 0; i < 50; ++i)
         {
             for (int j = 0; j < 50; ++j)
@@ -35,27 +36,58 @@ public class MapDisplay : MonoBehaviour
                 this.fields[i, j] = prefabInstantiated.GetComponent<Field>();
                 Sprite sprite = EmptyFieldSprite;
 
+                Debug.Log("Type: " + this.mapState.MapArray[i, j].Type.ToString() + " and it is trapped? " + this.mapState.MapArray[i, j].isTrapped);
+
                 switch (this.mapState.MapArray[i, j].Type)
                 {
                     case FieldType.CORPSE:
-                        sprite = this.CorpseFieldSprite;
+                        if(this.mapState.MapArray[i,j].isTrapped)
+                        {
+                            sprite = this.CorpseFieldWithTrapSprite;
+                        }
+                        else
+                        {
+                            sprite = this.CorpseFieldSprite;
+                        }
                         break;
                     case FieldType.EMPTY:
-                        sprite = this.EmptyFieldSprite;
+                        if (this.mapState.MapArray[i, j].isTrapped)
+                        {
+                            sprite = this.TrapFieldSprite;
+                        }
+                        else
+                        {
+                            sprite = this.EmptyFieldSprite;
+                        }
                         break;
                     case FieldType.FOOD:
-                        sprite = this.FoodFieldSprite;
+                        if (this.mapState.MapArray[i, j].isTrapped)
+                        {
+                            sprite = this.FoodFieldWithTrapSprite;
+                        }
+                        else
+                        {
+                            sprite = this.FoodFieldSprite;
+                        }
                         break;
                     case FieldType.WOOD:
-                        sprite = this.WoodFieldSprite;
+                        if (this.mapState.MapArray[i, j].isTrapped)
+                        {
+                            sprite = this.WoodFieldWithTrapSprite;
+                        }
+                        else
+                        {
+                            sprite = this.WoodFieldSprite;
+                        }
                         break;
                 }
 
-                if (this.mapState.MapArray[i, j].isTrapped)
-                    sprite = this.TrapFieldSprite;
-
                 this.fields[i, j].SetSprite(sprite);
             }
+        }
+        for(int i = 0; i < QueueControllerInstance.ActivePlayers.Length; ++i)
+        {
+            //Set players position
         }
 	}
 	
@@ -76,16 +108,44 @@ public class MapDisplay : MonoBehaviour
                 switch (this.mapState.MapArray[i, j].Type)
                 {
                     case FieldType.CORPSE:
-                        sprite = this.CorpseFieldSprite;
+                        if (this.mapState.MapArray[i, j].isTrapped)
+                        {
+                            sprite = this.CorpseFieldWithTrapSprite;
+                        }
+                        else
+                        {
+                            sprite = this.CorpseFieldSprite;
+                        }
                         break;
                     case FieldType.EMPTY:
-                        sprite = this.EmptyFieldSprite;
+                        if (this.mapState.MapArray[i, j].isTrapped)
+                        {
+                            sprite = this.EmptyFieldSprite;
+                        }
+                        else
+                        {
+                            sprite = this.TrapFieldSprite;
+                        }
                         break;
                     case FieldType.FOOD:
-                        sprite = this.FoodFieldSprite;
+                        if (this.mapState.MapArray[i, j].isTrapped)
+                        {
+                            sprite = this.FoodFieldWithTrapSprite;
+                        }
+                        else
+                        {
+                            sprite = this.FoodFieldSprite;
+                        }
                         break;
                     case FieldType.WOOD:
-                        sprite = this.WoodFieldSprite;
+                        if (this.mapState.MapArray[i, j].isTrapped)
+                        {
+                            sprite = this.WoodFieldWithTrapSprite;
+                        }
+                        else
+                        {
+                            sprite = this.WoodFieldSprite;
+                        }
                         break;
                 }
 
