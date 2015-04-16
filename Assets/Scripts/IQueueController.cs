@@ -6,8 +6,8 @@ public interface IQueueController
 {
     bool Move(ActionDirection direction);
     bool KindleFire();
-    bool SetTrap(ActionDirection dir);
-    bool ThrowSpear(Vector2 target);
+    bool SetTrap(ActionDirection direction);
+    bool ThrowSpear(IntVector2 target);
     MapState GetMapState();
     void EndTurn();
     int ActionPointsLeft { get; }

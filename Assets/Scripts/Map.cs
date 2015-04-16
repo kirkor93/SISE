@@ -116,6 +116,36 @@ public class Map : MonoBehaviour
         state.MapArray = new FieldType[MAP_SIZE, MAP_SIZE];
     }
 
+    public int[] SetPlayerStartPosition(int activePlayers)
+    {
+        int[] playerToSlot = new int[activePlayers];
+        for (int i = 0; i < activePlayers; i++)
+        {
+            bool contains = false;
+            int x;
+            do
+            {
+                x = UnityEngine.Random.Range(1, activePlayers);
+                for (int j = 0; j < activePlayers; j++)
+                {
+                    if (!contains)
+                    {
+                        if (playerToSlot[j] == x)
+                        {
+                            contains = true;
+                        }
+                        else
+                        {
+                            contains = false;
+                        }
+                    }
+                }
+            } while (!contains);
+            playerToSlot[i] = x;
+        }
+        return playerToSlot;
+    }
+
     private int ColorToInt(Color32 col)
     {
         int toReturn = 0x00000000;
