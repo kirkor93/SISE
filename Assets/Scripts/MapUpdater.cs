@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MapUpdater : MonoBehaviour
 {
-    public GameObject[] Players;
+    //public GameObject[] Players;
     public QueueController Controller;
 
 	protected void Start () 

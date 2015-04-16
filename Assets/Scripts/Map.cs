@@ -119,18 +119,21 @@ public class Map : MonoBehaviour
     public int[] SetPlayerStartPosition(int activePlayers)
     {
         int[] playerToSlot = new int[activePlayers];
+        for (int i = 0; i < activePlayers; i++ )
+        {
+            playerToSlot[i] = 0;
+        }
         for (int i = 0; i < activePlayers; i++)
         {
             bool contains = false;
-            int x;
             do
             {
-                x = UnityEngine.Random.Range(1, activePlayers);
-                for (int j = 0; j < activePlayers; j++)
+                playerToSlot[i] = UnityEngine.Random.Range(1, activePlayers);
+                for (int j = i; j < activePlayers; j++)
                 {
                     if (!contains)
                     {
-                        if (playerToSlot[j] == x)
+                        if (playerToSlot[j] == playerToSlot[i])
                         {
                             contains = true;
                         }
@@ -141,7 +144,6 @@ public class Map : MonoBehaviour
                     }
                 }
             } while (!contains);
-            playerToSlot[i] = x;
         }
         return playerToSlot;
     }
