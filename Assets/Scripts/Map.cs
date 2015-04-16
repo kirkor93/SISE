@@ -147,11 +147,11 @@ public class Map : MonoBehaviour
             do
             {
                 playerToSlot[i] = UnityEngine.Random.Range(1, activePlayers);
-                for (int j = i; j < activePlayers; j++)
+                for (int j = 0; j < activePlayers; j++)
                 {
                     if (!contains)
                     {
-                        if (playerToSlot[j] == playerToSlot[i])
+                        if (playerToSlot[j] == playerToSlot[i] && j != i)
                         {
                             contains = true;
                         }

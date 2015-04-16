@@ -40,6 +40,7 @@ public class QueueController : MonoBehaviour, IQueueController
     private const int _eatCorposePsychicalCost = 3;
     private const int _eatCorposeHpRegen = 10;
     private const int _trapEnterDamage = 8;
+    private const int _spearInHeadDamage = 8;
 
     private int _activePlayer = 0;
     private int[] _playerActionPoints;
@@ -179,22 +180,21 @@ public class QueueController : MonoBehaviour, IQueueController
                 ActivePlayers[b] = tmp;
                 
             }
-            int[] tmpArray = CurrentMap.SetPlayerStartPosition(ActivePlayers.Length);
             for (int i = 0; i < ActivePlayers.Length; i++)
             {
-                switch(tmpArray[i])
+                switch(i)
                 {
                     case 1:
                         _playerPosition[i] = new IntVector2(0,0);
                         break;
                     case 2:
-                        _playerPosition[i] = new IntVector2(0, 50);
+                        _playerPosition[i] = new IntVector2(0, 49);
                         break;
                     case 3:
-                        _playerPosition[i] = new IntVector2(50, 0);
+                        _playerPosition[i] = new IntVector2(49, 0);
                         break;
                     case 4:
-                        _playerPosition[i] = new IntVector2(50, 50);
+                        _playerPosition[i] = new IntVector2(49, 49);
                         break;
                 }
             }
@@ -226,37 +226,21 @@ public class QueueController : MonoBehaviour, IQueueController
                 break;
                 
         }
-        if (move.x < 0 || move.x > 50)
+        if (move.x < 0 || move.x > 49)
             return false;
-        if (move.y < 0 || move.y > 50)
+        if (move.y < 0 || move.y > 49)
             return false;
         move += _playerPosition[_activePlayer];
-
-        if (CurrentMap.GetCurrentMapState().MapArray[move.x, move.y].isTrapped)
-        {
-            if(_playerActionPoints[_activePlayer] >= NormalMoveCost)
-                {
-                    _playerActionPoints[_activePlayer] -= NormalMoveCost;
-                    GetPhysicalDmg(_trapEnterDamage);
-                    MapUpdate.ChangeFieldOnMap(move, FieldType.EMPTY);
-                    OnPlayerAction();
-                    _playerPosition[_activePlayer] = move;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-        }
 
         switch(CurrentMap.GetCurrentMapState().MapArray[move.x,move.y].Type)
         {
             case FieldType.EMPTY:
                 if (_playerActionPoints[_activePlayer] >= NormalMoveCost)
-                {         
+                {
+                    StepOnTrap(move);
                     _playerActionPoints[_activePlayer] -= NormalMoveCost;
-                    OnPlayerAction();
                     _playerPosition[_activePlayer] = move;
+                    OnPlayerAction();
                     return true;
                 }
                 else
@@ -266,11 +250,12 @@ public class QueueController : MonoBehaviour, IQueueController
             case FieldType.FOOD:
                 if (_playerActionPoints[_activePlayer] >= FoodMoveCost)
                 {
+                    StepOnTrap(move);
                     _playerActionPoints[_activePlayer] -= FoodMoveCost;
                     Heal(FoodMoveHpRegen);
                     MapUpdate.ChangeFieldOnMap(move, FieldType.EMPTY);
-                    OnPlayerAction();
                     _playerPosition[_activePlayer] = move;
+                    OnPlayerAction();
                     return true;
                 }
                 else
@@ -280,12 +265,13 @@ public class QueueController : MonoBehaviour, IQueueController
             case FieldType.CORPSE:
                 if (_playerActionPoints[_activePlayer] >= EatCorposeActionPointsCost)
                 {
+                    StepOnTrap(move);
                     _playerActionPoints[_activePlayer] -= EatCorposeActionPointsCost;
                     Heal(EatCorposeHpRegen);
                     GetMentalDmg(_eatCorposePsychicalCost);
                     MapUpdate.ChangeFieldOnMap(move, FieldType.EMPTY);
-                    OnPlayerAction();
                     _playerPosition[_activePlayer] = move;
+                    OnPlayerAction();
                     return true;
                 }
                 else
@@ -295,11 +281,12 @@ public class QueueController : MonoBehaviour, IQueueController
             case FieldType.WOOD:
                 if (_playerActionPoints[_activePlayer] >= WoodMoveCost)
                 {
+                    StepOnTrap(move);
                     _playerActionPoints[_activePlayer] -= WoodMoveCost;
                     _playerWoodCount[_activePlayer] += _kindleFireWoodCost;
                     MapUpdate.ChangeFieldOnMap(move, FieldType.EMPTY);
-                    OnPlayerAction();
                     _playerPosition[_activePlayer] = move;
+                    OnPlayerAction();
                     return true;
                 }
                 else
@@ -308,6 +295,16 @@ public class QueueController : MonoBehaviour, IQueueController
                 }
             default:
                 return false;
+        }
+    }
+
+    private void StepOnTrap(IntVector2 move)
+    {
+        if (CurrentMap.GetCurrentMapState().MapArray[move.x, move.y].isTrapped)
+        {
+            GetPhysicalDmg(_trapEnterDamage);
+            MapUpdate.ChangeFieldOnMap(move, FieldType.EMPTY);
+            if (_playerHitPoints[_activePlayer] <= 0) EndTurn();
         }
     }
 
@@ -351,7 +348,26 @@ public class QueueController : MonoBehaviour, IQueueController
 
     public bool ThrowSpear(IntVector2 target)
     {
+        if(_playerActionPoints[_activePlayer] >= _throwSpearActionPointsCost)
+        {
+            for(int i=0;i<ActivePlayers.Length;i++)
+            {
+                if(target == _playerPosition[i] && InRange(target))
+                {
+                    _playerHitPoints[i] -= _spearInHeadDamage;
+                    break;
+                }
+            }
+            _playerActionPoints[_activePlayer] -= _throwSpearActionPointsCost;
+            _playerWoodCount[_activePlayer] -= _throwSpearWoodCost;
+            return true;
+        }
         return false;
+    }
+
+    private bool InRange(IntVector2 target)
+    {
+        return ((Math.Abs(_playerPosition[_activePlayer].x - target.x) < 4) && (Math.Abs(_playerPosition[_activePlayer].y - target.y) < 4));
     }
 
     public MapState GetMapState()
@@ -416,6 +432,16 @@ public class QueueController : MonoBehaviour, IQueueController
         {
             IntVector2 tmp = new IntVector2(vec1.x + vec2.x, vec1.y + vec2.y);
             return tmp;
+        }
+
+        public static bool operator ==(IntVector2 vec1, IntVector2 vec2)
+        {
+            return (vec1.x == vec2.x) && (vec1.y == vec2.y);
+        }
+
+        public static bool operator !=(IntVector2 vec1, IntVector2 vec2)
+        {
+            return !(vec1.x == vec2.x) && (vec1.y == vec2.y);
         }
     }
     #endregion
