@@ -381,7 +381,15 @@ public class QueueController : MonoBehaviour, IQueueController
 
     public MapState GetMapState()
     {
-        return CurrentMap.GetCurrentMapState();
+        MapState state = CurrentMap.GetCurrentMapState();
+        for (int i = 0; i < Map.MAP_SIZE; i += 1)
+        {
+            for(int j = 0 ; j < Map.MAP_SIZE ; j += 1)
+            {
+                state.MapArray[i, j].isTrapped = false;
+            }
+        }
+        return state;
     }
 
     public void EndTurn()
@@ -389,6 +397,22 @@ public class QueueController : MonoBehaviour, IQueueController
         _playerActionPoints[_activePlayer] = InitActionPoints;
         _activePlayer += 1;
         _activePlayer %= ActivePlayers.Length;
+        _playerHitPoints[_activePlayer] -= 1;
+        _playerPsychicalPoints[_activePlayer] -= 1;
+        int counter = 0;
+        while (_playerHitPoints[_activePlayer] <= 0 || _playerPsychicalPoints[_activePlayer] <= 0)
+        {
+            _playerActionPoints[_activePlayer] = 0;
+            _activePlayer += 1;
+            _activePlayer %= ActivePlayers.Length;
+            _playerHitPoints[_activePlayer] -= 1;
+            _playerPsychicalPoints[_activePlayer] -= 1;
+            ++counter;
+            if (counter == ActivePlayers.Length)
+            {
+                break;
+            }
+        }
 
         //ActivePlayers[_activePlayer].Play();
 
