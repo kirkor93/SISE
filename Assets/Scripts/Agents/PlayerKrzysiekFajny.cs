@@ -5,7 +5,11 @@ public class PlayerKrzysiekFajny : Bot
 {
     public override void Play()
     {
-        Debug.Log("AAAAA");
-        Controller.EndTurn();
+        Debug.Log("Krzysiek fajny's turn");
+        if(Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            Controller.Move(ActionDirection.Right);
+            Controller.EndTurn();
+        }
     }
 }

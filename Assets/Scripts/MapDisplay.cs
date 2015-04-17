@@ -36,8 +36,6 @@ public class MapDisplay : MonoBehaviour
                 this.fields[i, j] = prefabInstantiated.GetComponent<Field>();
                 Sprite sprite = EmptyFieldSprite;
 
-                Debug.Log("Type: " + this.mapState.MapArray[i, j].Type.ToString() + " and it is trapped? " + this.mapState.MapArray[i, j].isTrapped);
-
                 switch (this.mapState.MapArray[i, j].Type)
                 {
                     case FieldType.CORPSE:
@@ -120,11 +118,11 @@ public class MapDisplay : MonoBehaviour
                     case FieldType.EMPTY:
                         if (this.mapState.MapArray[i, j].isTrapped)
                         {
-                            sprite = this.EmptyFieldSprite;
+                            sprite = this.TrapFieldSprite;
                         }
                         else
                         {
-                            sprite = this.TrapFieldSprite;
+                            sprite = this.EmptyFieldSprite;
                         }
                         break;
                     case FieldType.FOOD:

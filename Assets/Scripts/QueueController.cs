@@ -184,16 +184,16 @@ public class QueueController : MonoBehaviour, IQueueController
             {
                 switch(i)
                 {
-                    case 1:
+                    case 0:
                         _playerPosition[i] = new IntVector2(0,0);
                         break;
-                    case 2:
+                    case 1:
                         _playerPosition[i] = new IntVector2(0, 49);
                         break;
-                    case 3:
+                    case 2:
                         _playerPosition[i] = new IntVector2(49, 0);
                         break;
-                    case 4:
+                    case 3:
                         _playerPosition[i] = new IntVector2(49, 49);
                         break;
                 }
@@ -202,6 +202,14 @@ public class QueueController : MonoBehaviour, IQueueController
 
         //starting game
         ActivePlayers[_activePlayer].Play();
+    }
+
+    void Update()
+    {
+        if(_activePlayer >= 0 && _activePlayer < ActivePlayers.Length)
+        {
+            ActivePlayers[_activePlayer].Play();
+        }
     }
 
     #endregion
@@ -213,24 +221,25 @@ public class QueueController : MonoBehaviour, IQueueController
         switch(direction)
         {
             case ActionDirection.Up:
-                move.y = 1;
+                move.y = -1;
                 break;
             case ActionDirection.Down:
-                move.y = -1;
+                move.y = 1;
                 break;
             case ActionDirection.Left:
                 move.x = -1;
                 break;
             case ActionDirection.Right:
-                move.x += 1;
+                move.x = 1;
                 break;
                 
         }
+
+        move += _playerPosition[_activePlayer];
         if (move.x < 0 || move.x > 49)
             return false;
         if (move.y < 0 || move.y > 49)
             return false;
-        move += _playerPosition[_activePlayer];
 
         switch(CurrentMap.GetCurrentMapState().MapArray[move.x,move.y].Type)
         {
@@ -381,7 +390,7 @@ public class QueueController : MonoBehaviour, IQueueController
         _activePlayer += 1;
         _activePlayer %= ActivePlayers.Length;
 
-        ActivePlayers[_activePlayer].Play();
+        //ActivePlayers[_activePlayer].Play();
 
         if(OnEndTurn != null)
         {
@@ -417,6 +426,7 @@ public class QueueController : MonoBehaviour, IQueueController
 }
 
     #region MyIntVector2
+    [Serializable]
     public struct IntVector2
     {
         public int x;
