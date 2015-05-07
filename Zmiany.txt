@@ -14,3 +14,12 @@ Patryk Kochański - Brak nowych zmian
 Krzysztof Stengert - Brak nowych zmian
 Krzysztof Szczech - Brak nowych zmian
 Marcin Wawrzonowski - Brak nowych zmian
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+Jan Bełczącki - Podpięcie bibliotek do logiki rozmytej
+Bartosz Janiak - Brak nowych zmian
+Patryk Kochański - Brak nowych zmian
+Krzysztof Stengert - Brak nowych zmian
+Krzysztof Szczech - Brak nowych zmian
+Marcin Wawrzonowski - Brak nowych zmian
