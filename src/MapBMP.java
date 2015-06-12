@@ -6,6 +6,5 @@ public enum MapBMP {
 	groups,
 	middle,
 	random,
-	random2,
-	testMap
+	random2
 }
