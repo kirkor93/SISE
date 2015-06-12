@@ -2,7 +2,6 @@ import javax.imageio.*;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
 
 public class Map 
 {
@@ -15,6 +14,8 @@ public class Map
 	private String mapPath = "Maps/";
 	
 	private BufferedImage loadedImage;
+	
+	private GameController gameController;
 	
 	public Map(MapBMP map)
 	{
@@ -62,6 +63,11 @@ public class Map
 		}
 		
 		return true;
+	}
+	
+	public void SetGameController(GameController instance)
+	{
+		this.gameController = instance;
 	}
 	
 	@Override
