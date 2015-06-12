@@ -1,10 +1,11 @@
 import java.util.Random;
+import java.math.*;
 
 public class GameController 
 {	
-//	private int _initActionPoints = 5;
-//	private int _initHitPoints = 15;
-//	private int _initPsychicalPoints = 15;
+	private int _initActionPoints = 5;
+	private int _initHitPoints = 15;
+	private int _initPsychicalPoints = 15;
 
 	
     private final int _normalMoveCost = 1;
@@ -94,10 +95,207 @@ public class GameController
     	System.out.println(_map.toString());
     }
     
+    public void Run()
+    {
+    	int alivePlayers = 4;
+    	while(alivePlayers > 0)
+    	{
+    		if(_players[_activePlayer].HP > 0)
+    		{
+    			_players[_activePlayer].Bot.Play();
+    			_players[_activePlayer].AP = _initActionPoints;
+    			++_activePlayer;
+    			_activePlayer = _activePlayer % 4;
+    			if(_players[_activePlayer].HP <= 0) --alivePlayers;
+    		} 		
+    	}
+    }
+    
     public Player[] GetPlayers()
     {
     	return _players;
     }
     
+    
+    public boolean Move(ActionDirection direction)
+    {
+        Vector2 move = new Vector2();
+        switch(direction)
+        {
+            case UP:
+                move.Y = -1;
+                break;
+            case DOWN:
+                move.Y = 1;
+                break;
+            case LEFT:
+                move.X = -1;
+                break;
+            case RIGHT:
+                move.X = 1;
+                break;
+                
+        }
+
+        move.Add(_players[_activePlayer].Position);
+        if (move.Y < 0 || move.X > 49)
+            return false;
+        if (move.Y < 0 || move.X > 49)
+            return false;
+
+        switch(_map.MyFields[move.X][move.Y].MyFieldType)
+        {
+            case NORMAL:
+                if (_players[_activePlayer].AP >= _normalMoveCost)
+                {
+                    StepOnTrap(move);
+                    _players[_activePlayer].AP -= _normalMoveCost;
+                    _players[_activePlayer].Position = move;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case FOOD:
+                if (_players[_activePlayer].AP >= _foodMoveCost)
+                {
+                    StepOnTrap(move);
+                    _players[_activePlayer].AP -= _foodMoveCost;
+                    Heal(_foodMoveHpRegen);
+                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.NORMAL;
+                    _players[_activePlayer].Position = move;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case CORPSE:
+                if (_players[_activePlayer].AP >= _eatCorposeActionPointsCost)
+                {
+                    StepOnTrap(move);
+                    _players[_activePlayer].AP -= _eatCorposeActionPointsCost;
+                    Heal(_eatCorposeHpRegen);
+                    GetMentalDmg(_eatCorposePsychicalCost);
+                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.NORMAL;
+                    _players[_activePlayer].Position = move;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case WOOD:
+                if (_players[_activePlayer].AP >= _woodMoveCost)
+                {
+                    StepOnTrap(move);
+                    _players[_activePlayer].AP -= _woodMoveCost;
+                    _players[_activePlayer].WP += _woodCollectedOnMove;
+                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.NORMAL;
+                    _players[_activePlayer].Position = move;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            default:
+                return false;
+        }
+    }
+
+    private void StepOnTrap(Vector2 move)
+    {
+        if (_map.MyFields[move.X][move.Y].IsTrap)
+        {
+            GetPhysicalDmg(_trapEnterDamage);
+            _map.MyFields[move.X][move.Y].IsTrap = false;
+            if (_players[_activePlayer].HP <= 0) _players[_activePlayer].AP  = 0;
+        }
+    }
+
+    public boolean KindleFire()
+    {
+        if (_players[_activePlayer].WP >= _kindleFireWoodCost
+            && _players[_activePlayer].AP >= _kindleFireActionPointsCost)
+        {
+        	_players[_activePlayer].WP -= _kindleFireWoodCost;
+        	_players[_activePlayer].AP -= _kindleFireActionPointsCost;
+        	_players[_activePlayer].PP = _initPsychicalPoints;
+        	_players[_activePlayer].HP = _initHitPoints;
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean SetTrap(ActionDirection direction)
+    {
+        Vector2 move = new Vector2(0, 0);
+        switch (direction)
+        {
+            case UP:
+                move.Y = 1;
+                break;
+            case DOWN:
+                move.Y = -1;
+                break;
+            case LEFT:
+                move.X = -1;
+                break;
+            case RIGHT:
+                move.X += 1;
+                break;
+
+        }
+        move.Add(_players[_activePlayer].Position);
+        if (move.Y < 0 || move.X > 49 || move.Y < 0 || move.X > 49 || _players[_activePlayer].AP < _setTrapActionPointsCost 
+        		|| _players[_activePlayer].WP < _setTrapWoodCost) return false;
+        _players[_activePlayer].AP -= _setTrapActionPointsCost;
+        _players[_activePlayer].WP -= _setTrapWoodCost;
+        _map.MyFields[move.X][move.Y].IsTrap = true;
+        return true;
+    }
+
+    public boolean ThrowSpear(Vector2 target)
+    {
+        if( _players[_activePlayer].AP >= _throwSpearActionPointsCost)
+        {
+            for(int i=0; i<4 ;i++)
+            {
+                if(target == _players[i].Position && InRange(target))
+                {
+                	_players[_activePlayer].HP -= _spearInHeadDamage;
+                    break;
+                }
+            }
+            _players[_activePlayer].AP -= _throwSpearActionPointsCost;
+            _players[_activePlayer].WP -= _throwSpearWoodCost;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean InRange(Vector2 target)
+    {
+        return ((Math.abs(_players[_activePlayer].Position.X - target.X) < 4) && (Math.abs(_players[_activePlayer].Position.Y - target.Y) < 4));
+    }
+
+    private void Heal(int value)
+    {
+    	_players[_activePlayer].HP += value;
+    }
+
+    private void GetMentalDmg(int value)
+    {
+    	_players[_activePlayer].PP -= value;
+    }
+
+    private void GetPhysicalDmg(int value)
+    {
+    	_players[_activePlayer].HP -= value;
+    }
+
 	
 }
