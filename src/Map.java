@@ -15,6 +15,8 @@ public class Map
 	
 	private BufferedImage loadedImage;
 	
+	private GameController gameController;
+	
 	public Map(MapBMP map)
 	{
 		this.mapPath += map.toString();
@@ -61,6 +63,11 @@ public class Map
 		}
 		
 		return true;
+	}
+	
+	public void SetGameController(GameController instance)
+	{
+		this.gameController = instance;
 	}
 	
 	@Override
