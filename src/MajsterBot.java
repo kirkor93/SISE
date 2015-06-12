@@ -1,10 +1,9 @@
 
-public class MajsterBot extends IBot
+public class MajsterBot extends Bot
 {
-	public MajsterBot(Player myPlayer)
+	public MajsterBot()
 	{
-		this.MyPlayer = myPlayer;
-		this.MyPlayer.MySymbol = "M";
+		this.MySymbol = "M";
 	}
 	
 	@Override

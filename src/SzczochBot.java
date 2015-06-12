@@ -1,10 +1,9 @@
 
-public class SzczochBot extends IBot
+public class SzczochBot extends Bot
 {
-	public SzczochBot(Player myPlayer)
+	public SzczochBot()
 	{
-		this.MyPlayer = myPlayer;
-		this.MyPlayer.MySymbol = "R";
+		this.MySymbol = "R";
 	}
 	
 	@Override

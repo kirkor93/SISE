@@ -1,5 +1,4 @@
 import java.util.Random;
-import java.math.*;
 
 public class GameController 
 {	
@@ -69,26 +68,33 @@ public class GameController
     		switch(names[i])
     		{
     			case 1:
-    				_players[i].Bot = new MajsterBot(_players[i]);
+    				_players[i].MyBot = new MajsterBot();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				break;
     			case 2:
-    				_players[i].Bot = new StengerdtBot(_players[i]);
+    				_players[i].MyBot = new StengerdtBot();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				break;
     			case 3:
-    				_players[i].Bot = new MarcinBot(_players[i]);
+    				_players[i].MyBot = new MarcinBot();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				break;
     			case 4:
-    				_players[i].Bot = new SzczochBot(_players[i]);
+    				_players[i].MyBot = new SzczochBot();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				break;
     			case 5:
-    				_players[i].Bot = new JaniakBot(_players[i]);
+    				_players[i].MyBot = new JaniakBot();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				break;
     			case 6: 
-    				_players[i].Bot = new PatrykBot(_players[i]);
+    				_players[i].MyBot = new PatrykBot();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				break;
 				default:
 					System.out.println("Retard Alert!!!!");
-					_players[i].Bot = new JaniakBot(_players[i]);
+					_players[i].MyBot = new JaniakBot();
+					_players[i].MySymbol = _players[i].MyBot.MySymbol;
 					break;    				
     		}   		
     	}		
@@ -103,7 +109,7 @@ public class GameController
     	{
     		if(_players[_activePlayer].HP > 0)
     		{
-    			_players[_activePlayer].Bot.Play();
+    			_players[_activePlayer].MyBot.Play();
     			_players[_activePlayer].AP = _initActionPoints;
     			++_activePlayer;
     			_activePlayer = _activePlayer % 4;
@@ -112,32 +118,42 @@ public class GameController
     	}
     }
     
+    public void SetActionBrokerOnBots(ActionBroker ab)
+    {
+    	for(int i=0; i<4 ;++i)
+    	{
+    		_players[i].MyBot.Broker = ab;
+    	}
+    }
+    
+	public boolean Action(ActionType type, Vector2 vec)
+	{
+		switch(type)
+		{
+		case MOVE:
+			return Move(vec);
+		case SET_TRAP:
+			return SetTrap(vec);
+		case THROW_SPEAR:
+			return ThrowSpear(vec);
+		case KINDLE_FIRE:
+			return KindleFire();
+			default:
+				return false;
+		}
+	}
+    
+    
     public Player[] GetPlayers()
     {
     	return _players;
     }
     
     
-    public boolean Move(ActionDirection direction)
+    public boolean Move(Vector2 vec)
     {
-        Vector2 move = new Vector2();
-        switch(direction)
-        {
-            case UP:
-                move.Y = -1;
-                break;
-            case DOWN:
-                move.Y = 1;
-                break;
-            case LEFT:
-                move.X = -1;
-                break;
-            case RIGHT:
-                move.X = 1;
-                break;
-                
-        }
-
+    	if((Math.abs(_players[_activePlayer].Position.X - vec.X) >1 ) || (Math.abs(_players[_activePlayer].Position.Y - vec.Y) > 1)) return false;
+    	Vector2 move = vec;
         move.Add(_players[_activePlayer].Position);
         if (move.Y < 0 || move.X > 49)
             return false;
@@ -231,25 +247,10 @@ public class GameController
         return false;
     }
 
-    public boolean SetTrap(ActionDirection direction)
+    public boolean SetTrap(Vector2 vec)
     {
-        Vector2 move = new Vector2(0, 0);
-        switch (direction)
-        {
-            case UP:
-                move.Y = 1;
-                break;
-            case DOWN:
-                move.Y = -1;
-                break;
-            case LEFT:
-                move.X = -1;
-                break;
-            case RIGHT:
-                move.X += 1;
-                break;
-
-        }
+    	if((Math.abs(_players[_activePlayer].Position.X - vec.X) >1 ) || (Math.abs(_players[_activePlayer].Position.Y - vec.Y) > 1)) return false;
+    	Vector2 move = vec;
         move.Add(_players[_activePlayer].Position);
         if (move.Y < 0 || move.X > 49 || move.Y < 0 || move.X > 49 || _players[_activePlayer].AP < _setTrapActionPointsCost 
         		|| _players[_activePlayer].WP < _setTrapWoodCost) return false;
@@ -298,5 +299,28 @@ public class GameController
     	_players[_activePlayer].HP -= value;
     }
 
+	public int GetActivePlayerHP()
+	{
+		return _players[_activePlayer].HP;
+	}
 	
+	public int GetActivePlayerPP()
+	{
+		return _players[_activePlayer].PP;
+	}
+	
+	public int GetActivePlayerWP()
+	{
+		return _players[_activePlayer].WP;
+	}
+	
+	public int GetActivePlayerAP()
+	{
+		return _players[_activePlayer].AP;
+	}
+	
+	public Vector2 GetActivePlayerPosition()
+	{
+		return _players[_activePlayer].Position;
+	}
 }

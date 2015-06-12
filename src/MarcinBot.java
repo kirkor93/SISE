@@ -1,10 +1,9 @@
 
-public class MarcinBot extends IBot
+public class MarcinBot extends Bot
 {
-	public MarcinBot(Player myPlayer)
+	public MarcinBot()
 	{
-		this.MyPlayer = myPlayer;
-		this.MyPlayer.MySymbol = "Q";
+		this.MySymbol = "Q";
 	}
 	
 	@Override

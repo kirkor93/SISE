@@ -19,7 +19,12 @@ public class Program {
 		System.out.println("Pick bot");	
 		names[3] = scan.nextInt();
 		
+		scan.close();
+		
 		GameController controller = new GameController(names);	
+		ActionBroker abroker = new ActionBroker(controller);
+		controller.SetActionBrokerOnBots(abroker);
+		
 	}
 
 }

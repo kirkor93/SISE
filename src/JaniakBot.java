@@ -1,10 +1,9 @@
 
-public class JaniakBot extends IBot
+public class JaniakBot extends Bot
 {
-	public JaniakBot(Player myPlayer)
+	public JaniakBot()
 	{
-		this.MyPlayer = myPlayer;
-		this.MyPlayer.MySymbol = "J";
+		this.MySymbol = "J";
 	}
 	
 	@Override

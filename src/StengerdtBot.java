@@ -1,10 +1,9 @@
 
-public class StengerdtBot extends IBot
+public class StengerdtBot extends Bot
 {
-	public StengerdtBot(Player myPlayer)
+	public StengerdtBot()
 	{
-		this.MyPlayer = myPlayer;
-		this.MyPlayer.MySymbol = "S";
+		this.MySymbol = "S";
 	}
 	
 	@Override

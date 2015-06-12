@@ -1,10 +1,9 @@
 
-public class PatrykBot extends IBot
+public class PatrykBot extends Bot
 {
-	public PatrykBot(Player myPlayer)
+	public PatrykBot()
 	{
-		this.MyPlayer = myPlayer;
-		this.MyPlayer.MySymbol = "K";
+		this.MySymbol = "K";
 	}
 	
 	@Override

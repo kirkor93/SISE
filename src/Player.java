@@ -5,7 +5,7 @@ public class Player {
 	public int PP;
 	public int AP;
 	public int WP;
-	public IBot Bot;
+	public Bot MyBot;
 	public String MySymbol = "X";
 	
 	Player()
