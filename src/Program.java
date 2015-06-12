@@ -8,7 +8,7 @@ public class Program {
 	{
 		Scanner scan = new Scanner(System.in);
 		int[] names = new int[4];		
-		System.out.println("1 - Majster's bot \n2 - Stengerdt's bot \n3 - Marcin's bot \n4 - Szoch's bot \n5 - Janiak's bot \n5 - Patryk's bot");	
+		System.out.println("1 - Majster's bot \n2 - Stengerdt's bot \n3 - Marcin's bot \n4 - Szoch's bot \n5 - Janiak's bot \n6 - Patryk's bot");	
 
 		System.out.println("Pick bot");	
 		names[0] = scan.nextInt();
@@ -24,6 +24,7 @@ public class Program {
 		GameController controller = new GameController(names);	
 		ActionBroker abroker = new ActionBroker(controller);
 		controller.SetActionBrokerOnBots(abroker);
+		controller.Run();
 		
 	}
 

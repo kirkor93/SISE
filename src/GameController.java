@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Random;
 
 public class GameController 
@@ -99,7 +100,6 @@ public class GameController
     		}   		
     	}		
     	_map.SetGameController(this);
-    	System.out.println(_map.toString());
     }
     
     public void Run()
@@ -109,6 +109,9 @@ public class GameController
     	{
     		if(_players[_activePlayer].HP > 0)
     		{
+    			System.out.println(_map);
+    			--_players[_activePlayer].HP;
+    			--_players[_activePlayer].PP;
     			_players[_activePlayer].MyBot.Play();
     			_players[_activePlayer].AP = _initActionPoints;
     			++_activePlayer;
