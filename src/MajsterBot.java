@@ -1,5 +1,15 @@
 
-public class MajsterBot implements IBot
+public class MajsterBot extends IBot
 {
-	public void Play(){};
+	public MajsterBot(Player myPlayer)
+	{
+		this.MyPlayer = myPlayer;
+		this.MyPlayer.MySymbol = "M";
+	}
+	
+	@Override
+	public void Play() {
+		// TODO Auto-generated method stub
+		
+	}
 }

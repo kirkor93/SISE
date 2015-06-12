@@ -1,4 +1,6 @@
 
-public interface IBot {
-	public void Play();
+public abstract class IBot
+{
+	public Player MyPlayer;
+	public abstract void Play();
 }

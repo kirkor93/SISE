@@ -6,6 +6,7 @@ public class Player {
 	public int AP;
 	public int WP;
 	public IBot Bot;
+	public String MySymbol = "X";
 	
 	Player()
 	{

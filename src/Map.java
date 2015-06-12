@@ -78,26 +78,39 @@ public class Map
 			toRet += "-";
 		}
 		toRet += "\n";
+		Player[] players = gameController.GetPlayers();
+		boolean flag = false;
 		for(int i = 0; i < 50; ++i)
 		{
 			toRet += "|";
 			for(int j = 0; j < 50; ++j)
 			{
-				switch(MyFields[i][j].MyFieldType)
+				flag = false;
+				for(int k = 0; k < 4; ++k)
 				{
-				case WOOD:
-					toRet += "W";
-					break;
-				case FOOD:
-					toRet += "F";
-					break;
-				case CORPSE:
-					toRet += "C";
-					break;
-				default:
-					toRet += " ";
-					break;
-						
+					if(players[k].Position.X == i && players[k].Position.Y == j)
+					{
+						toRet += players[k].MySymbol;
+						flag = true;
+					}
+				}
+				if(!flag)
+				{
+					switch(MyFields[i][j].MyFieldType)
+					{
+					case WOOD:
+						toRet += "W";
+						break;
+					case FOOD:
+						toRet += "F";
+						break;
+					case CORPSE:
+						toRet += "C";
+						break;
+					default:
+						toRet += " ";
+						break;
+					}
 				}
 			}
 			toRet += "|";

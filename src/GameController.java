@@ -68,29 +68,30 @@ public class GameController
     		switch(names[i])
     		{
     			case 1:
-    				_players[i].Bot = new MajsterBot();
+    				_players[i].Bot = new MajsterBot(_players[i]);
     				break;
     			case 2:
-    				_players[i].Bot = new StengerdtBot();
+    				_players[i].Bot = new StengerdtBot(_players[i]);
     				break;
     			case 3:
-    				_players[i].Bot = new MarcinBot();
+    				_players[i].Bot = new MarcinBot(_players[i]);
     				break;
     			case 4:
-    				_players[i].Bot = new SzczochBot();
+    				_players[i].Bot = new SzczochBot(_players[i]);
     				break;
     			case 5:
-    				_players[i].Bot = new JaniakBot();
+    				_players[i].Bot = new JaniakBot(_players[i]);
     				break;
     			case 6: 
-    				_players[i].Bot = new PatrykBot();
+    				_players[i].Bot = new PatrykBot(_players[i]);
     				break;
 				default:
 					System.out.println("Retard Alert!!!!");
-					_players[i].Bot = new JaniakBot();
+					_players[i].Bot = new JaniakBot(_players[i]);
 					break;    				
     		}   		
     	}		
+    	_map.SetGameController(this);
     	System.out.println(_map.toString());
     }
     
