@@ -109,15 +109,24 @@ public class GameController
     	{
     		if(_players[_activePlayer].HP > 0)
     		{
-    			System.out.println(_map);
-    			--_players[_activePlayer].HP;
-    			--_players[_activePlayer].PP;
+
+        		if(_activePlayer == 0)
+        		{
+        			System.out.println();
+        			System.out.println();
+        			System.out.println(_map);
+        		}
+    			_players[_activePlayer].HP -= 1;
+    			_players[_activePlayer].PP -= 1;
     			_players[_activePlayer].MyBot.Play();
     			_players[_activePlayer].AP = _initActionPoints;
-    			++_activePlayer;
-    			_activePlayer = _activePlayer % 4;
-    			if(_players[_activePlayer].HP <= 0) --alivePlayers;
-    		} 		
+    			if(_players[_activePlayer].HP <= 0) 
+    			{
+    				--alivePlayers;
+    			}
+    		}
+			++_activePlayer;
+			_activePlayer = _activePlayer % 4;
     	}
     }
     
