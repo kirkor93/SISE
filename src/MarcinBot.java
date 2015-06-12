@@ -1,5 +1,15 @@
 
-public class MarcinBot implements IBot
+public class MarcinBot extends IBot
 {
-	public void Play(){};
+	public MarcinBot(Player myPlayer)
+	{
+		this.MyPlayer = myPlayer;
+		this.MyPlayer.MySymbol = "Q";
+	}
+	
+	@Override
+	public void Play() {
+		// TODO Auto-generated method stub
+		
+	}
 }
