@@ -94,5 +94,10 @@ public class GameController
     	System.out.println(_map.toString());
     }
     
+    public Player[] GetPlayers()
+    {
+    	return _players;
+    }
+    
 	
 }
