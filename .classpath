@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Krzysztof/Documents/_Learning/Actual semester/Sztuczna inteligencja/Projekt 2/CLIPSJNI.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Krzysztof/Documents/_Learning/Actual semester/Sztuczna inteligencja/Projekt 2/jFuzzyLogic.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Patryk/Desktop/Repoz/SISE/CLIPSJNI.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Patryk/Desktop/Repoz/SISE/jFuzzyLogic.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

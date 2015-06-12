@@ -1,5 +1,4 @@
 
-public interface IBot 
-{
+public interface IBot {
 	public void Play();
 }
