@@ -19,7 +19,7 @@ public class Program {
 		System.out.println("Pick bot");	
 		names[3] = scan.nextInt();
 		
-		GameController controller = new GameController(names);
+		GameController controller = new GameController(names);	
 	}
 
 }

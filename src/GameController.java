@@ -1,7 +1,7 @@
+import java.util.Random;
+
 public class GameController 
-{
-	public Map MyMap;
-	
+{	
 //	private int _initActionPoints = 5;
 //	private int _initHitPoints = 15;
 //	private int _initPsychicalPoints = 15;
@@ -30,7 +30,36 @@ public class GameController
     
     GameController(int[] names)
     {
-    	_map = new Map();
+    	Random generator = new Random();
+    	int mapRand = generator.nextInt(7);
+    	switch(mapRand)
+    	{
+	    	case 0:
+	        	_map = new Map(MapBMP.counted);
+	    		break;
+	    	case 1:
+	        	_map = new Map(MapBMP.fight);
+	    		break;
+	    	case 2:
+	        	_map = new Map(MapBMP.fight2);
+	    		break;
+	    	case 3:
+	    		_map = new Map(MapBMP.groups);
+	    		break;
+	    	case 4:
+	    		_map = new Map(MapBMP.middle);
+	    		break;
+	    	case 5: 
+	    		_map = new Map(MapBMP.random);
+	    		break;
+	    	case 6: 
+	    		_map = new Map(MapBMP.random2);
+	    		break;
+    		default:
+    			_map = new Map(MapBMP.counted);
+    			break;
+    	}
+    	_map.LoadMap();
     	_players = new Player[4];
     	Vector2[] positions = {new Vector2(0,0),new Vector2(0,49), new Vector2(49,0), new Vector2(49,49)};
     	for(int i=0; i<4; ++i)
@@ -61,10 +90,8 @@ public class GameController
 					_players[i].Bot = new JaniakBot();
 					break;    				
     		}   		
-    	}
-    	
-    	
-    	
+    	}		
+    	System.out.println(_map.toString());
     }
     
 	
