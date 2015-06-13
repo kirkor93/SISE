@@ -164,12 +164,13 @@ public class GameController
     
     public boolean Move(Vector2 vec)
     {
-    	if((Math.abs(_players[_activePlayer].Position.X - vec.X) >1 ) || (Math.abs(_players[_activePlayer].Position.Y - vec.Y) > 1)) return false;
+    	if((Math.abs(vec.X) >1 ) || (Math.abs(vec.Y) > 1)) return false;
+    	if((Math.abs(vec.X) == 1) && (Math.abs(vec.Y)==1)) return false;
     	Vector2 move = vec;
         move.Add(_players[_activePlayer].Position);
-        if (move.Y < 0 || move.X > 49)
+        if (move.Y < 0 || move.Y > 49)
             return false;
-        if (move.Y < 0 || move.X > 49)
+        if (move.X < 0 || move.X > 49)
             return false;
 
         switch(_map.MyFields[move.X][move.Y].MyFieldType)
@@ -261,7 +262,8 @@ public class GameController
 
     public boolean SetTrap(Vector2 vec)
     {
-    	if((Math.abs(_players[_activePlayer].Position.X - vec.X) >1 ) || (Math.abs(_players[_activePlayer].Position.Y - vec.Y) > 1)) return false;
+    	if((Math.abs(vec.X) >1 ) || (Math.abs(vec.Y) > 1)) return false;
+    	if((Math.abs(vec.X) == 1) && (Math.abs(vec.Y)==1)) return false;
     	Vector2 move = vec;
         move.Add(_players[_activePlayer].Position);
         if (move.Y < 0 || move.X > 49 || move.Y < 0 || move.X > 49 || _players[_activePlayer].AP < _setTrapActionPointsCost 
