@@ -90,7 +90,7 @@ public class Map
 				}
 				if(!flag)
 				{
-					switch(MyFields[i][j].MyFieldType)
+					switch(MyFields[j][i].MyFieldType)
 					{
 					case WOOD:
 						toRet += "W";
