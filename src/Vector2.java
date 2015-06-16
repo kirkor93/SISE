@@ -26,4 +26,10 @@ public class Vector2 {
 		X += vec.X;
 		Y += vec.Y;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return String.valueOf(X) + "," + String.valueOf(Y);
+	}
 }
