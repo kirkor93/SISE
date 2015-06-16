@@ -43,6 +43,11 @@ public class ActionBroker {
 		else return new Vector2();
 	}
 	
+	public String GetFieldType(int x, int y)
+	{
+		return _GC.GetField(x, y).toString();
+	}
+	
 	public boolean Action(ActionType type, Vector2 vec)
 	{
 		return _GC.Action(type, vec);

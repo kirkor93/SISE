@@ -82,7 +82,7 @@ public class Map
 				flag = false;
 				for(int k = 0; k < 4; ++k)
 				{
-					if(players[k].Position.X == i && players[k].Position.Y == j)
+					if(players[k].Position.X == j && players[k].Position.Y == i)
 					{
 						toRet += players[k].MySymbol;
 						flag = true;

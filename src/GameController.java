@@ -337,4 +337,9 @@ public class GameController
 	{
 		return _players[_activePlayer].Position;
 	}
+	
+	public FieldType GetField(int x, int y)
+	{
+		return _map.MyFields[x][y].MyFieldType;
+	}
 }
