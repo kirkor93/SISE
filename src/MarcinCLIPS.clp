@@ -1,9 +1,10 @@
 (deftemplate bot
-	(slot hitPoints (default 15))
-	(slot actionPoints (default 5))
-	(slot woodPoints (default 0))
-	(slot state (default initial))
-	(slot direction)
+	(slot HP (default 15))
+	(slot PP (default 15))
+	(slot WP (default 0))
+	(slot state (default current))
+	(slot posX (default -1))
+	(slot posY (default -1))
 	(slot currentField (default normal)))
 	
 (deftemplate tile
@@ -12,6 +13,3 @@
 	(slot type (default current))
 	(slot fieldType (default normal))) 
 	
-(deffacts startup
-	(bot)
-	(tile))
