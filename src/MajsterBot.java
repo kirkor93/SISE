@@ -59,8 +59,6 @@ public class MajsterBot extends Bot
 			}
 		}
 		
-		this.Clips.eval("(facts)");
-		
 		System.out.println("Majster");
 
 		//String evalStr = "(find-all-facts ((?f bot)) TRUE)";
