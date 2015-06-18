@@ -42,12 +42,18 @@
 			(bind ?*dir* wait))))
 			
 (defrule detectWood
-	(bot (actionPoints ?ap))
+	(bot (actionPoints ?ap) (woodPoints ?wp))
 	(tile (direction ?d) (distance ?l) (type neighbour) (fieldType WOOD))
 	=>
-	(if (< ?ap 3)
-	then
-		(bind ?*dir* wait)))
+	(if (> ?ap 3)
+		then
+		(if (< ?wp 4)
+		then 
+			(bind ?*dir* ?d))
+		else
+		(if (< ?ap 3)
+			then
+			(bind ?*dir* wait))))
 	
 ;(defrule idleWalk
 ;	(bot (x ?x) (y ?y) (actionPoints ?ap))
