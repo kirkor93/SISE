@@ -26,12 +26,13 @@ public class MajsterBot extends Bot
 			this.Clips.eval("(do-for-fact ((?b bot)) (retract ?b))"); //refreshing bot state
 			//this.Clips.eval("(do-for-fact ((?d dir)) (retract ?d))");
 			this.Clips.assertString("(bot (x " + Broker.GetMyPosition().X + ") (y " + Broker.GetMyPosition().Y + ")"
-					+ "(hitPoints " + Broker.GetMyHP() + ")" + "(actionPoints " + Broker.GetMyAP() + "))");	//adding current bot state
+					+ "(hitPoints " + Broker.GetMyHP() + ")" + "(actionPoints " + Broker.GetMyAP() + ")"
+							+ "(woodPoints " + Broker.GetMyWP() + "))");	//adding current bot state
 			this.Clips.assertString("(tile (x " + Broker.GetMyPosition().X + ")" +
 									"(y " + Broker.GetMyPosition().Y + ")" +
 									"(type current)"
 									+ "(fieldType " + Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y) + "))");	//adding current tile
-			for(int i=1; i<6; ++i)	//adding neighbours
+			for(int i=1; i<8; ++i)	//adding neighbours
 			{
 				if(Broker.GetMyPosition().X + i <= 49)
 				{
@@ -95,6 +96,7 @@ public class MajsterBot extends Bot
 				return;
 			}
 			System.out.println("Current AP: " + Broker.GetMyAP());
+			System.out.println("Current WP: " + Broker.GetMyWP());
 			System.out.println("Position: X - " + Broker.GetMyPosition().X + " Y - " + Broker.GetMyPosition().Y);
 			
 			switch(currentDirection)
@@ -112,14 +114,15 @@ public class MajsterBot extends Bot
 				Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 				break;
 			case "random":
-				int x = (int) ((Math.random()*4) - 2);
-				int y = 0;
-				if(x == 0)
-				{
-					y = (int) ((Math.random()*4) - 2);
-				}
-				System.out.println(x + " " + y);
-				Broker.Action(ActionType.MOVE, new Vector2(x, y));
+//				int x = (int) ((Math.random()*4) - 2);
+//				int y = 0;
+//				if(x == 0)
+//				{
+//					y = (int) ((Math.random()*4) - 2);
+//				}
+//				System.out.println(x + " " + y);
+//				Broker.Action(ActionType.MOVE, new Vector2(x, y));
+				Randomize();
 				break;
 			case "wait":
 				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
@@ -131,5 +134,20 @@ public class MajsterBot extends Bot
 			this.Clips.eval("(bind ?*dir*)");
 			//this.Clips.run();
 		}
+	}
+	
+	public void Randomize()
+	{
+		int n = (int) (Math.random()*4);
+		if(n == 0 && Broker.GetMyPosition().Y != 0)
+			Broker.Action(ActionType.MOVE, new Vector2(0, -1));
+		else if(n == 1 && Broker.GetMyPosition().Y != 49)
+			Broker.Action(ActionType.MOVE, new Vector2(0, 1));
+		else if(n == 2 && Broker.GetMyPosition().X != 0)
+			Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
+		else if(n == 3 && Broker.GetMyPosition().X != 49)
+			Broker.Action(ActionType.MOVE, new Vector2(1, 0));
+		else
+			Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 	}
 }
