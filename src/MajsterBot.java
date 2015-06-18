@@ -25,7 +25,8 @@ public class MajsterBot extends Bot
 			this.Clips.eval("(do-for-all-facts ((?f tile)) TRUE (retract ?f))"); //refreshing tiles (deleting old neighbours)
 			this.Clips.eval("(do-for-fact ((?b bot)) (retract ?b))"); //refreshing bot state
 			//this.Clips.eval("(do-for-fact ((?d dir)) (retract ?d))");
-			this.Clips.assertString("(bot (hitPoints " + Broker.GetMyHP() + ")" + "(actionPoints " + Broker.GetMyAP() + "))");	//adding current bot state
+			this.Clips.assertString("(bot (x " + Broker.GetMyPosition().X + ") (y " + Broker.GetMyPosition().Y + ")"
+					+ "(hitPoints " + Broker.GetMyHP() + ")" + "(actionPoints " + Broker.GetMyAP() + "))");	//adding current bot state
 			this.Clips.assertString("(tile (x " + Broker.GetMyPosition().X + ")" +
 									"(y " + Broker.GetMyPosition().Y + ")" +
 									"(type current)"
@@ -37,6 +38,7 @@ public class MajsterBot extends Bot
 					this.Clips.assertString("(tile (x " + (Broker.GetMyPosition().X + i) + ")" +
 							"(y " + Broker.GetMyPosition().Y + ")" +
 							"(direction right)" +
+							"(distance " + i + ")" +
 							"(type neighbour)"
 							+ "(fieldType " + Broker.GetFieldType(Broker.GetMyPosition().X + i, Broker.GetMyPosition().Y) + "))");
 				}
@@ -45,6 +47,7 @@ public class MajsterBot extends Bot
 					this.Clips.assertString("(tile (x " + (Broker.GetMyPosition().X - i) + ")" +
 							"(y " + Broker.GetMyPosition().Y + ")" +
 							"(direction left)" +
+							"(distance " + i + ")" +
 							"(type neighbour)"
 							+ "(fieldType " + Broker.GetFieldType(Broker.GetMyPosition().X - i, Broker.GetMyPosition().Y) + "))");
 				}
@@ -53,6 +56,7 @@ public class MajsterBot extends Bot
 					this.Clips.assertString("(tile (x " + Broker.GetMyPosition().X + ")" +
 							"(y " + (Broker.GetMyPosition().Y + i) + ")" +
 							"(direction down)" +
+							"(distance " + i + ")" +
 							"(type neighbour)"
 							+ "(fieldType " + Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y + i) + "))");
 				}
@@ -61,6 +65,7 @@ public class MajsterBot extends Bot
 					this.Clips.assertString("(tile (x " + Broker.GetMyPosition().X + ")" +
 							"(y " + (Broker.GetMyPosition().Y - i) + ")" +
 							"(direction up)" +
+							"(distance " + i + ")" +
 							"(type neighbour)"
 							+ "(fieldType " + Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y - i) + "))");	
 				}
@@ -106,8 +111,20 @@ public class MajsterBot extends Bot
 			case "right":
 				Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 				break;
-			default:
+			case "random":
+				int x = (int) ((Math.random()*4) - 2);
+				int y = 0;
+				if(x == 0)
+				{
+					y = (int) ((Math.random()*4) - 2);
+				}
+				System.out.println(x + " " + y);
+				Broker.Action(ActionType.MOVE, new Vector2(x, y));
+				break;
+			case "wait":
 				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+				break;
+			default:
 				break;
 			}
 			
