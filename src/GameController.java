@@ -169,9 +169,15 @@ public class GameController
     	Vector2 move = vec;
         move.Add(_players[_activePlayer].Position);
         if (move.Y < 0 || move.Y > 49)
-            return false;
+        {
+        	_players[_activePlayer].AP -= _normalMoveCost;
+        	return false;
+        }
         if (move.X < 0 || move.X > 49)
-            return false;
+        {
+        	_players[_activePlayer].AP -= _normalMoveCost;
+        	return false;
+        }
 
         switch(_map.MyFields[move.X][move.Y].MyFieldType)
         {
@@ -199,6 +205,7 @@ public class GameController
                 }
                 else
                 {
+                	//_players[_activePlayer].AP -= 1;
                     return false;
                 }
             case CORPSE:
@@ -228,6 +235,7 @@ public class GameController
                 }
                 else
                 {
+                	//_players[_activePlayer].AP -= 1;
                     return false;
                 }
             default:
