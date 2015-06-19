@@ -71,6 +71,7 @@ public class GameController
     			case 1:
     				_players[i].MyBot = new MajsterBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
     			case 2:
     				_players[i].MyBot = new StengerdtBot();
@@ -87,6 +88,7 @@ public class GameController
     			case 5:
     				_players[i].MyBot = new JaniakBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
     			case 6: 
     				_players[i].MyBot = new PatrykBot();
@@ -116,7 +118,10 @@ public class GameController
         			System.out.println();
         			System.out.println(_map);
         		}
-    			_players[_activePlayer].HP -= 1;
+        		if(_players[_activePlayer].PP <= 0)
+        			_players[_activePlayer].HP -= 2;
+        		else
+        			_players[_activePlayer].HP -= 1;
     			_players[_activePlayer].PP -= 1;
     			_players[_activePlayer].MyBot.Play();
     			_players[_activePlayer].AP = _initActionPoints;
@@ -186,7 +191,9 @@ public class GameController
                 {
                     StepOnTrap(move);
                     _players[_activePlayer].AP -= _normalMoveCost;
+                    _map.MyFields[_players[_activePlayer].Position.X][_players[_activePlayer].Position.Y].MyFieldType = FieldType.NORMAL;
                     _players[_activePlayer].Position = move;
+                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.ENEMY;
                     return true;
                 }
                 else
@@ -199,8 +206,9 @@ public class GameController
                     StepOnTrap(move);
                     _players[_activePlayer].AP -= _foodMoveCost;
                     Heal(_foodMoveHpRegen);
-                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.NORMAL;
+                    _map.MyFields[_players[_activePlayer].Position.X][_players[_activePlayer].Position.Y].MyFieldType = FieldType.NORMAL;
                     _players[_activePlayer].Position = move;
+                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.ENEMY;
                     return true;
                 }
                 else
@@ -215,8 +223,9 @@ public class GameController
                     _players[_activePlayer].AP -= _eatCorposeActionPointsCost;
                     Heal(_eatCorposeHpRegen);
                     GetMentalDmg(_eatCorposePsychicalCost);
-                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.NORMAL;
+                    _map.MyFields[_players[_activePlayer].Position.X][_players[_activePlayer].Position.Y].MyFieldType = FieldType.NORMAL;
                     _players[_activePlayer].Position = move;
+                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.ENEMY;
                     return true;
                 }
                 else
@@ -229,8 +238,9 @@ public class GameController
                     StepOnTrap(move);
                     _players[_activePlayer].AP -= _woodMoveCost;
                     _players[_activePlayer].WP += _woodCollectedOnMove;
-                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.NORMAL;
+                    _map.MyFields[_players[_activePlayer].Position.X][_players[_activePlayer].Position.Y].MyFieldType = FieldType.NORMAL;
                     _players[_activePlayer].Position = move;
+                    _map.MyFields[move.X][move.Y].MyFieldType = FieldType.ENEMY;
                     return true;
                 }
                 else
@@ -238,6 +248,9 @@ public class GameController
                 	//_players[_activePlayer].AP -= 1;
                     return false;
                 }
+            case ENEMY:
+            	_players[_activePlayer].AP -= 1;
+            	return false;
             default:
                 return false;
         }

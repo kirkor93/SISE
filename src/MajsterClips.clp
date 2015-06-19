@@ -3,10 +3,19 @@
 	(slot y)
 	(slot hitPoints (default 15))
 	(slot actionPoints (default 5))
-	(slot woodPoints (default 0)))
+	(slot woodPoints (default 0))
+	(slot psychicPoints (default 15)))
 	
 (defglobal
 	?*dir* = random
+)
+
+(defglobal
+	?*iks* = 0
+)
+
+(defglobal
+	?*igrek* = 0
 )
 	
 (deftemplate tile
@@ -20,13 +29,6 @@
 (deffacts startup
 	(bot)
 	(tile))
-		
-;(defrule idleWalk
-;	(bot (x ?x) (y ?y) (actionPoints ?ap))
-;	(tile (direction ?d) (distance ?l) (type neighbour) (fieldType NORMAL))
-;	(not (any-factp ((?tile tile)) (not (?tile:fieldType NORMAL))))
-;	=>
-;	(bind ?*dir* random))
 			
 (defrule detectFood
 	(bot (x ?x) (y ?y) (actionPoints ?ap))
@@ -53,3 +55,26 @@
 		(if (< ?ap 3)
 			then
 			(bind ?*dir* wait))))
+			
+(defrule kindleFire
+	(bot (actionPoints ?ap) (woodPoints ?wp) (psychicPoints ?pp))
+	(test (and (> ?ap 3) (>= ?wp 1) (< ?pp 0)))
+	=>
+	(bind ?*dir* kindle))
+	
+(defrule getCloseToEnemy
+	(bot (hitPoints ?hp) (woodPoints ?wp))
+	(tile (direction ?d) (distance ?l (type neighbour) (fieldType ENEMY))
+	(test (and (> ?l 5) (> ?wp 1) (> ?hp 10)))
+	=>
+	(bind ?*dir* ?d))
+	
+(defrule attack
+	(bot (hitPoints ?hp) (actionPoints ?ap) (woodPoints ?wp))
+	(tile (x ?x) (y ?y) (distance ?l) (type neighbour) (fieldType ENEMY))
+	(test (and (< ?l 5) (= ?ap 5) (>= ?wp 1) (> ?hp 10)))
+	=>
+	(bind ?*iks* ?x)
+	(bind ?*igrek* ?y)
+	(bind ?*dir* attack))
+	

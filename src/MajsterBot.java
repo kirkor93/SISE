@@ -1,3 +1,4 @@
+import sun.io.Converters;
 import CLIPSJNI.Environment;
 import CLIPSJNI.FactAddressValue;
 import CLIPSJNI.MultifieldValue;
@@ -25,9 +26,12 @@ public class MajsterBot extends Bot
 			this.Clips.eval("(do-for-all-facts ((?f tile)) TRUE (retract ?f))"); //refreshing tiles (deleting old neighbours)
 			this.Clips.eval("(do-for-fact ((?b bot)) (retract ?b))"); //refreshing bot state
 			//this.Clips.eval("(do-for-fact ((?d dir)) (retract ?d))");
-			this.Clips.assertString("(bot (x " + Broker.GetMyPosition().X + ") (y " + Broker.GetMyPosition().Y + ")"
-					+ "(hitPoints " + Broker.GetMyHP() + ")" + "(actionPoints " + Broker.GetMyAP() + ")"
-							+ "(woodPoints " + Broker.GetMyWP() + "))");	//adding current bot state
+			this.Clips.assertString("(bot (x " + Broker.GetMyPosition().X + ") "
+					+ "(y " + Broker.GetMyPosition().Y + ")"
+					+ "(hitPoints " + Broker.GetMyHP() + ")" 
+					+ "(actionPoints " + Broker.GetMyAP() + ")"
+					+ "(woodPoints " + Broker.GetMyWP() + ")"
+					+ "(psychicPoints " + Broker.GetMyPP() + "))");	//adding current bot state
 			this.Clips.assertString("(tile (x " + Broker.GetMyPosition().X + ")" +
 									"(y " + Broker.GetMyPosition().Y + ")" +
 									"(type current)"
@@ -87,7 +91,7 @@ public class MajsterBot extends Bot
 			//String currentDirection = fv.getFactSlot("value").toString();
 			
 			//this.Clips.eval("(facts)");
-			System.out.println(currentDirection);
+//			System.out.println(currentDirection);
 			
 			System.out.println("Current HP: " + Broker.GetMyHP());
 			if(Broker.GetMyHP() == 0)
@@ -97,6 +101,7 @@ public class MajsterBot extends Bot
 			}
 			System.out.println("Current AP: " + Broker.GetMyAP());
 			System.out.println("Current WP: " + Broker.GetMyWP());
+			System.out.println("Current PP: " + Broker.GetMyPP());
 			System.out.println("Position: X - " + Broker.GetMyPosition().X + " Y - " + Broker.GetMyPosition().Y);
 			
 			switch(currentDirection)
@@ -114,23 +119,27 @@ public class MajsterBot extends Bot
 				Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 				break;
 			case "random":
-//				int x = (int) ((Math.random()*4) - 2);
-//				int y = 0;
-//				if(x == 0)
-//				{
-//					y = (int) ((Math.random()*4) - 2);
-//				}
-//				System.out.println(x + " " + y);
-//				Broker.Action(ActionType.MOVE, new Vector2(x, y));
 				Randomize();
 				break;
 			case "wait":
 				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 				break;
+			case "kindle":
+				Broker.Action(ActionType.KINDLE_FIRE, null);
+				break;
+			case "attack":
+				String evalStrX = "?*iks*";
+				String evalStrY = "?*igrek*";
+				//SymbolValue x = (SymbolValue) this.Clips.eval(evalStrX);
+				int outputX = Integer.parseInt(this.Clips.eval(evalStrX).toString());
+				//SymbolValue y = (SymbolValue) this.Clips.eval(evalStrY);
+				int outputY = Integer.parseInt(this.Clips.eval(evalStrY).toString());
+				Broker.Action(ActionType.THROW_SPEAR, new Vector2(outputX, outputY));
+				break;
 			default:
 				break;
 			}
-			
+			System.out.println(currentDirection);
 			this.Clips.eval("(bind ?*dir*)");
 			//this.Clips.run();
 		}
