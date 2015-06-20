@@ -7,6 +7,8 @@
 	(slot posX (default -1))
 	(slot posY (default -1))
 	(slot currentField (default normal))
+	(slot time (default 0))
+	(slot modifiedFlag (default false))
 )
 	
 (deftemplate tile
@@ -20,6 +22,7 @@
 	(slot value)
 )
 
+;INTERFACE
 ;NTH UP DWN LFT RGT FIR TRP THR
 (defglobal ?*slotUp* = -1)
 (defglobal ?*slotDown* = -1)
@@ -31,6 +34,9 @@
 
 (defglobal ?*throwCoordX* = 0)
 (defglobal ?*throwCoordY* = 0)
+
+;INTERNAL
+(defglobal ?*MAX_BOT_TIME* = 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; HELPER RULES 
@@ -71,6 +77,15 @@
 	(declare (salience -10))
 	(helper (value wantUp))
 	(not (helper (value cannotUp)))
+	(bot (state current) (posX ?cpX) (posY ?cpY))
+	(not
+		(exists
+			(and
+				(bot (state past) (posX ?pX) (posY ?pY))
+				(test (and (eq ?pX ?cpX) (eq ?pY (- ?cpY 1))))
+			)
+		)
+	)
 	=>
 	(bind ?*slotUp* (+ ?*slotUp* 1))
 )
@@ -79,6 +94,15 @@
 	(declare (salience -10))
 	(helper (value wantDown))
 	(not (helper (value cannotDown)))
+	(bot (state current) (posX ?cpX) (posY ?cpY))
+	(not
+		(exists
+			(and
+				(bot (state past) (posX ?pX) (posY ?pY))
+				(test (and (eq ?pX ?cpX) (eq ?pY (+ ?cpY 1))))
+			)
+		)
+	)
 	=>
 	(bind ?*slotDown* (+ ?*slotDown* 1))
 )
@@ -87,6 +111,15 @@
 	(declare (salience -10))
 	(helper (value wantLeft))
 	(not (helper (value cannotLeft)))
+	(bot (state current) (posX ?cpX) (posY ?cpY))
+	(not
+		(exists
+			(and
+				(bot (state past) (posX ?pX) (posY ?pY))
+				(test (and (eq ?pX (- ?cpX 1)) (eq ?pY ?cpY)))
+			)
+		)
+	)
 	=>
 	(bind ?*slotLeft* (+ ?*slotLeft* 1))
 )
@@ -95,8 +128,25 @@
 	(declare (salience -10))
 	(helper (value wantRight))
 	(not (helper (value cannotRight)))
+	(bot (state current) (posX ?cpX) (posY ?cpY))
+	(not
+		(exists
+			(and
+				(bot (state past) (posX ?pX) (posY ?pY))
+				(test (and (eq ?pX (+ ?cpX 1)) (eq ?pY ?cpY)))
+			)
+		)
+	)
 	=>
 	(bind ?*slotRight* (+ ?*slotRight* 1))
+)
+
+(defrule forgetOldBots
+	(declare (salience -20))
+	?b <- (bot (state past) (time ?t))
+	(test (> ?t ?*MAX_BOT_TIME*))
+	=>
+	(retract ?b)
 )
 
 ;(defrule haveToWait

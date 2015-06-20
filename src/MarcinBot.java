@@ -10,6 +10,7 @@ public class MarcinBot extends Bot
 {
 	private static final int FIELD_OF_VIEW = 3;
 	private static final int DATA_SLOTS = 7;
+	private static final int MAX_BOT_TIME = 5;
 	
 	private int[] evalArray = new int[DATA_SLOTS];
 	private ArrayList<Integer> evalHelper = new ArrayList<Integer>();
@@ -35,12 +36,20 @@ public class MarcinBot extends Bot
 		this.Clips = new Environment();
 		this.Clips.load("src/MarcinCLIPS.clp");
 		this.Clips.reset();
+		
+		Initialize();
+	}
+	
+	private void Initialize()
+	{
+		Clips.eval("(bind ?*MAX_BOT_TIME* " + String.valueOf(MAX_BOT_TIME) + ")");
 	}
 	
 	@Override
 	public void Play() {
 		
 		actList.clear();
+		String cFldStr = "ERROR";
 		
 		while(Broker.GetMyAP() > 0)
 		{
@@ -57,10 +66,11 @@ public class MarcinBot extends Bot
 			Clips.eval("(bind ?*throwCoordX* 0)");
 			Clips.eval("(bind ?*throwCoordY* 0)");
 			Clips.eval("(do-for-all-facts ((?h helper)) TRUE (retract ?h))");
-//			Clips.eval("(do-for-fact "
-//							+ "((?b bot)) "
-//							+ "(eq ?b:state current) "
-//							+ "(retract ?b))");
+			Clips.eval("(do-for-all-facts"
+					+ "((?b bot))"
+					+ "(and (eq ?b:state past) (eq ?b:modifiedFlag false))"
+					+ "(modify ?b (time (+ ?b:time 1)) (modifiedFlag true))"
+					+ ")");
 			
 			Vector2 myPos = Broker.GetMyPosition();
 			
@@ -152,23 +162,28 @@ public class MarcinBot extends Bot
 			}
 			
 			maxID = evalHelper.get(0);
+			cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y);
 			
-			if(maxID >= 0)
+			if(evalArray[maxID] >= 0)
 			{
 				if(maxID == 0)
 				{
+					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y - 1);
 					Broker.Action(ActionType.MOVE, new Vector2(0, -1));
 				}
 				else if(maxID == 1)
 				{
+					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y + 1);
 					Broker.Action(ActionType.MOVE, new Vector2(0, 1));
 				}
 				else if(maxID == 2)
 				{
+					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X - 1, Broker.GetMyPosition().Y);
 					Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
 				}
 				else if(maxID == 3)
 				{
+					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X + 1, Broker.GetMyPosition().Y);
 					Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 				}
 				else if(maxID == 4)	// kindle bonfire
@@ -182,15 +197,13 @@ public class MarcinBot extends Bot
 				else if(maxID == 6)	// throw spear
 				{
 					int cX, cY;
-					SymbolValue valX, valY;
-					valX = (SymbolValue) Clips.eval("?*throwCoordX");
-					valY = (SymbolValue) Clips.eval("?*throwCoordY");
-					cX = (int)valX.getValue();
-					cY = (int)valY.getValue();
+					cX = ((IntegerValue) Clips.eval("?*throwCoordX")).intValue();
+					cY = ((IntegerValue) Clips.eval("?*throwCoordY")).intValue();
 					Broker.Action(ActionType.THROW_SPEAR, new Vector2(cX, cY));
 				}
 				else
 				{
+					cFldStr = "ERROR";
 					System.out.println("Marcin: ERROR: GOT TRASH FROM CLIPS: " + String.valueOf(maxID));
 					return;
 				}
@@ -204,64 +217,24 @@ public class MarcinBot extends Bot
 			
 			actList.add(valStr);
 			
-			// cleanup
+			// cleanup		
+			Clips.eval("(do-for-all-facts"
+					+ "((?b bot))"
+					+ "(and (eq ?b:state past) (eq ?b:modifiedFlag true))"
+					+ "(modify ?b (modifiedFlag false))"
+					+ ")");
+			
 					Clips.eval("(do-for-all-facts ((?b bot)) (eq ?b:state current) (retract ?b))");
 					Clips.assertString("(bot"
 							+ "(HP " + Broker.GetMyHP() + ")" 
 							+ "(PP " + Broker.GetMyPP() + ")" 
 							+ "(AP " + Broker.GetMyAP() + ")" 
 							+ "(WP " + Broker.GetMyWP() + ")" 
-							+ "(state last)"
+							+ "(state past)"
 							+ "(posX " + String.valueOf(myPos.X) + ")"
 							+ "(posY " + String.valueOf(myPos.Y) + ")"
 							+ "(currentField " + Broker.GetFieldType(myPos.X, myPos.Y) + ")"
 							+ ")");
-
-			// proceed accordingly
-//			if(valStr.equals("NTH"))	// do nothing
-//			{
-//				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
-//			}
-//			else if(valStr.equals("UP"))
-//			{
-//				Broker.Action(ActionType.MOVE, new Vector2(0, -1));
-//			}
-//			else if(valStr.equals("DWN"))
-//			{
-//				Broker.Action(ActionType.MOVE, new Vector2(0, 1));
-//			}
-//			else if(valStr.equals("LFT"))
-//			{
-//				Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
-//			}
-//			else if(valStr.equals("RGT"))
-//			{
-//				Broker.Action(ActionType.MOVE, new Vector2(1, 0));
-//			}
-//			else if(valStr.equals("FIR"))	// kindle bonfire
-//			{
-//				Broker.Action(ActionType.KINDLE_FIRE, Broker.GetMyPosition());
-//			}
-//			else if(valStr.equals("TRP"))	// set trap where u stand
-//			{
-//				Broker.Action(ActionType.SET_TRAP, Broker.GetMyPosition());
-//			}
-//			else if(valStr.equals("THR"))	// throw spear
-//			{
-//				int cX, cY;
-//				SymbolValue valX, valY;
-//				valX = (SymbolValue) Clips.eval("?*throwCoordX");
-//				valY = (SymbolValue) Clips.eval("?*throwCoordY");
-//				cX = (int)valX.getValue();
-//				cY = (int)valY.getValue();
-//				Broker.Action(ActionType.THROW_SPEAR, new Vector2(cX, cY));
-//			}
-//			else
-//			{
-//				System.out.println("Marcin: ERROR: GOT TRASH FROM CLIPS: " + valStr);
-//				return;
-//			}
-			
 		}
 		
 //		Clips.eval("(facts)");
@@ -274,7 +247,7 @@ public class MarcinBot extends Bot
 		
 		System.out.println("Marcin | " + 
 				"POS=" + Broker.GetMyPosition().toString() + " | " +
-				"CFLD=" + Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y).toString() + " | " +
+				"CFLD=" + cFldStr + " | " +
 				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
 				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +
 				"AP=" + String.valueOf(Broker.GetMyAP()) + " | " +
