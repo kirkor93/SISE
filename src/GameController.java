@@ -8,22 +8,22 @@ public class GameController
 	private int _initPsychicalPoints = 15;
 
 	
-    private final int _normalMoveCost = 1;
-    private final int _foodMoveCost = 3;
-    private final int _foodMoveHpRegen = 10;
-    private final int _woodMoveCost = 3;
-    private final int _woodCollectedOnMove = 1;
-    private final int _kindleFireActionPointsCost = 3;
-    private final int _kindleFireWoodCost = 1;
-    private final int _setTrapActionPointsCost = 3;
-    private final int _setTrapWoodCost = 1;
-    private final int _throwSpearActionPointsCost = 5;
-    private final int _throwSpearWoodCost = 1;
-    private final int _eatCorposeActionPointsCost = 3;
-    private final int _eatCorposePsychicalCost = 3;
-    private final int _eatCorposeHpRegen = 10;
-    private final int _trapEnterDamage = 8;
-    private final int _spearInHeadDamage = 8;
+    private static final int _normalMoveCost = 1;
+    private static final int _foodMoveCost = 3;
+    private static final int _foodMoveHpRegen = 10;
+    private static final int _woodMoveCost = 3;
+    private static final int _woodCollectedOnMove = 1;
+    private static final int _kindleFireActionPointsCost = 3;
+    private static final int _kindleFireWoodCost = 1;
+    private static final int _setTrapActionPointsCost = 3;
+    private static final int _setTrapWoodCost = 1;
+    private static final int _throwSpearActionPointsCost = 5;
+    private static final int _throwSpearWoodCost = 1;
+    private static final int _eatCorposeActionPointsCost = 3;
+    private static final int _eatCorposePsychicalCost = 3;
+    private static final int _eatCorposeHpRegen = 10;
+    private static final int _trapEnterDamage = 8;
+    private static final int _spearInHeadDamage = 8;
     
     private Map _map = null;
     private int _activePlayer = 0;
@@ -363,4 +363,19 @@ public class GameController
 	{
 		return _map.MyFields[x][y].MyFieldType;
 	}
+	
+	public static int GetCostNormalMove() { return _normalMoveCost; }
+	public static int GetCostFoodMove() { return _foodMoveCost; }
+	public static int GetFoodMoveHPRegen() { return _foodMoveHpRegen; }
+	public static int GetCostWoodMove() { return _woodMoveCost; }
+	public static int GetWoodCollectedOnMove() { return _woodCollectedOnMove; }
+	public static int GetCostKindle() { return _kindleFireActionPointsCost; }
+	public static int GetCostWoodKindle() { return _kindleFireWoodCost; }
+	public static int GetCostTrap() { return _setTrapActionPointsCost; }
+	public static int GetCostWoodTrap() { return _setTrapWoodCost; }
+	public static int GetCostThrow() { return _throwSpearActionPointsCost; }
+	public static int GetCostWoodThrow() { return _throwSpearWoodCost; }
+	public static int GetCostEatCorpse() { return _eatCorposeActionPointsCost; }
+	public static int GetCostPsyhicalEatCorpse() { return _eatCorposePsychicalCost; }
+	public static int GetEatCorpseHPRegen() { return _eatCorposeHpRegen; }
 }

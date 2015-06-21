@@ -8,7 +8,7 @@ import CLIPSJNI.IntegerValue;
 
 public class MarcinBot extends Bot
 {
-	private static final int FIELD_OF_VIEW = 3;
+	private static final int FIELD_OF_VIEW = 6;
 	private static final int DATA_SLOTS = 7;
 	private static final int MAX_BOT_TIME = 5;
 	
@@ -43,6 +43,19 @@ public class MarcinBot extends Bot
 	private void Initialize()
 	{
 		Clips.eval("(bind ?*MAX_BOT_TIME* " + String.valueOf(MAX_BOT_TIME) + ")");
+		
+		Clips.eval("(bind ?*FOOD_COST_AP* " + String.valueOf(GameController.GetCostFoodMove()) + ")");
+		Clips.eval("(bind ?*FOOD_REGEN_HP* " + String.valueOf(GameController.GetFoodMoveHPRegen()) + ")");
+		Clips.eval("(bind ?*WOOD_COST_AP* " + String.valueOf(GameController.GetCostWoodMove()) + ")");
+		Clips.eval("(bind ?*FIRE_COST_AP* " + String.valueOf(GameController.GetCostKindle()) + ")");
+		Clips.eval("(bind ?*FIRE_COST_WP* " + String.valueOf(GameController.GetCostWoodKindle()) + ")");
+		Clips.eval("(bind ?*TRAP_COST_AP* " + String.valueOf(GameController.GetCostTrap()) + ")");
+		Clips.eval("(bind ?*TRAP_COST_WP* " + String.valueOf(GameController.GetCostWoodTrap()) + ")");
+		Clips.eval("(bind ?*THROW_COST_AP* " + String.valueOf(GameController.GetCostThrow()) + ")");
+		Clips.eval("(bind ?*THROW_COST_WP* " + String.valueOf(GameController.GetCostWoodThrow()) + ")");
+		Clips.eval("(bind ?*EAT_COST_AP* " + String.valueOf(GameController.GetCostEatCorpse()) + ")");
+		Clips.eval("(bind ?*EAT_COST_PP* " + String.valueOf(GameController.GetCostPsyhicalEatCorpse()) + ")");
+		Clips.eval("(bind ?*EAT_REGEN_HP* " + String.valueOf(GameController.GetEatCorpseHPRegen()) + ")");
 	}
 	
 	@Override
@@ -65,7 +78,13 @@ public class MarcinBot extends Bot
 			
 			Clips.eval("(bind ?*throwCoordX* 0)");
 			Clips.eval("(bind ?*throwCoordY* 0)");
+			
 			Clips.eval("(do-for-all-facts ((?h helper)) TRUE (retract ?h))");
+			Clips.eval("(assert (helper (value closestFood) (numValue 9999)))");
+			Clips.eval("(assert (helper (value closestWood) (numValue 9999)))");
+			Clips.eval("(assert (helper (value closestBonfire) (numValue 9999)))");
+			Clips.eval("(assert (helper (value closestEnemy) (numValue 9999)))");
+			
 			Clips.eval("(do-for-all-facts"
 					+ "((?b bot))"
 					+ "(and (eq ?b:state past) (eq ?b:modifiedFlag false))"
