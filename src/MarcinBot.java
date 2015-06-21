@@ -30,6 +30,8 @@ public class MarcinBot extends Bot
 	
 	private ArrayList<String> actList = new ArrayList<String>();
 	
+	private int tl = -1;
+	
 	public MarcinBot()
 	{
 		this.MySymbol = "Q";
@@ -61,11 +63,24 @@ public class MarcinBot extends Bot
 	@Override
 	public void Play() {
 		
+		if(Broker.GetMyHP() <= 0)
+		{
+			System.out.println("Marcin | " + 
+					"POS=" + Broker.GetMyPosition().toString() + " | " +
+					"TL=" + String.valueOf(tl) + " | " +
+					"DEAD"
+					);
+			return;
+		}
+		
 		actList.clear();
 		String cFldStr = "ERROR";
 		
-		while(Broker.GetMyAP() > 0)
+		while(Broker.GetMyAP() > 0 && Broker.GetMyHP() > 0)
 		{
+			// so we live to see another day!
+			++tl;
+			
 			// clear CLIPS assert data
 			Clips.eval("(do-for-all-facts "
 							+ "((?f tile)) TRUE "
@@ -266,6 +281,7 @@ public class MarcinBot extends Bot
 		
 		System.out.println("Marcin | " + 
 				"POS=" + Broker.GetMyPosition().toString() + " | " +
+				"TL=" + String.valueOf(tl) + " | " +
 				"CFLD=" + cFldStr + " | " +
 				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
 				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +

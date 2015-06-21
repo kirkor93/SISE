@@ -52,10 +52,10 @@
 (defglobal ?*EAT_COST_PP* = 3)
 (defglobal ?*EAT_REGEN_HP* = 10)
 
-(defglobal ?*PRIO_FOOD* = 1)
-(defglobal ?*PRIO_WOOD* = 1)
-(defglobal ?*PRIO_FIRE* = 1)
-(defglobal ?*PRIO_FIGHT* = 1)
+(defglobal ?*PRIO_FOOD* = 50)
+(defglobal ?*PRIO_WOOD* = 20)
+(defglobal ?*PRIO_FIRE* = 12)
+(defglobal ?*PRIO_FIGHT* = 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; FUNCTIONS
@@ -259,7 +259,7 @@
 ;;;;; REAL DEAL
 
 (defrule goFood
-	(declare (salience 1))
+	(declare (salience 10))
 	(bot (state current) (posX ?cpX) (posY ?cpY) (HP ?chp) (AP ?cap))
 	(tile (fieldType FOOD) (type ?t) (x ?pX) (y ?pY))
 	(test 
@@ -269,11 +269,11 @@
 		)
 	)
 	?cl <- (helper (value closestFood) (numValue ?closest))
-	(test (not (<= (+ (abs (- ?cpX ?pX)) (abs (- ?cpY ?pY))) 0)))
-	(test (< (+ (abs (- ?cpX ?pX)) (abs (- ?cpY ?pY))) ?closest))
+	(test (not (<= (GetDistance ?cpX ?cpY ?pX ?pY) 0)))
+	(test (< (GetDistance ?cpX ?cpY ?pX ?pY) ?closest))
 	=>
-	(SolveDirection ?cpX ?cpY ?pX ?pY (round(/ 20 (+ (abs (- ?cpX ?pX)) (abs (- ?cpY ?pY))))))
-	(modify ?cl (numValue (+ (abs (- ?cpX ?pX)) (abs (- ?cpY ?pY)))))
+	(SolveDirection ?cpX ?cpY ?pX ?pY (round(/ ?*PRIO_FOOD* (GetDistance ?cpX ?cpY ?pX ?pY))))
+	(modify ?cl (numValue (GetDistance ?cpX ?cpY ?pX ?pY)))
 )
 
 
