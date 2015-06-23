@@ -59,6 +59,7 @@
 (defglobal ?*EAT_COST_AP* = 3)
 (defglobal ?*EAT_COST_PP* = 3)
 (defglobal ?*EAT_REGEN_HP* = 10)
+(defglobal ?*EAT_BARRIER_HP* = 0)
 
 (defglobal ?*PRIO_FOOD* = 30)
 (defglobal ?*PRIO_WOOD* = 15)
@@ -140,6 +141,10 @@
 							(eq ?ft WOOD)
 							(< ?ap ?*WOOD_COST_AP*)
 						)
+						(and
+							(eq ?ft CORPSE)
+							(< ?ap ?*EAT_COST_AP*)
+						)
 					)
 				)
 			)
@@ -179,6 +184,10 @@
 						(and
 							(eq ?ft WOOD)
 							(< ?ap ?*WOOD_COST_AP*)
+						)
+						(and
+							(eq ?ft CORPSE)
+							(< ?ap ?*EAT_COST_AP*)
 						)
 					)
 				)
@@ -220,6 +229,10 @@
 							(eq ?ft WOOD)
 							(< ?ap ?*WOOD_COST_AP*)
 						)
+						(and
+							(eq ?ft CORPSE)
+							(< ?ap ?*EAT_COST_AP*)
+						)
 					)
 				)
 			)
@@ -259,6 +272,10 @@
 						(and
 							(eq ?ft WOOD)
 							(< ?ap ?*WOOD_COST_AP*)
+						)
+						(and
+							(eq ?ft CORPSE)
+							(< ?ap ?*EAT_COST_AP*)
 						)
 					)
 				)
@@ -313,6 +330,28 @@
 		(or 
 			(not (eq ?t neighbour))
 			(>= ?cap ?*FOOD_COST_AP*)
+		)
+	)
+	?cl <- (helper (value closestFood) (numValue ?closest))
+	(test (not (<= (GetDistance ?cpX ?cpY ?pX ?pY) 0)))
+	(test (< (GetDistance ?cpX ?cpY ?pX ?pY) ?closest))
+	=>
+	(SolveDirection ?cpX ?cpY ?pX ?pY (round(/ ?*PRIO_FOOD* (GetDistance ?cpX ?cpY ?pX ?pY))))
+	(modify ?cl (numValue (GetDistance ?cpX ?cpY ?pX ?pY)))
+)
+
+(defrule goFoodCorpse
+	(declare (salience 10))
+	(bot (state current) (posX ?cpX) (posY ?cpY) (HP ?chp) (PP ?cpp) (AP ?cap))
+	(tile (fieldType CORPSE) (type ?t) (x ?pX) (y ?pY))
+	(test
+		(and
+			(or 
+				(not (eq ?t neighbour))
+				(>= ?cap ?*EAT_COST_AP*)
+			)
+			(< ?chp ?*EAT_BARRIER_HP*)
+			(> ?cpp (- 15 ?*EAT_COST_PP*))
 		)
 	)
 	?cl <- (helper (value closestFood) (numValue ?closest))

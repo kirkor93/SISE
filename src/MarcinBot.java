@@ -12,6 +12,7 @@ public class MarcinBot extends Bot
 	private static final int DATA_SLOTS = 8;
 	private static final int MAX_BOT_TIME = 5;
 	private static final int WOOD_TO_LAY_TRAP = 8;
+	private static final int WILL_BE_CANNIBAL_BELOW_HP = 6;
 	
 	private int[] evalArray = new int[DATA_SLOTS];
 	private ArrayList<Integer> evalHelper = new ArrayList<Integer>();
@@ -62,6 +63,7 @@ public class MarcinBot extends Bot
 		Clips.eval("(bind ?*EAT_COST_AP* " + String.valueOf(GameController.GetCostEatCorpse()) + ")");
 		Clips.eval("(bind ?*EAT_COST_PP* " + String.valueOf(GameController.GetCostPsyhicalEatCorpse()) + ")");
 		Clips.eval("(bind ?*EAT_REGEN_HP* " + String.valueOf(GameController.GetEatCorpseHPRegen()) + ")");
+		Clips.eval("(bind ?*EAT_BARRIER_HP* " + String.valueOf(WILL_BE_CANNIBAL_BELOW_HP) + ")");
 	}
 	
 	@Override
@@ -234,8 +236,8 @@ public class MarcinBot extends Bot
 				else if(maxID == 6)	// throw spear
 				{
 					int cX, cY;
-					cX = ((IntegerValue) Clips.eval("?*throwCoordX")).intValue();
-					cY = ((IntegerValue) Clips.eval("?*throwCoordY")).intValue();
+					cX = ((IntegerValue) Clips.eval("?*throwCoordX*")).intValue();
+					cY = ((IntegerValue) Clips.eval("?*throwCoordY*")).intValue();
 					Broker.Action(ActionType.THROW_SPEAR, new Vector2(cX, cY));
 				}
 				else if(maxID == 7)	// eat corpse on current field
