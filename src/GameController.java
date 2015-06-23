@@ -19,6 +19,7 @@ public class GameController
     private static final int _setTrapWoodCost = 1;
     private static final int _throwSpearActionPointsCost = 5;
     private static final int _throwSpearWoodCost = 1;
+    private static final int _throwSpearRange = 4;
     private static final int _eatCorposeActionPointsCost = 3;
     private static final int _eatCorposePsychicalCost = 3;
     private static final int _eatCorposeHpRegen = 10;
@@ -316,7 +317,8 @@ public class GameController
 
     private boolean InRange(Vector2 target)
     {
-        return ((Math.abs(_players[_activePlayer].Position.X - target.X) < 4) && (Math.abs(_players[_activePlayer].Position.Y - target.Y) < 4));
+        return ((Math.abs(_players[_activePlayer].Position.X - target.X) < _throwSpearRange) && 
+        		(Math.abs(_players[_activePlayer].Position.Y - target.Y) < _throwSpearRange));
     }
 
     private void Heal(int value)
@@ -375,6 +377,7 @@ public class GameController
 	public static int GetCostWoodTrap() { return _setTrapWoodCost; }
 	public static int GetCostThrow() { return _throwSpearActionPointsCost; }
 	public static int GetCostWoodThrow() { return _throwSpearWoodCost; }
+	public static int GetRangeThrow() { return _throwSpearRange; }
 	public static int GetCostEatCorpse() { return _eatCorposeActionPointsCost; }
 	public static int GetCostPsyhicalEatCorpse() { return _eatCorposePsychicalCost; }
 	public static int GetEatCorpseHPRegen() { return _eatCorposeHpRegen; }

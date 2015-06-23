@@ -17,6 +17,11 @@
 	(slot type (default current))
 	(slot fieldType (default NORMAL))
 ) 
+
+(deftemplate tileTrapped
+	(slot x (type INTEGER))
+	(slot y (type INTEGER))
+)
 	
 (deftemplate helper
 	(slot value)
@@ -32,9 +37,10 @@
 (defglobal ?*slotFire* = -1)
 (defglobal ?*slotTrap* = -1)
 (defglobal ?*slotThrow* = -1)
+(defglobal ?*slotEatCorpse* = -1)
 
-(defglobal ?*throwCoordX* = 0)
-(defglobal ?*throwCoordY* = 0)
+(defglobal ?*throwCoordX* = 1)
+(defglobal ?*throwCoordY* = 1)
 
 ;INTERNAL
 (defglobal ?*MAX_BOT_TIME* = 5)
@@ -46,16 +52,19 @@
 (defglobal ?*FIRE_COST_WP* = 1)
 (defglobal ?*TRAP_COST_AP* = 3)
 (defglobal ?*TRAP_COST_WP* = 1)
+(defglobal ?*TRAP_RANDOMLAY_WP* = 15)
 (defglobal ?*THROW_COST_AP* = 5)
 (defglobal ?*THROW_COST_WP* = 1)
+(defglobal ?*THROW_MAX_DIST* = 4)
 (defglobal ?*EAT_COST_AP* = 3)
 (defglobal ?*EAT_COST_PP* = 3)
 (defglobal ?*EAT_REGEN_HP* = 10)
 
-(defglobal ?*PRIO_FOOD* = 50)
-(defglobal ?*PRIO_WOOD* = 20)
-(defglobal ?*PRIO_FIRE* = 12)
-(defglobal ?*PRIO_FIGHT* = 5)
+(defglobal ?*PRIO_FOOD* = 30)
+(defglobal ?*PRIO_WOOD* = 15)
+(defglobal ?*PRIO_FIRE* = 50)
+(defglobal ?*PRIO_FIGHT* = 50)
+(defglobal ?*PRIO_RANDOMLAY* = 30)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; FUNCTIONS
@@ -95,6 +104,20 @@
 	(return ?val)
 )
 
+(deffunction CheckIfInRange
+	(?cpX ?cpY ?pX ?pY ?rng)
+	
+	(bind ?valX (abs (- ?cpX ?pX)))
+	(bind ?valY (abs (- ?cpY ?pY)))
+	
+	(if (and (< ?rng ?valX) (< ?rng ?valY))
+		then
+		(return TRUE)
+		else
+		(return FALSE)
+	)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; HELPER RULES 
 
@@ -124,6 +147,12 @@
 		(exists
 			(and
 				(bot (state past) (posX ?pX) (posY ?pY))
+				(test (and (eq ?pX ?x) (eq ?pY (- ?y 1))))
+			)
+		)
+		(exists
+			(and
+				(tileTrapped (x ?pX) (y ?pY))
 				(test (and (eq ?pX ?x) (eq ?pY (- ?y 1))))
 			)
 		)
@@ -161,6 +190,12 @@
 				(test (and (eq ?pX ?x) (eq ?pY (+ ?y 1))))
 			)
 		)
+		(exists
+			(and
+				(tileTrapped (x ?pX) (y ?pY))
+				(test (and (eq ?pX ?x) (eq ?pY (+ ?y 1))))
+			)
+		)
 	)
 	=>
 	(bind ?*slotDown*  -100)
@@ -195,6 +230,12 @@
 				(test (and (eq ?pX (- ?x 1)) (eq ?pY ?y)))
 			)
 		)
+		(exists
+			(and
+				(tileTrapped (x ?pX) (y ?pY))
+				(test (and (eq ?pX (- ?x 1)) (eq ?pY ?y)))
+			)
+		)
 	)
 	=>
 	(bind ?*slotLeft*  -100)
@@ -226,6 +267,12 @@
 		(exists
 			(and
 				(bot (state past) (posX ?pX) (posY ?pY))
+				(test (and (eq ?pX (+ ?x 1)) (eq ?pY ?y)))
+			)
+		)
+		(exists
+			(and
+				(tileTrapped (x ?pX) (y ?pY))
 				(test (and (eq ?pX (+ ?x 1)) (eq ?pY ?y)))
 			)
 		)
@@ -276,6 +323,118 @@
 	(modify ?cl (numValue (GetDistance ?cpX ?cpY ?pX ?pY)))
 )
 
+(defrule goWood
+	(declare (salience 9))
+	(bot (state current) (posX ?cpX) (posY ?cpY) (HP ?chp) (AP ?cap))
+	(tile (fieldType WOOD) (type ?t) (x ?pX) (y ?pY))
+	(test 
+		(or 
+			(not (eq ?t neighbour))
+			(>= ?cap ?*WOOD_COST_AP*)
+		)
+	)
+	?cl <- (helper (value closestWood) (numValue ?closest))
+	(test (not (<= (GetDistance ?cpX ?cpY ?pX ?pY) 0)))
+	(test (< (GetDistance ?cpX ?cpY ?pX ?pY) ?closest))
+	=>
+	(SolveDirection ?cpX ?cpY ?pX ?pY (round(/ ?*PRIO_WOOD* (GetDistance ?cpX ?cpY ?pX ?pY))))
+	(modify ?cl (numValue (GetDistance ?cpX ?cpY ?pX ?pY)))
+)
+
+(defrule kindleFire
+	(declare (salience 8))
+	(bot (state current) (HP ?chp) (PP ?cpp) (AP ?cap) (WP ?cwp))
+	(test
+		(and
+			(>= ?cap ?*FIRE_COST_AP*)
+			(>= ?cwp ?*FIRE_COST_WP*)
+			(or
+				(<= ?cpp 5)
+				(<= ?chp 5)
+			)
+		)
+	)
+	(not (exists (helper (value kindledFire))))
+	=>
+	(assert (helper (value kindledFire)))
+	(bind ?*slotFire* ?*PRIO_FIRE*)
+)
+
+(defrule throwSpear
+	(declare (salience 7))
+	(bot (state current) (posX ?cpX) (posY ?cpY) (AP ?cap) (WP ?cwp))
+	(tile (fieldType ENEMY) (x ?pX) (y ?pY))
+	(test 
+		(and
+			(CheckIfInRange ?cpX ?cpY ?pX ?pY ?*THROW_MAX_DIST*)
+			(>= ?cap ?*THROW_COST_AP*)
+			(>= ?cwp ?*THROW_COST_WP*)
+		)
+	)
+	?cl <- (helper (value closestEnemy) (numValue ?closest))
+	(test (not (<= (GetDistance ?cpX ?cpY ?pX ?pY) 0)))
+	(test (< (GetDistance ?cpX ?cpY ?pX ?pY) ?closest))
+	=>
+	(bind ?*slotThrow* (round(/ ?*PRIO_FIGHT* (GetDistance ?cpX ?cpY ?pX ?pY))))
+	(modify ?cl (numValue (GetDistance ?cpX ?cpY ?pX ?pY)))'
+	(bind ?*throwCoordX* ?pX)
+	(bind ?*throwCoordY* ?pY)
+	(assert (helper (value spearThrown)))
+)
+
+(defrule getCloserToThrowSpear
+	(declare (salience 7))
+	(bot (state current) (posX ?cpX) (posY ?cpY) (AP ?cap) (WP ?cwp))
+	(tile (fieldType ENEMY) (x ?pX) (y ?pY))
+	(test 
+		(and
+			(not(CheckIfInRange ?cpX ?cpY ?pX ?pY ?*THROW_MAX_DIST*))
+			(>= ?cap (+ ?*THROW_COST_AP* (GetDistance ?cpX ?cpY ?pX ?pY)))
+			(>= ?cwp ?*THROW_COST_WP*)
+		)
+	)
+	?cl <- (helper (value closestEnemy) (numValue ?closest))
+	(test (not (<= (GetDistance ?cpX ?cpY ?pX ?pY) 0)))
+	(test (< (GetDistance ?cpX ?cpY ?pX ?pY) ?closest))
+	=>
+	(SolveDirection ?cpX ?cpY ?pX ?pY (round(/ ?*PRIO_FIGHT* (GetDistance ?cpX ?cpY ?pX ?pY))))
+	(modify ?cl (numValue (GetDistance ?cpX ?cpY ?pX ?pY)))
+)
+
+(defrule randomlyLayTrap
+	(declare (salience 6))
+	(bot (state current) (posX ?cpX) (posY ?cpY) (AP ?cap) (WP ?cwp))
+	(test
+		(and
+			(>= ?cap ?*TRAP_COST_AP*)
+			(>= ?cwp ?*TRAP_RANDOMLAY_WP*)
+		)
+	)
+	=>
+	(bind ?*slotTrap* ?*PRIO_RANDOMLAY*)
+	(assert (tileTrapped (x ?cpX) (y ?cpY)))
+)
+
+(defrule layTrapOnEnemy
+	(declare (salience 6))
+	(bot (state current) (posX ?cpX) (posY ?cpY) (AP ?cap) (WP ?cwp))
+	(tile (fieldType ENEMY) (x ?pX) (y ?pY))
+	(test
+		(and
+			(CheckIfInRange ?cpX ?cpY ?pX ?pY ?*THROW_MAX_DIST*)
+			(>= ?cap ?*TRAP_COST_AP*)
+			(>= ?cwp ?*TRAP_COST_WP*)
+		)
+	)
+	(not (exists(helper (value spearThrown))))
+	;?cl <- (helper (value closestEnemy) (numValue ?closest))
+	;(test (not (<= (GetDistance ?cpX ?cpY ?pX ?pY) 0)))
+	;(test (<= (GetDistance ?cpX ?cpY ?pX ?pY) ?closest))
+	=>
+	(bind ?*slotTrap* ?*PRIO_FIGHT*)
+	(assert (tileTrapped (x ?cpX) (y ?cpY)))
+	;(modify ?cl (numValue (GetDistance ?cpX ?cpY ?pX ?pY)))
+)
 
 (defrule search
 	(declare (salience 0))
