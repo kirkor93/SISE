@@ -69,7 +69,7 @@ public class GameController
     		switch(names[i])
     		{
     			case 1:
-    				_players[i].MyBot = new MajsterBot();
+    				_players[i].MyBot = new MajsterBotFuzzy();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;

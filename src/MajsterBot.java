@@ -1,4 +1,3 @@
-import sun.io.Converters;
 import CLIPSJNI.Environment;
 import CLIPSJNI.FactAddressValue;
 import CLIPSJNI.MultifieldValue;
