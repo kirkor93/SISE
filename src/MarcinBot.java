@@ -67,7 +67,8 @@ public class MarcinBot extends Bot
 	}
 	
 	@Override
-	public void Play() {
+	public void Play() 
+	{
 		
 		if(Broker.GetMyHP() <= 0)
 		{
