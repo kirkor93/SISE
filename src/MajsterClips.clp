@@ -64,7 +64,7 @@
 	
 (defrule getCloseToEnemy
 	(bot (hitPoints ?hp) (woodPoints ?wp))
-	(tile (direction ?d) (distance ?l (type neighbour) (fieldType ENEMY))
+	(tile (direction ?d) (distance ?l) (type neighbour) (fieldType ENEMY))
 	(test (and (> ?l 5) (> ?wp 1) (> ?hp 10)))
 	=>
 	(bind ?*dir* ?d))
