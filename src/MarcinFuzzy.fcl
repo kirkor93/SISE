@@ -1,3 +1,211 @@
-FUNCTION_BLOCK action		// Block definition
+FUNCTION_BLOCK action		
+
+VAR_INPUT
+	botHP : REAL;
+	botAP : REAL;
+	botWP : REAL;
+	botPP : REAL;
+	
+	clFoodDir : REAL;
+	clFoodDist : REAL;
+	clWoodDir : REAL;
+	clWoodDist : REAL;
+	clCorpseDir : REAL;
+	clCorpseDist : REAL;
+	clPlayerDir : REAL;
+	clPlayerDist : REAL;
+END_VAR
+
+VAR_OUTPUT
+	slotUp : REAL;
+	slotDown : REAL;
+	slotLeft : REAL;
+	slotRight : REAL;
+	slotFire : REAL;
+	slotTrap : REAL;
+	slotThrow : REAL;
+	slotWait : REAL;
+	slotRandom : REAL;
+END_VAR
+
+FUZZIFY botHP
+	TERM low := (0, 1) (7, 0);
+	TERM medium := (5, 0) (8, 1) (10, 1) (12, 0);
+	TERM high := (10, 0) (15, 1) (999, 1);
+END_FUZZIFY
+
+FUZZIFY botAP
+	TERM low := (0, 1) (2, 1);
+	TERM medium := (3, 1) (4, 1);
+	TERM high := (5, 1) (999, 1);
+END_FUZZIFY
+
+FUZZIFY botWP
+	TERM low := (0, 1) (2, 1) (4, 0);
+	TERM medium := (3, 0) (4, 1) (7, 1) (8, 0);
+	TERM high := (7, 0) (8, 1) (999, 1);
+END_FUZZIFY
+
+FUZZIFY botPP
+	TERM mad := (-999, 1) (0, 1) (2, 0);
+	TERM low := (0, 1) (7, 0);
+	TERM medium := (5, 0) (8, 1) (10, 1) (12, 0);
+	TERM high := (10, 0) (15, 1) (999, 1);
+END_FUZZIFY
+
+FUZZIFY clFoodDir
+	TERM up := 0;
+	TERM down := 1;
+	TERM left := 2;
+	TERM right := 3;
+END_FUZZIFY
+
+FUZZIFY clFoodDist
+	TERM here := 0;
+	TERM neighbour := 1;
+	TERM near := (2, 1) (4, 1) (5, 0);
+	TERM far := (4, 0) (6, 1) (999, 1);
+END_FUZZIFY
+
+FUZZIFY clWoodDir
+	TERM up := 0;
+	TERM down := 1;
+	TERM left := 2;
+	TERM right := 3;
+END_FUZZIFY
+
+FUZZIFY clWoodDist
+	TERM here := 0;
+	TERM neighbour := 1;
+	TERM near := (2, 1) (4, 1) (5, 0);
+	TERM far := (4, 0) (6, 1) (999, 1);
+END_FUZZIFY
+
+FUZZIFY clCorpseDir
+	TERM up := 0;
+	TERM down := 1;
+	TERM left := 2;
+	TERM right := 3;
+END_FUZZIFY
+
+FUZZIFY clCorpseDist
+	TERM here := 0;
+	TERM neighbour := 1;
+	TERM near := (2, 1) (4, 1) (5, 0);
+	TERM far := (4, 0) (6, 1) (999, 1);
+END_FUZZIFY
+
+FUZZIFY clPlayerDir
+	TERM up := 0;
+	TERM down := 1;
+	TERM left := 2;
+	TERM right := 3;
+END_FUZZIFY
+
+FUZZIFY clPlayerDist
+	TERM here := 0;
+	TERM neighbour := 1;
+	TERM near := (2, 1) (4, 1) (5, 0);
+	TERM far := (4, 0) (6, 1) (999, 1);
+END_FUZZIFY
+
+DEFUZZIFY slotUp
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotDown
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotLeft
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotRight
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotFire
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotTrap
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotThrow
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotWait
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY slotRandom
+	TERM nope := -1;
+	TERM unlikely := (0, 0) (5, 1) (10, 0);
+	TERM maybe := (10, 0) (15, 1) (20, 0);
+	TERM likely := (20, 0) (25, 1) (30, 0);
+	TERM topPriority := 999;
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
 
 END_FUNCTION_BLOCK
