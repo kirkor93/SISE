@@ -11,7 +11,7 @@ public class MajsterBotFuzzy extends Bot {
 		public String type;
 		public int distance;
 		public int direction;
-		public int priority;
+		public double priority;
 		
 		public Tile(String type, int distance, int direction)
 		{
@@ -42,11 +42,16 @@ public class MajsterBotFuzzy extends Bot {
 				return;
 			}
 			
+			System.out.println("AP: " + Broker.GetMyAP());
+			
+			if(Broker.GetMyHP() <= 0)
+				return;
+			
 			CheckNeighbours(Broker.GetMyPosition().X, Broker.GetMyPosition().Y);
 			
 			if(this.neighbours.isEmpty())
 			{
-				if(Broker.GetMyAP() >= 3 && Broker.GetMyWP() > 0)
+				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 5 && Broker.GetMyWP() > 0)
 					Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
 				else
 					Randomize();
@@ -55,18 +60,21 @@ public class MajsterBotFuzzy extends Bot {
 			{
 				for(int j = 0; j<this.neighbours.size(); ++j)
 				{
+					if(this.neighbours.get(j).type == "ENEMY" && Broker.GetMyAP() == 5 && Broker.GetMyWP() > 0)
+					{
+						Attack(this.neighbours.get(j));
+						return;
+					}
 					fis.setVariable("distance", this.neighbours.get(j).distance);
+					fis.setVariable("actionPoints", Broker.GetMyAP());
 					fis.evaluate();
-					this.neighbours.get(j).priority = (int) fis.getVariable("priority").getLatestDefuzzifiedValue();
+					this.neighbours.get(j).priority = (double) fis.getVariable("priority").getLatestDefuzzifiedValue();
+					
 				}
 				DecideAndGo();
 				
 				this.neighbours.clear();
 			}
-			System.out.println("AP: " + Broker.GetMyAP());
-			System.out.println("HP: " + Broker.GetMyHP());
-			System.out.println("WP: " + Broker.GetMyWP());
-			System.out.println(Broker.GetMyPosition().toString());
 		}
 	}
 	
@@ -103,20 +111,33 @@ public class MajsterBotFuzzy extends Bot {
 	public void Randomize()
 	{
 		int n = (int) (Math.random()*4);
-		if(n == 0 && Broker.GetMyPosition().Y != 0 && 
-				Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y - 1) == "NORMAL")
-			Broker.Action(ActionType.MOVE, new Vector2(0, -1));
-		else if(n == 1 && Broker.GetMyPosition().Y != 49 &&
-				Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y + 1) == "NORMAL")
-			Broker.Action(ActionType.MOVE, new Vector2(0, 1));
-		else if(n == 2 && Broker.GetMyPosition().X != 0 &&
-				Broker.GetFieldType(Broker.GetMyPosition().X - 1, Broker.GetMyPosition().Y) == "NORMAL")
-			Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
-		else if(n == 3 && Broker.GetMyPosition().X != 49 &&
-				Broker.GetFieldType(Broker.GetMyPosition().X + 1, Broker.GetMyPosition().Y) == "NORMAL")
-			Broker.Action(ActionType.MOVE, new Vector2(1, 0));
-		else
-			Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+		while(true)
+		{
+			if(n == 0 && canDown())
+			{
+				Broker.Action(ActionType.MOVE, new Vector2(0, 1));
+				break;
+			}
+			if(n == 1 && canUp())
+			{
+				Broker.Action(ActionType.MOVE, new Vector2(0, -1));
+				break;
+			}
+			if(n == 2 && canLeft())
+			{
+				Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
+				break;
+			}
+			if(n == 3 && canRight())
+			{
+				Broker.Action(ActionType.MOVE, new Vector2(1, 0));
+				break;
+			}
+			if(n == 3)
+				n = 0;
+			else
+				n++;
+		}
 	}
 	
 	public int GetHighest()
@@ -129,7 +150,8 @@ public class MajsterBotFuzzy extends Bot {
 			else
 				highestIndex = i+1;
 		}
-		if(this.neighbours.get(highestIndex).priority > 6)
+		if(this.neighbours.get(highestIndex).priority > 6 &&
+				this.neighbours.get(highestIndex).priority < 10)
 		{
 			return -1;
 		}
@@ -160,5 +182,63 @@ public class MajsterBotFuzzy extends Bot {
 			break;
 		}
 		
+	}
+	
+	public void Attack(Tile t)
+	{
+		switch(t.direction)
+		{
+		case 0:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X + t.distance, Broker.GetMyPosition().Y));
+			break;
+		case 1:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X - t.distance, Broker.GetMyPosition().Y));
+			break;
+		case 2:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X, Broker.GetMyPosition().Y + t.distance));
+			break;
+		case 3:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X, Broker.GetMyPosition().Y - t.distance));
+		}
+	}
+	
+	public boolean canUp()
+	{
+		if(Broker.GetMyPosition().Y != 0 && 
+				Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y - 1) == "NORMAL")
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean canDown()
+	{
+		if(Broker.GetMyPosition().Y != 49 &&
+				Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y + 1) == "NORMAL")
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean canLeft()
+	{
+		if(Broker.GetMyPosition().X != 0 &&
+				Broker.GetFieldType(Broker.GetMyPosition().X - 1, Broker.GetMyPosition().Y) == "NORMAL")
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean canRight()
+	{
+		if(Broker.GetMyPosition().X != 49 &&
+				Broker.GetFieldType(Broker.GetMyPosition().X + 1, Broker.GetMyPosition().Y) == "NORMAL")
+			return true;
+		else
+			return false;
 	}
 }
