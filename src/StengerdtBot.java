@@ -221,7 +221,6 @@ public class StengerdtBot extends Bot
 			flag = this.Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 			break;
 		case ACTION_FIRE:
-			System.out.println("Hey, fire");
 			this.Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
 			break;
 		case ACTION_THROW:

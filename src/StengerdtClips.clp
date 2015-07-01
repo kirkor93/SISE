@@ -107,7 +107,6 @@
 				then
 				(if (> ?wp 0)
 					then
-					(printout t "I can fire")
 					(bind ?*action* fire)
 					(bind ?*curPrio* ?*FIRE_PRIORITY*)
 				)

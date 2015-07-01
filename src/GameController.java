@@ -131,12 +131,9 @@ public class GameController
     			System.out.println();
     			System.out.println(_map);
     		}
-    		if(_players[_activePlayer].HP > 0)
+    		if(_players[_activePlayer].HP > 0 && _players[_activePlayer].PP > 0)
     		{
-        		if(_players[_activePlayer].PP <= 0)
-        			_players[_activePlayer].HP -= 2;
-        		else
-        			_players[_activePlayer].HP -= 1;
+        		_players[_activePlayer].HP -= 1;
     			_players[_activePlayer].PP -= 1;
     			System.out.println(_players[_activePlayer].MyBot);
     			_players[_activePlayer].MyBot.Play();
