@@ -55,10 +55,10 @@
 	?*ATTACK_PRIORITY* = 10
 )
 (defglobal
-	?*WOOD_PRIORITY* = 25
+	?*WOOD_PRIORITY* = 20
 )
 (defglobal
-	?*FIRE_PRIORITY* = 20
+	?*FIRE_PRIORITY* = 25
 )
 
 ;FUNCTIONS
@@ -97,22 +97,47 @@
 	(bot  (HP ?hp) (PP ?pp) (AP ?ap) (WP ?wp) (state current) (posX ?bx) (posY ?by))
 	(tile (x ?fx) (y ?fy) (type ?t) (fieldType ?ft))
 	=>
-	(if (> ?hp 10)
+	(if (= ?*curPrio* 0)
 		then
-		(bind ?*action* nothing)
-		(bind ?*curPrio* 0)
-	else
-		(if (not(eq ?ft FOOD))
-		then
+		(if (> ?hp 10)
+			then
 			(bind ?*action* nothing)
 			(bind ?*curPrio* 0)
 		else
-			(if (>= ?ap 3)
-				then
-				(findDirection ?bx ?by ?fx ?fy ?*FOOD_PRIORITY*)
-			else
-				(bind ?*action* nothing)	
+			(if (not(eq ?ft FOOD))
+			then
+				(bind ?*action* nothing)
 				(bind ?*curPrio* 0)
+			else
+				(if (>= ?ap 3)
+					then
+					(findDirection ?bx ?by ?fx ?fy ?*FOOD_PRIORITY*)
+				else
+					(bind ?*action* nothing)	
+					(bind ?*curPrio* 0)
+				)
+			)
+		)
+	)
+)
+
+(defrule kindleFire
+	(bot (HP ?hp) (PP ?pp) (AP ?ap) (WP ?wp))
+	=>
+	(if (= ?*curPrio* 0)
+		then
+		(if (> ?ap 3)
+			then
+			(if (> ?wp 1)
+			then
+				(if (< ?pp 5)
+				then
+					(bind ?*action* fire)
+					(bind ?*curPrio* ?*FIRE_PRIORITY*)
+				else
+					(bind ?*action* nothing)
+					(bind ?*curPrio* 0)
+				)
 			)
 		)
 	)
@@ -122,7 +147,7 @@
 	(bot  (HP ?hp) (PP ?pp) (AP ?ap) (WP ?wp) (state current) (posX ?bx) (posY ?by))
 	(tile (x ?wx) (y ?wy) (type ?t) (fieldType ?ft))
 	=>
-	(if (not(eq ?*curPrio* 0))
+	(if (= ?*curPrio* 0)
 		then
 		(if (> ?wp 3)
 			then

@@ -36,6 +36,11 @@ public class StengerdtBot extends Bot
 	
 	@Override
 	public void Play() {
+		if(this.Broker.GetMyHP() <= 0)
+		{
+			return;
+		}
+		
 		this.currentIterationCounter = 0;
 		this.randDirection = rnd.nextInt(4);
 		while(this.Broker.GetMyAP() > 0 && this.currentIterationCounter < MAX_ITERATIONS)
@@ -49,7 +54,6 @@ public class StengerdtBot extends Bot
 			Clips.eval("(do-for-all-facts ((?b bot)) (retract ?b))");
 			
 			this.currentPosition = this.Broker.GetMyPosition();
-			System.out.println(this.PlayerInfo());
 			
 			//So updating bot's state
 			Clips.assertString("(bot"
@@ -96,12 +100,6 @@ public class StengerdtBot extends Bot
 			action = symbolValue.stringValue();
 			this.DoAction(action);
 		}
-		
-		if(this.Broker.GetMyHP() <= 0)
-		{
-			System.out.println("I'm dead and so retarded :(");
-			return;
-		}
 	}
 	
 	private boolean PositionCondition(Vector2 position)
@@ -124,49 +122,21 @@ public class StengerdtBot extends Bot
 		return false;
 	}
 	
-	private String PlayerInfo()
-	{
-		String toRet = "";
-		toRet = "STENGERDT: POSX " + this.currentPosition.X;
-		toRet += " | POSY " + this.currentPosition.Y;
-		toRet += " | HP " + this.Broker.GetMyHP();
-		toRet += " | AP " + this.Broker.GetMyAP();
-		toRet += " | WP " + this.Broker.GetMyWP();
-		toRet += " | PP " + this.Broker.GetMyPP();
-		return toRet;
-	}
-	
 	private void DoAction(String action)
 	{
 		switch(action)
 		{
 		case ACTION_DOWN:
-			System.out.println("GOING DOWN");
-			if(!this.Broker.Action(ActionType.MOVE, new Vector2(0, -1)))
-			{
-				System.out.println("DOESN'T WORK");
-			}
+			this.Broker.Action(ActionType.MOVE, new Vector2(0, -1));
 			break;
 		case ACTION_UP:
-			System.out.println("GOING UP");
-			if(!this.Broker.Action(ActionType.MOVE, new Vector2(0, 1)))
-			{
-				System.out.println("DOESN'T WORK");
-			}
+			this.Broker.Action(ActionType.MOVE, new Vector2(0, 1));
 			break;
 		case ACTION_LEFT:
-			System.out.println("GOING LEFT");
-			if(!this.Broker.Action(ActionType.MOVE, new Vector2(-1, 0)))
-			{
-				System.out.println("DOESN'T WORK");
-			}
+			this.Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
 			break;
 		case ACTION_RIGHT:
-			System.out.println("GOING RIGHT");
-			if(!this.Broker.Action(ActionType.MOVE, new Vector2(1, 0)))
-			{
-				System.out.println("DOESN'T WORK");
-			}
+			this.Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 			break;
 		case ACTION_FIRE:
 			this.Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
