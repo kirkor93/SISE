@@ -72,11 +72,11 @@ public class MarcinBot extends Bot
 		
 		if(Broker.GetMyHP() <= 0)
 		{
-			System.out.println("Marcin | " + 
-					"POS=" + Broker.GetMyPosition().toString() + " | " +
-					"TL=" + String.valueOf(tl) + " | " +
-					"DEAD"
-					);
+//			System.out.println("Marcin | " + 
+//					"POS=" + Broker.GetMyPosition().toString() + " | " +
+//					"TL=" + String.valueOf(tl) + " | " +
+//					"DEAD"
+//					);
 			return;
 		}
 		
@@ -85,9 +85,6 @@ public class MarcinBot extends Bot
 		
 		while(Broker.GetMyAP() > 0 && Broker.GetMyHP() > 0)
 		{
-			// so we live to see another day!
-			++tl;
-			
 			// clear CLIPS assert data
 			Clips.eval("(do-for-all-facts "
 							+ "((?f tile)) TRUE "
@@ -285,15 +282,21 @@ public class MarcinBot extends Bot
 			tmpAct += str + ";";
 		}
 		
-		System.out.println("Marcin | " + 
-				"POS=" + Broker.GetMyPosition().toString() + " | " +
-				"TL=" + String.valueOf(tl) + " | " +
-				"CFLD=" + cFldStr + " | " +
-				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
-				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +
-				"AP=" + String.valueOf(Broker.GetMyAP()) + " | " +
-				"WP=" + String.valueOf(Broker.GetMyWP()) + " | " +
-				"ACTS=" + String.valueOf(tmpAct)
-				);
+		if(Broker.GetMyHP() > 0)
+		{
+			// so we live to see another day!
+			++tl;
+		}
+		
+//		System.out.println("Marcin | " + 
+//				"POS=" + Broker.GetMyPosition().toString() + " | " +
+//				"TL=" + String.valueOf(tl) + " | " +
+//				"CFLD=" + cFldStr + " | " +
+//				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
+//				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +
+//				"AP=" + String.valueOf(Broker.GetMyAP()) + " | " +
+//				"WP=" + String.valueOf(Broker.GetMyWP()) + " | " +
+//				"ACTS=" + String.valueOf(tmpAct)
+//				);
 	}
 }

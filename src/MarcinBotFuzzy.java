@@ -72,11 +72,11 @@ public class MarcinBotFuzzy extends Bot {
 	{
 		if(Broker.GetMyHP() <= 0)
 		{
-			System.out.println("MarcinFuzzy | " + 
-					"POS=" + Broker.GetMyPosition().toString() + " | " +
-					"TL=" + String.valueOf(tl) + " | " +
-					"DEAD"
-					);
+//			System.out.println("MarcinFuzzy | " + 
+//					"POS=" + Broker.GetMyPosition().toString() + " | " +
+//					"TL=" + String.valueOf(tl) + " | " +
+//					"DEAD"
+//					);
 			return;
 		}
 		
@@ -84,8 +84,6 @@ public class MarcinBotFuzzy extends Bot {
 
 		while(Broker.GetMyAP() > 0)
 		{
-			++tl;
-			
 			// cleanup
 			for(int i = 0; i < DATA_SLOTS; ++i)
 			{
@@ -196,7 +194,7 @@ public class MarcinBotFuzzy extends Bot {
 			
 			// get data from FIS
 			
-			String valStr, cFldStr;
+			String valStr;
 			dataHelper.clear();
 			double max = Double.MIN_VALUE;
 			int maxID;
@@ -227,7 +225,6 @@ public class MarcinBotFuzzy extends Bot {
 			}
 			
 			maxID = dataHelper.get(0);
-			cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y);
 			
 			
 			// make action according to the data
@@ -236,27 +233,51 @@ public class MarcinBotFuzzy extends Bot {
 			{
 				if(maxID == 0)
 				{
-					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y - 1);
-					Broker.Action(ActionType.MOVE, new Vector2(0, -1));
-					prevPositions.add(new Vector2(mPos.X, mPos.Y - 1));
+					if(CanGo(new Vector2(mPos.X, mPos.Y - 1)))
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(0, -1));
+						prevPositions.add(new Vector2(mPos.X, mPos.Y - 1));
+					}
+					else
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+					}
 				}
 				else if(maxID == 1)
 				{
-					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y + 1);
-					Broker.Action(ActionType.MOVE, new Vector2(0, 1));
-					prevPositions.add(new Vector2(mPos.X, mPos.Y + 1));
+					if(CanGo(new Vector2(mPos.X, mPos.Y + 1)))
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(0, 1));
+						prevPositions.add(new Vector2(mPos.X, mPos.Y + 1));
+					}
+					else
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+					}
 				}
 				else if(maxID == 2)
 				{
-					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X - 1, Broker.GetMyPosition().Y);
-					Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
-					prevPositions.add(new Vector2(mPos.X - 1, mPos.Y));
+					if(CanGo(new Vector2(mPos.X - 1, mPos.Y)))
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
+						prevPositions.add(new Vector2(mPos.X - 1, mPos.Y));
+					}
+					else
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+					}
 				}
 				else if(maxID == 3)
 				{
-					cFldStr = Broker.GetFieldType(Broker.GetMyPosition().X + 1, Broker.GetMyPosition().Y);
-					Broker.Action(ActionType.MOVE, new Vector2(1, 0));
-					prevPositions.add(new Vector2(mPos.X + 1, mPos.Y));
+					if(CanGo(new Vector2(mPos.X + 1, mPos.Y)))
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(1, 0));
+						prevPositions.add(new Vector2(mPos.X + 1, mPos.Y));
+					}
+					else
+					{
+						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+					}
 				}
 				else if(maxID == 4)	// kindle bonfire
 				{
@@ -322,8 +343,7 @@ public class MarcinBotFuzzy extends Bot {
 				}
 				else
 				{
-					cFldStr = "ERROR";
-					System.out.println("Marcin: ERROR: GOT TRASH FROM JFUZZY: " + String.valueOf(maxID));
+					System.out.println("MarcinFuzzy: ERROR: GOT TRASH FROM JFUZZY: " + String.valueOf(maxID));
 					return;
 				}
 				valStr = dataLabels[maxID];
@@ -343,15 +363,21 @@ public class MarcinBotFuzzy extends Bot {
 			tmpAct += str + ";";
 		}
 		
-		System.out.println("MarcinFuzzy | " + 
-				"POS=" + Broker.GetMyPosition().toString() + " | " +
-				"TL=" + String.valueOf(tl) + " | " +
-				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
-				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +
-				"AP=" + String.valueOf(Broker.GetMyAP()) + " | " +
-				"WP=" + String.valueOf(Broker.GetMyWP()) + " | " +
-				"ACTS=" + String.valueOf(tmpAct)
-				);
+		if(Broker.GetMyHP() > 0)
+		{
+			// so we live to see another day!
+			++tl;
+		}
+		
+//		System.out.println("MarcinFuzzy | " + 
+//				"POS=" + Broker.GetMyPosition().toString() + " | " +
+//				"TL=" + String.valueOf(tl) + " | " +
+//				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
+//				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +
+//				"AP=" + String.valueOf(Broker.GetMyAP()) + " | " +
+//				"WP=" + String.valueOf(Broker.GetMyWP()) + " | " +
+//				"ACTS=" + String.valueOf(tmpAct)
+//				);
 	}
 	
 	private Boolean CanGo(Vector2 fieldPos)
