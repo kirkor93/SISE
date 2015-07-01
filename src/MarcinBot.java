@@ -241,10 +241,6 @@ public class MarcinBot extends Bot
 					cY = ((IntegerValue) Clips.eval("?*throwCoordY*")).intValue();
 					Broker.Action(ActionType.THROW_SPEAR, new Vector2(cX, cY));
 				}
-				else if(maxID == 7)	// eat corpse on current field
-				{
-					System.out.println("Marcin:  I'd like to eat some flesh but somebody forgot to implement it :<");
-				}
 				else
 				{
 					cFldStr = "ERROR";
