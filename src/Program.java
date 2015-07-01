@@ -8,7 +8,9 @@ public class Program {
 	{
 		Scanner scan = new Scanner(System.in);
 		int[] names = new int[4];		
-		System.out.println("1 - Majster's bot \n2 - Stengerdt's bot \n3 - Marcin's bot \n4 - Szoch's bot \n5 - Janiak's bot \n6 - Patryk's bot");	
+		System.out.println("1 - Majster's bot \n2 - Stengerdt's bot \n3 - Marcin's bot \n4 - Szoch's bot \n5 - Janiak's bot \n6 - Patryk's bot"
+				+ "\n7 - Majster's fuzzy bot"
+				+ "\n8 - Maricn's fuzzy bot");	
 
 		System.out.println("Pick bot");	
 		names[0] = scan.nextInt();

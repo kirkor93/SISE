@@ -70,7 +70,7 @@ public class GameController
     		switch(names[i])
     		{
     			case 1:
-    				_players[i].MyBot = new MajsterBotFuzzy();
+    				_players[i].MyBot = new MajsterBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
@@ -94,6 +94,16 @@ public class GameController
     			case 6: 
     				_players[i].MyBot = new PatrykBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				break;
+    			case 7:
+    				_players[i].MyBot = new MajsterBotFuzzy();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
+    				break;
+    			case 8:
+    				_players[i].MyBot = new MarcinBotFuzzy();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
 				default:
 					System.out.println("Retard Alert!!!!");

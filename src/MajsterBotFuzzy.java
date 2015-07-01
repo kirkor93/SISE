@@ -33,6 +33,7 @@ public class MajsterBotFuzzy extends Bot {
 	@Override
 	public void Play() {
 		// TODO Auto-generated method stub
+		
 		while(Broker.GetMyAP() > 0)
 		{
 			if(this.fis == null)
@@ -158,5 +159,6 @@ public class MajsterBotFuzzy extends Bot {
 			Broker.Action(ActionType.MOVE, new Vector2(0, -1));
 			break;
 		}
+		
 	}
 }
