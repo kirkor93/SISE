@@ -11,7 +11,7 @@ public class MajsterBotFuzzy extends Bot {
 		public String type;
 		public int distance;
 		public int direction;
-		public int priority;
+		public double priority;
 		
 		public Tile(String type, int distance, int direction)
 		{
@@ -42,11 +42,19 @@ public class MajsterBotFuzzy extends Bot {
 				return;
 			}
 			
+			System.out.println("AP: " + Broker.GetMyAP());
+			System.out.println("HP: " + Broker.GetMyHP());
+			System.out.println("WP: " + Broker.GetMyWP());
+			System.out.println(Broker.GetMyPosition().toString());
+			
+			if(Broker.GetMyHP() <= 0)
+				return;
+			
 			CheckNeighbours(Broker.GetMyPosition().X, Broker.GetMyPosition().Y);
 			
 			if(this.neighbours.isEmpty())
 			{
-				if(Broker.GetMyAP() >= 3 && Broker.GetMyWP() > 0)
+				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 5 && Broker.GetMyWP() > 0)
 					Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
 				else
 					Randomize();
@@ -55,18 +63,18 @@ public class MajsterBotFuzzy extends Bot {
 			{
 				for(int j = 0; j<this.neighbours.size(); ++j)
 				{
+					if(this.neighbours.get(j).type == "ENEMY" && Broker.GetMyAP() == 5 && Broker.GetMyWP() > 0)
+						Attack(this.neighbours.get(j));
 					fis.setVariable("distance", this.neighbours.get(j).distance);
+					fis.setVariable("actionPoints", Broker.GetMyAP());
 					fis.evaluate();
-					this.neighbours.get(j).priority = (int) fis.getVariable("priority").getLatestDefuzzifiedValue();
+					this.neighbours.get(j).priority = (double) fis.getVariable("priority").getLatestDefuzzifiedValue();
+					
 				}
 				DecideAndGo();
 				
 				this.neighbours.clear();
 			}
-			System.out.println("AP: " + Broker.GetMyAP());
-			System.out.println("HP: " + Broker.GetMyHP());
-			System.out.println("WP: " + Broker.GetMyWP());
-			System.out.println(Broker.GetMyPosition().toString());
 		}
 	}
 	
@@ -129,7 +137,8 @@ public class MajsterBotFuzzy extends Bot {
 			else
 				highestIndex = i+1;
 		}
-		if(this.neighbours.get(highestIndex).priority > 6)
+		if(this.neighbours.get(highestIndex).priority > 6 &&
+				this.neighbours.get(highestIndex).priority < 10)
 		{
 			return -1;
 		}
@@ -144,6 +153,7 @@ public class MajsterBotFuzzy extends Bot {
 			Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 			return;
 		}
+		System.out.println(this.neighbours.get(i).priority);
 		switch(this.neighbours.get(i).direction)
 		{
 		case 0:
@@ -160,5 +170,27 @@ public class MajsterBotFuzzy extends Bot {
 			break;
 		}
 		
+	}
+	
+	public void Attack(Tile t)
+	{
+		switch(t.direction)
+		{
+		case 0:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X + t.distance, Broker.GetMyPosition().Y));
+			break;
+		case 1:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X - t.distance, Broker.GetMyPosition().Y));
+			break;
+		case 2:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X, Broker.GetMyPosition().Y + t.distance));
+			break;
+		case 3:
+			Broker.Action(ActionType.THROW_SPEAR, 
+					new Vector2(Broker.GetMyPosition().X, Broker.GetMyPosition().Y - t.distance));
+		}
 	}
 }
