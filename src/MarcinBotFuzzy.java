@@ -85,6 +85,8 @@ public class MarcinBotFuzzy extends Bot {
 		while(Broker.GetMyAP() > 0)
 		{
 			// cleanup
+			fb.reset();
+			
 			for(int i = 0; i < DATA_SLOTS; ++i)
 			{
 				dataArray[i] = Integer.MIN_VALUE;
