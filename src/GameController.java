@@ -77,14 +77,17 @@ public class GameController
     			case 2:
     				_players[i].MyBot = new StengerdtBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
     			case 3:
     				_players[i].MyBot = new MarcinBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
     			case 4:
     				_players[i].MyBot = new SzczochBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
     			case 5:
     				_players[i].MyBot = new JaniakBot();
@@ -94,6 +97,7 @@ public class GameController
     			case 6: 
     				_players[i].MyBot = new PatrykBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
     			case 7:
     				_players[i].MyBot = new MajsterBotFuzzy();
@@ -109,6 +113,7 @@ public class GameController
 					System.out.println("Retard Alert!!!!");
 					_players[i].MyBot = new JaniakBot();
 					_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
 					break;    				
     		}   		
     	}		

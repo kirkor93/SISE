@@ -21,16 +21,13 @@
 )
 
 ;POSSIBLE ACTIONS:
-;up
-;down
-;left
-;right
-;throw
+;food
+;wood
 ;fire
 ;trap
 ;nothing
 (defglobal
-	?*action* = random
+	?*action* = nothing
 )
 
 (defglobal
@@ -42,6 +39,22 @@
 )
 (defglobal
 	?*throwYCoord* = 1
+)
+
+(defglobal
+	?*foodX* = -1
+)
+
+(defglobal
+	?*foodY* = -1
+)
+
+(defglobal
+	?*woodX* = -1
+)
+
+(defglobal
+	?*woodY* = -1
 )
 
 ;SOME CONST TO PRIORITIZE ACTIONS
@@ -61,110 +74,64 @@
 	?*FIRE_PRIORITY* = 25
 )
 
-;FUNCTIONS
-(deffunction findDirection
-	(?bx ?by ?tx ?ty ?priority)
-	
-	(if (> ?bx ?tx)
-		then
-		(bind ?*action* left)
-		(bind ?*curPrio* ?priority)
-	else
-		(if (< ?bx ?tx)
-			then
-			(bind ?*action* right)
-			(bind ?*curPrio* ?priority)
-		else
-			(if (< ?by ?ty)
-				then
-				(bind ?*action* up)
-				(bind ?*curPrio* ?priority)
-			else
-				(if (> ?by ?ty)
-					then
-					(bind ?*action* down)
-					(bind ?*curPrio* ?priority)
-				else
-					(bind ?*action* nothing)
-					(bind ?*curPrio* 0)
-				)
-			)
-		)
-	)
-)
-
-(defrule searchForFood
-	(bot  (HP ?hp) (PP ?pp) (AP ?ap) (WP ?wp) (state current) (posX ?bx) (posY ?by))
+(defrule searchFood
+	(bot (HP ?hp) (AP ?ap) (PP ?pp))
 	(tile (x ?fx) (y ?fy) (type ?t) (fieldType ?ft))
 	=>
 	(if (= ?*curPrio* 0)
 		then
-		(if (> ?hp 10)
+		(if (and (<= ?hp ?pp) (< ?hp 8))
 			then
-			(bind ?*action* nothing)
-			(bind ?*curPrio* 0)
-		else
-			(if (not(eq ?ft FOOD))
-			then
-				(bind ?*action* nothing)
-				(bind ?*curPrio* 0)
-			else
+			(if (eq ?ft FOOD)
+				then
 				(if (>= ?ap 3)
 					then
-					(findDirection ?bx ?by ?fx ?fy ?*FOOD_PRIORITY*)
-				else
-					(bind ?*action* nothing)	
-					(bind ?*curPrio* 0)
+					(bind ?*action* food)
+					(bind ?*foodX* ?fx)
+					(bind ?*foodY* ?fy)
+					(bind ?*curPrio* ?*FOOD_PRIORITY*)
 				)
 			)
 		)
 	)
 )
 
-(defrule kindleFire
-	(bot (HP ?hp) (PP ?pp) (AP ?ap) (WP ?wp))
+(defrule doFire
+	(bot (PP ?pp) (WP ?wp) (AP ?ap))
 	=>
 	(if (= ?*curPrio* 0)
 		then
-		(if (> ?ap 3)
+		(if (< ?pp 7)
 			then
-			(if (> ?wp 1)
-			then
-				(if (< ?pp 5)
+			(if (>= ?ap 3)
 				then
+				(if (> ?wp 0)
+					then
+					(printout t "I can fire")
 					(bind ?*action* fire)
 					(bind ?*curPrio* ?*FIRE_PRIORITY*)
-				else
-					(bind ?*action* nothing)
-					(bind ?*curPrio* 0)
 				)
 			)
 		)
 	)
 )
 
-(defrule searchForWood
-	(bot  (HP ?hp) (PP ?pp) (AP ?ap) (WP ?wp) (state current) (posX ?bx) (posY ?by))
+(defrule searchWood
+	(bot (WP ?wp) (AP ?ap))
 	(tile (x ?wx) (y ?wy) (type ?t) (fieldType ?ft))
 	=>
-	(if (= ?*curPrio* 0)
+	(if (eq ?ft WOOD)
 		then
-		(if (> ?wp 3)
+		(if (= ?*curPrio* 0)
 			then
-			(bind ?*action* nothing)
-			(bind ?*curPrio* 0)
-		else
-			(if (not(eq ?ft WOOD))
-			then
-				(bind ?*action* nothing)
-				(bind ?*curPrio* 0)
-			else
+			(if (<= ?wp 2)
+				then
 				(if (>= ?ap 3)
 					then
-					(findDirection ?bx ?by ?wx ?wy ?*WOOD_PRIORITY*)
-				else
-					(bind ?*action* nothing)	
-					(bind ?*curPrio* 0)
+					(bind ?*action* wood)
+					(bind ?*curPrio* ?*WOOD_PRIORITY*)
+					(bind ?*woodX* ?wx)
+					(bind ?*woodY* ?wy)
 				)
 			)
 		)
