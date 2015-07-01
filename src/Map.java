@@ -73,6 +73,7 @@ public class Map
 	@Override
 	public String toString() {
 		String toRet = "";
+		toRet += "==================================================";
 		Player[] players = gameController.GetPlayers();
 		boolean flag = false;
 		for(int i = 0; i < 50; ++i)
@@ -109,6 +110,7 @@ public class Map
 			}
 			toRet += "\n";
 		}
+		toRet += "==================================================";
 		return toRet;
 	}
 }

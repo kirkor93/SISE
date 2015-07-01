@@ -9,6 +9,5 @@ public class JaniakBot extends Bot
 	@Override
 	public void Play() {
 		// TODO Auto-generated method stub
-		System.out.println("Janiak");
 	}
 }

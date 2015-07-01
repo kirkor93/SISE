@@ -10,4 +10,22 @@ public abstract class Bot
 	public FIS fis;
 	
 	public abstract void Play();
+	
+	@Override
+	public String toString() {
+		String myState = "";
+		myState += MySymbol;
+		if(this.Broker.GetMyHP() <= 0 || this.Broker.GetMyPP() <= 0)
+		{
+			myState += " IS DEAD";
+		}
+		else
+		{
+			myState += " | HP: " + this.Broker.GetMyHP();
+			myState += " | PP: " + this.Broker.GetMyPP();
+			myState += " | WP: " + this.Broker.GetMyWP();
+			myState += " | POSITION: " + this.Broker.GetMyPosition();
+		}
+		return myState;
+	}
 }

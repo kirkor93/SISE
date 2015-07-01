@@ -120,23 +120,23 @@ public class GameController
     	int alivePlayers = 4;
     	while(alivePlayers > 0)
     	{
+    		if(_activePlayer == 0)
+    		{
+    			System.out.println();
+    			System.out.println();
+    			System.out.println(_map);
+    		}
     		if(_players[_activePlayer].HP > 0)
     		{
-
-        		if(_activePlayer == 0)
-        		{
-        			System.out.println();
-        			System.out.println();
-        			System.out.println(_map);
-        		}
         		if(_players[_activePlayer].PP <= 0)
         			_players[_activePlayer].HP -= 2;
         		else
         			_players[_activePlayer].HP -= 1;
     			_players[_activePlayer].PP -= 1;
+    			System.out.println(_players[_activePlayer].MyBot);
     			_players[_activePlayer].MyBot.Play();
     			_players[_activePlayer].AP = _initActionPoints;
-    			if(_players[_activePlayer].HP <= 0) 
+    			if(_players[_activePlayer].HP <= 0 || _players[_activePlayer].PP <= 0) 
     			{
     				--alivePlayers;
     			}
@@ -284,8 +284,7 @@ public class GameController
         {
         	_players[_activePlayer].WP -= _kindleFireWoodCost;
         	_players[_activePlayer].AP -= _kindleFireActionPointsCost;
-        	_players[_activePlayer].PP = _initPsychicalPoints;
-        	_players[_activePlayer].HP = _initHitPoints;
+        	_players[_activePlayer].PP += 10;
             return true;
         }
 
