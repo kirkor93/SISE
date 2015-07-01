@@ -130,7 +130,7 @@ DEFUZZIFY slotUp
 	TERM topPriority := (28, 0) (30, 1) (999, 1);
 	
 	METHOD : COG;
-	DEFAULT := -1;
+	DEFAULT := -14;
 END_DEFUZZIFY
 
 DEFUZZIFY slotDown
@@ -226,65 +226,56 @@ RULEBLOCK FoodSearch
 	ACT: MIN;
 	ACCU: MAX;
 	
+	RULE 1 : IF clFoodDir IS up THEN slotUp IS likely WITH 0.5;
+	RULE 2 : IF clFoodDir IS down THEN slotDown IS likely WITH 0.5;
+	RULE 3 : IF clFoodDir IS left THEN slotLeft IS likely WITH 0.5;
+	RULE 4 : IF clFoodDir IS right THEN slotRight IS likely WITH 0.5;
+	
+	/*
 	// for UP direction
-	RULE 1 : IF ((( clFoodDir IS up AND clFoodDist IS neighbour) 
+	RULE 1 : IF ((( clFoodDir IS up) 
 		AND botHP IS high)
 		AND botAP IS NOT low) THEN slotUp IS maybe WITH 0.5;
-	RULE 2 : IF ((( clFoodDir IS up AND clFoodDist IS neighbour) 
+	RULE 2 : IF ((( clFoodDir IS up) 
 		AND botHP IS NOT high)
 		AND botAP IS NOT low) THEN slotUp IS likely WITH 0.5;
-	RULE 3 : IF ((( clFoodDir IS up AND clFoodDist IS neighbour) 
+	RULE 3 : IF ((( clFoodDir IS up) 
 		AND botHP IS low)
 		AND botAP IS NOT low) THEN slotUp IS topPriority WITH 0.5;
-	RULE 4 : IF (( clFoodDir IS up AND clFoodDist IS NOT neighbour) 
-		AND botHP IS NOT high) THEN slotUp IS maybe WITH 0.5;
-	RULE 5 : IF ((( clFoodDir IS up AND clFoodDist IS NOT neighbour) 
-		AND botHP IS low)) THEN slotUp IS likely WITH 0.5;
 		
 	// for DOWN direction
-	RULE 6 : IF ((( clFoodDir IS down AND clFoodDist IS neighbour) 
+	RULE 4 : IF ((( clFoodDir IS down) 
 		AND botHP IS high)
 		AND botAP IS NOT low) THEN slotDown IS maybe WITH 0.5;
-	RULE 7 : IF ((( clFoodDir IS down AND clFoodDist IS neighbour) 
+	RULE 5 : IF ((( clFoodDir IS down) 
 		AND botHP IS NOT high)
 		AND botAP IS NOT low) THEN slotDown IS likely WITH 0.5;
-	RULE 8 : IF ((( clFoodDir IS down AND clFoodDist IS neighbour) 
+	RULE 6 : IF ((( clFoodDir IS down) 
 		AND botHP IS low)
 		AND botAP IS NOT low) THEN slotDown IS topPriority WITH 0.5;
-	RULE 9 : IF (( clFoodDir IS down AND clFoodDist IS NOT neighbour) 
-		AND botHP IS NOT high) THEN slotDown IS maybe WITH 0.5;
-	RULE 10 : IF ((( clFoodDir IS down AND clFoodDist IS NOT neighbour) 
-		AND botHP IS low)) THEN slotDown IS likely WITH 0.5;
 		
 	// for LEFT direction
-	RULE 11 : IF ((( clFoodDir IS left AND clFoodDist IS neighbour) 
+	RULE 7 : IF ((( clFoodDir IS left) 
 		AND botHP IS high)
 		AND botAP IS NOT low) THEN slotLeft IS maybe WITH 0.5;
-	RULE 12 : IF ((( clFoodDir IS left AND clFoodDist IS neighbour) 
+	RULE 8 : IF ((( clFoodDir IS left) 
 		AND botHP IS NOT high)
 		AND botAP IS NOT low) THEN slotLeft IS likely WITH 0.5;
-	RULE 13 : IF ((( clFoodDir IS left AND clFoodDist IS neighbour) 
+	RULE 9 : IF ((( clFoodDir IS left) 
 		AND botHP IS low)
 		AND botAP IS NOT low) THEN slotLeft IS topPriority WITH 0.5;
-	RULE 14 : IF (( clFoodDir IS left AND clFoodDist IS NOT neighbour) 
-		AND botHP IS NOT high) THEN slotLeft IS maybe WITH 0.5;
-	RULE 15 : IF ((( clFoodDir IS left AND clFoodDist IS NOT neighbour) 
-		AND botHP IS low)) THEN slotLeft IS likely WITH 0.5;
 		
 	// for LEFT direction
-	RULE 16 : IF ((( clFoodDir IS right AND clFoodDist IS neighbour) 
+	RULE 10 : IF ((( clFoodDir IS right) 
 		AND botHP IS high)
 		AND botAP IS NOT low) THEN slotRight IS maybe WITH 0.5;
-	RULE 17 : IF ((( clFoodDir IS right AND clFoodDist IS neighbour) 
+	RULE 11 : IF ((( clFoodDir IS right) 
 		AND botHP IS NOT high)
 		AND botAP IS NOT low) THEN slotRight IS likely WITH 0.5;
-	RULE 18 : IF ((( clFoodDir IS right AND clFoodDist IS neighbour) 
+	RULE 12 : IF ((( clFoodDir IS right) 
 		AND botHP IS low)
 		AND botAP IS NOT low) THEN slotRight IS topPriority WITH 0.5;
-	RULE 19 : IF (( clFoodDir IS right AND clFoodDist IS NOT neighbour) 
-		AND botHP IS NOT high) THEN slotRight IS maybe WITH 0.5;
-	RULE 20 : IF ((( clFoodDir IS right AND clFoodDist IS NOT neighbour) 
-		AND botHP IS low)) THEN slotRight IS likely WITH 0.5;
+	*/
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
