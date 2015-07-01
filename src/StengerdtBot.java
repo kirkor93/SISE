@@ -2,12 +2,13 @@ import java.util.Random;
 
 import CLIPSJNI.Environment;
 import CLIPSJNI.FactAddressValue;
+import CLIPSJNI.IntegerValue;
 import CLIPSJNI.MultifieldValue;
 import CLIPSJNI.SymbolValue;
 
 public class StengerdtBot extends Bot
 {
-	final int MAX_ITERATIONS = 100;
+	final int MAX_ITERATIONS = 10;
 	final int MAX_HORIZONTAL_FIELDS = 5;
 	final int MAX_VERTICAL_FIELDS = 5;
 	
@@ -92,13 +93,93 @@ public class StengerdtBot extends Bot
 					}
 				}
 			}
-			this.Clips.assertString("(bind ?*action* nothing)");
-			this.Clips.assertString("(bind ?*curPrio* 0)");
+			this.Clips.eval("(bind ?*action* nothing)");
+			this.Clips.eval("(bind ?*curPrio* 0)");
+			this.Clips.eval("(bind ?*foodX* -1)");
+			this.Clips.eval("(bind ?*foodY* -1)");
+			this.Clips.eval("(bind ?*woodX* -1)");
+			this.Clips.eval("(bind ?*woodY* -1)");
 			this.Clips.run();
-			String action = "nothing";
+			String action = "xyz";
 			SymbolValue symbolValue = (SymbolValue)this.Clips.eval("?*action*");
 			action = symbolValue.stringValue();
-			this.DoAction(action);
+			int fx,fy,wx,wy;
+			if(action.equals("food"))
+			{
+				IntegerValue iv = (IntegerValue)this.Clips.eval("?*foodX*");
+				fx = iv.intValue();
+				iv = (IntegerValue)this.Clips.eval("?*foodY*");
+				fy = iv.intValue();
+				boolean flag = true;
+				this.currentIterationCounter = MAX_ITERATIONS;
+				while(this.Broker.GetMyAP() >= 3 && flag)
+				{
+					this.currentPosition = this.Broker.GetMyPosition();
+					if(this.currentPosition.X < fx)
+					{
+						DoAction(ACTION_RIGHT);
+					}
+					else if(this.currentPosition.X > fx)
+					{
+						DoAction(ACTION_LEFT);
+					}
+					else
+					{
+						if(this.currentPosition.Y < fy)
+						{
+							DoAction(ACTION_DOWN);
+						}
+						else if(this.currentPosition.Y > fy)
+						{
+							DoAction(ACTION_UP);
+						}
+						else
+						{
+							flag = false;
+						}
+					}
+				}
+			}
+			else if(action.equals("wood"))
+			{
+				IntegerValue iv = (IntegerValue)this.Clips.eval("?*woodX*");
+				wx = iv.intValue();
+				iv = (IntegerValue)this.Clips.eval("?*woodY*");
+				wy = iv.intValue();
+				boolean flag = true;
+				this.currentIterationCounter = MAX_ITERATIONS;
+				while(this.Broker.GetMyAP() >= 3 && flag)
+				{
+					this.currentPosition = this.Broker.GetMyPosition();
+					if(this.currentPosition.X < wx)
+					{
+						DoAction(ACTION_RIGHT);
+					}
+					else if(this.currentPosition.X > wx)
+					{
+						DoAction(ACTION_LEFT);
+					}
+					else
+					{
+						if(this.currentPosition.Y < wy)
+						{
+							DoAction(ACTION_DOWN);
+						}
+						else if(this.currentPosition.Y > wy)
+						{
+							DoAction(ACTION_UP);
+						}
+						else
+						{
+							flag = false;
+						}
+					}
+				}
+			}
+			else
+			{	
+				this.DoAction(action);
+			}
 		}
 	}
 	
@@ -124,21 +205,23 @@ public class StengerdtBot extends Bot
 	
 	private void DoAction(String action)
 	{
+		boolean flag = true;
 		switch(action)
 		{
 		case ACTION_DOWN:
-			this.Broker.Action(ActionType.MOVE, new Vector2(0, -1));
+			flag = this.Broker.Action(ActionType.MOVE, new Vector2(0, 1));
 			break;
 		case ACTION_UP:
-			this.Broker.Action(ActionType.MOVE, new Vector2(0, 1));
+			flag = this.Broker.Action(ActionType.MOVE, new Vector2(0, -1));
 			break;
 		case ACTION_LEFT:
-			this.Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
+			flag = this.Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
 			break;
 		case ACTION_RIGHT:
-			this.Broker.Action(ActionType.MOVE, new Vector2(1, 0));
+			flag = this.Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 			break;
 		case ACTION_FIRE:
+			System.out.println("Hey, fire");
 			this.Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
 			break;
 		case ACTION_THROW:
@@ -150,6 +233,11 @@ public class StengerdtBot extends Bot
 		case ACTION_NOTHING:
 			this.Broker.Action(ActionType.MOVE, this.RandomDirection());
 			break;
+		}
+		
+		if(!flag)
+		{
+			System.out.println("Lol, dosent work");
 		}
 	}
 	
