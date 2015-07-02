@@ -103,10 +103,3 @@
 		then
 		(bind ?*action* wait))
 )
-
-
-		
-(deffacts startup
-	(bot)
-	(tile)
-)

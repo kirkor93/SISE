@@ -114,6 +114,11 @@ public class GameController
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
+    			case 10:
+    				_players[i].MyBot = new JaniakBotFuzzy();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
+    				break;
 				default:
 					System.out.println("Retard Alert!!!!");
 					_players[i].MyBot = new JaniakBot();

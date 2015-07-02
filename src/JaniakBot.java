@@ -28,7 +28,7 @@ public class JaniakBot extends Bot
 			return;
 		}
 		
-		while (Broker.GetMyAP() > 0 && Broker.GetMyHP() > 0)
+		while (Broker.GetMyAP() > 0 && Broker.GetMyHP() > 0 && Broker.GetMyPP() > 0)
 		{
 			Clips.assertString("(bot" +  "(x " + String.valueOf(Broker.GetMyPosition().X) + ")"
 					+ "(y " + String.valueOf(Broker.GetMyPosition().Y) + ")"
