@@ -8,6 +8,7 @@ public abstract class Bot
 	public String MySymbol;
 	public Environment Clips;
 	public FIS fis;
+	public int turnCtr = -1;
 	
 	public abstract void Play();
 	
@@ -17,7 +18,7 @@ public abstract class Bot
 		myState += MySymbol;
 		if(this.Broker.GetMyHP() <= 0 || this.Broker.GetMyPP() <= 0)
 		{
-			myState += " IS DEAD";
+			myState += " | IS DEAD";
 		}
 		else
 		{
@@ -26,6 +27,7 @@ public abstract class Bot
 			myState += " | WP: " + this.Broker.GetMyWP();
 			myState += " | POSITION: " + this.Broker.GetMyPosition();
 		}
+		myState += " | TL: " + String.valueOf(turnCtr);
 		return myState;
 	}
 }
