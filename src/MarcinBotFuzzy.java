@@ -239,7 +239,6 @@ public class MarcinBotFuzzy extends Bot {
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 						valStr = dataLabels[7];
-						prevPositions.removeFirst();
 					}
 				}
 				else if(maxID == 1)
@@ -254,7 +253,6 @@ public class MarcinBotFuzzy extends Bot {
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 						valStr = dataLabels[7];
-						prevPositions.removeFirst();
 					}
 				}
 				else if(maxID == 2)
@@ -269,7 +267,6 @@ public class MarcinBotFuzzy extends Bot {
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 						valStr = dataLabels[7];
-						prevPositions.removeFirst();
 					}
 				}
 				else if(maxID == 3)
@@ -284,7 +281,6 @@ public class MarcinBotFuzzy extends Bot {
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 						valStr = dataLabels[7];
-						prevPositions.removeFirst();
 					}
 				}
 				else if(maxID == 4)	// kindle bonfire
@@ -306,7 +302,8 @@ public class MarcinBotFuzzy extends Bot {
 				{
 					Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 					valStr = dataLabels[maxID];
-					prevPositions.removeFirst();
+					if(prevPositions.size() > 0)
+						prevPositions.removeFirst();
 				}
 				else if(maxID == 8) // walk in random direction
 				{
@@ -322,7 +319,8 @@ public class MarcinBotFuzzy extends Bot {
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 						valStr = "R_Wait";
-						prevPositions.removeFirst();
+						if(prevPositions.size() > 0)
+							prevPositions.removeFirst();
 					}
 					else
 					{
@@ -457,7 +455,7 @@ public class MarcinBotFuzzy extends Bot {
 		}
 		return false;
 	}
-	
+	/*
 	@Override
 	public String toString()
 	{
@@ -472,5 +470,5 @@ public class MarcinBotFuzzy extends Bot {
 		
 		return ret;
 	}
-
+	*/
 }
