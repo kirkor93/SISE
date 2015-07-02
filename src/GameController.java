@@ -109,6 +109,11 @@ public class GameController
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
+    			case 9:
+    				_players[i].MyBot = new StengerdtBotFuzzy();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
+    				break;
 				default:
 					System.out.println("Retard Alert!!!!");
 					_players[i].MyBot = new JaniakBot();
@@ -131,11 +136,12 @@ public class GameController
     			System.out.println();
     			System.out.println(_map);
     		}
+    		System.out.println(_players[_activePlayer].MyBot);
     		if(_players[_activePlayer].HP > 0 && _players[_activePlayer].PP > 0)
     		{
         		_players[_activePlayer].HP -= 1;
     			_players[_activePlayer].PP -= 1;
-    			System.out.println(_players[_activePlayer].MyBot);
+    			++ _players[_activePlayer].MyBot.turnCtr;
     			_players[_activePlayer].MyBot.Play();
     			_players[_activePlayer].AP = _initActionPoints;
     			if(_players[_activePlayer].HP <= 0 || _players[_activePlayer].PP <= 0) 
