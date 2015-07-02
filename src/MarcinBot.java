@@ -8,7 +8,7 @@ import CLIPSJNI.IntegerValue;
 
 public class MarcinBot extends Bot
 {
-	private static final int FIELD_OF_VIEW = 6;
+	private static final int FIELD_OF_VIEW = 16;
 	private static final int DATA_SLOTS = 8;
 	private static final int MAX_BOT_TIME = 5;
 	private static final int WOOD_TO_LAY_TRAP = 8;

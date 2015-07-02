@@ -13,7 +13,7 @@ import net.sourceforge.jFuzzyLogic.rule.Variable;
 public class MarcinBotFuzzy extends Bot {
 
 	private static final String MAIN_BLOCK_NAME = "action";
-	private static final int FIELD_OF_VIEW = 6;
+	private static final int FIELD_OF_VIEW = 16;
 	private static final int DATA_SLOTS = 9;
 	private static final int MAX_BOT_TIME = 5;
 	private static final int WOOD_TO_LAY_TRAP = 8;
@@ -85,6 +85,8 @@ public class MarcinBotFuzzy extends Bot {
 		while(Broker.GetMyAP() > 0)
 		{
 			// cleanup
+			fb.reset();
+			
 			for(int i = 0; i < DATA_SLOTS; ++i)
 			{
 				dataArray[i] = Integer.MIN_VALUE;
@@ -109,44 +111,38 @@ public class MarcinBotFuzzy extends Bot {
 			clFoodDist = clWoodDist = clCorpseDist = clPlayerDistX = clPlayerDistY = -1;
 			String ft;
 			
-			for(int i = 1; i < FIELD_OF_VIEW; ++i)
+			for(int i = 1; i <= FIELD_OF_VIEW; ++i)
 			{
-				if(vVs[0] != null && vVs[1] != null && vVs[2] != null && vVs[3] != null)
-				{
-					break;
-				}
 				for(int j = -i; j <= i; ++j)
 				{
-					if(vVs[0] != null && vVs[1] != null && vVs[2] != null && vVs[3] != null)
-					{
-						break;
-					}
 					for(int k = -i; k <= i; ++k)
 					{
-						if((vVs[0] != null && vVs[1] != null && vVs[2] != null && vVs[3] != null) ||
-								(k < 0 || k > 49 || j < 0 || j > 49))
+						Vector2 cPos = new Vector2(mPos.X + k, mPos.Y + j);
+						if(cPos.X < 0 || cPos.X > 49 || cPos.Y < 0 || cPos.Y > 49)
 						{
 							break;
 						}
-						ft = Broker.GetFieldType(mPos.X + k, mPos.Y + j);
+						
+						ft = Broker.GetFieldType(cPos.X, cPos.Y);
+						
 						if(ft.equals(FieldType.FOOD.toString()) && vVs[0] == null)
 						{
-							vVs[0] = new Vector2(k, j);
+							vVs[0] = cPos;
 							clFoodDist = Math.abs(vVs[0].X - mPos.X) + Math.abs(vVs[0].Y - mPos.Y);
 						}
 						else if(ft.equals(FieldType.WOOD.toString()) && vVs[1] == null)
 						{
-							vVs[1] = new Vector2(k, j);
+							vVs[1] = cPos;
 							clWoodDist = Math.abs(vVs[1].X - mPos.X) + Math.abs(vVs[1].Y - mPos.Y);
 						}
 						else if(ft.equals(FieldType.CORPSE.toString()) && vVs[2] == null)
 						{
-							vVs[2] = new Vector2(k, j);
+							vVs[2] = cPos;
 							clCorpseDist = Math.abs(vVs[2].X - mPos.X) + Math.abs(vVs[2].Y - mPos.Y);
 						}
 						else if(ft.equals(FieldType.ENEMY.toString()) && vVs[3] == null)
 						{
-							vVs[3] = new Vector2(k, j);
+							vVs[3] = cPos;
 							clPlayerDistX = Math.abs(vVs[3].X - mPos.X);
 							clPlayerDistY = Math.abs(vVs[3].Y - mPos.Y);
 						}
@@ -233,67 +229,81 @@ public class MarcinBotFuzzy extends Bot {
 			{
 				if(maxID == 0)
 				{
-					if(CanGo(new Vector2(mPos.X, mPos.Y - 1)))
+					if(CanGoNoPrevCheck(new Vector2(mPos.X, mPos.Y - 1)))
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, -1));
 						prevPositions.add(new Vector2(mPos.X, mPos.Y - 1));
+						valStr = dataLabels[maxID];
 					}
 					else
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+						valStr = dataLabels[7];
 					}
 				}
 				else if(maxID == 1)
 				{
-					if(CanGo(new Vector2(mPos.X, mPos.Y + 1)))
+					if(CanGoNoPrevCheck(new Vector2(mPos.X, mPos.Y + 1)))
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 1));
 						prevPositions.add(new Vector2(mPos.X, mPos.Y + 1));
+						valStr = dataLabels[maxID];
 					}
 					else
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+						valStr = dataLabels[7];
 					}
 				}
 				else if(maxID == 2)
 				{
-					if(CanGo(new Vector2(mPos.X - 1, mPos.Y)))
+					if(CanGoNoPrevCheck(new Vector2(mPos.X - 1, mPos.Y)))
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
 						prevPositions.add(new Vector2(mPos.X - 1, mPos.Y));
+						valStr = dataLabels[maxID];
 					}
 					else
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+						valStr = dataLabels[7];
 					}
 				}
 				else if(maxID == 3)
 				{
-					if(CanGo(new Vector2(mPos.X + 1, mPos.Y)))
+					if(CanGoNoPrevCheck(new Vector2(mPos.X + 1, mPos.Y)))
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 						prevPositions.add(new Vector2(mPos.X + 1, mPos.Y));
+						valStr = dataLabels[maxID];
 					}
 					else
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+						valStr = dataLabels[7];
 					}
 				}
 				else if(maxID == 4)	// kindle bonfire
 				{
 					Broker.Action(ActionType.KINDLE_FIRE, Broker.GetMyPosition());
+					valStr = dataLabels[maxID];
 				}
 				else if(maxID == 5)	// set trap where u stand
 				{
 					Broker.Action(ActionType.SET_TRAP, new Vector2(0, 0));
+					valStr = dataLabels[maxID];
 				}
 				else if(maxID == 6)	// throw spear
 				{
 					Broker.Action(ActionType.THROW_SPEAR, vVs[3]);
+					valStr = dataLabels[maxID];
 				}
 				else if(maxID == 7) // wait
 				{
 					Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+					valStr = dataLabels[maxID];
+					if(prevPositions.size() > 0)
+						prevPositions.removeFirst();
 				}
 				else if(maxID == 8) // walk in random direction
 				{
@@ -308,6 +318,9 @@ public class MarcinBotFuzzy extends Bot {
 					if(!cans[0] && !cans[1] && !cans[2] && !cans[3])
 					{
 						Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+						valStr = "R_Wait";
+						if(prevPositions.size() > 0)
+							prevPositions.removeFirst();
 					}
 					else
 					{
@@ -320,21 +333,25 @@ public class MarcinBotFuzzy extends Bot {
 								{
 									Broker.Action(ActionType.MOVE, new Vector2(0, 1));
 									prevPositions.add(new Vector2(mPos.X, mPos.Y + 1));
+									valStr = "R_Down";
 								}
 								else if(rand == 2)
 								{
 									Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
 									prevPositions.add(new Vector2(mPos.X - 1, mPos.Y));
+									valStr = "R_Left";
 								}
 								else if(rand == 3)
 								{
 									Broker.Action(ActionType.MOVE, new Vector2(1, 0));
 									prevPositions.add(new Vector2(mPos.X + 1, mPos.Y));
+									valStr = "R_Right";
 								}
 								else
 								{
 									Broker.Action(ActionType.MOVE, new Vector2(0, -1));
 									prevPositions.add(new Vector2(mPos.X, mPos.Y - 1));
+									valStr = "R_Up";
 								}
 								break;
 							}
@@ -346,7 +363,6 @@ public class MarcinBotFuzzy extends Bot {
 					System.out.println("MarcinFuzzy: ERROR: GOT TRASH FROM JFUZZY: " + String.valueOf(maxID));
 					return;
 				}
-				valStr = dataLabels[maxID];
 			}
 			else
 			{
@@ -414,5 +430,45 @@ public class MarcinBotFuzzy extends Bot {
 		}
 		return false;
 	}
-
+	
+	private Boolean CanGoNoPrevCheck(Vector2 fieldPos)
+	{
+		if(fieldPos.X >= 0 &&
+			fieldPos.X < 50 &&
+			fieldPos.Y >= 0 &&
+			fieldPos.Y < 50)
+		{
+			int ap = Broker.GetMyAP();
+			String ft = Broker.GetFieldType(fieldPos.X, fieldPos.Y);
+			if((ft.equals(FieldType.FOOD.toString()) &&
+					ap < GameController.GetCostFoodMove()) ||
+				(ft.equals(FieldType.WOOD.toString()) &&
+					ap < GameController.GetCostWoodMove()) ||
+				(ft.equals(FieldType.CORPSE.toString()) &&
+					ap < GameController.GetCostEatCorpse()) ||
+					(ft.equals(FieldType.ENEMY.toString())))
+			{
+				return false;
+			}
+			
+			return true;
+		}
+		return false;
+	}
+	/*
+	@Override
+	public String toString()
+	{
+		String tmpAct = "";
+		for(String str : actList)
+		{
+			tmpAct += str + ";";
+		}
+		
+		String ret = super.toString();
+		ret += " | " + tmpAct; 
+		
+		return ret;
+	}
+	*/
 }
