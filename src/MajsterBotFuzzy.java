@@ -42,9 +42,6 @@ public class MajsterBotFuzzy extends Bot {
 				return;
 			}
 			
-			System.out.println("AP: " + Broker.GetMyAP());
-			System.out.println("Position " + Broker.GetMyPosition());
-			
 			if(Broker.GetMyHP() <= 0)
 				return;
 			
@@ -64,11 +61,11 @@ public class MajsterBotFuzzy extends Bot {
 			}
 			else
 			{
-				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 10 && Broker.GetMyWP() > 0)
-				{
-					Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
-					break;
-				}
+//				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 10 && Broker.GetMyWP() > 0)
+//				{
+//					Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
+//					break;
+//				}
 				for(int j = 0; j<this.neighbours.size(); ++j)
 				{
 					if(this.neighbours.get(j).type == "ENEMY" && Broker.GetMyAP() == 5 && Broker.GetMyWP() > 0)
@@ -80,15 +77,10 @@ public class MajsterBotFuzzy extends Bot {
 					fis.setVariable("actionPoints", Broker.GetMyAP());
 					fis.setVariable("hitPoints", Broker.GetMyHP());
 					fis.setVariable("pPoints", Broker.GetMyPP());
+					fis.setVariable("woodPoints", Broker.GetMyWP());
 					fis.setVariable("type", SendType(this.neighbours.get(j).type));
 					fis.evaluate();
 					this.neighbours.get(j).priority += (double) fis.getVariable("priority").getLatestDefuzzifiedValue();
-					//if(Broker.GetMyPP() <= 5 && this.neighbours.get(j).type == "WOOD" && this.neighbours.get(j).distance <= 3)
-					//	this.neighbours.get(j).priority += 2;
-				}
-				for(int j = 0; j<this.neighbours.size(); ++j)
-				{
-					System.out.println(this.neighbours.get(j).type + " " + this.neighbours.get(j).priority + " " + this.neighbours.get(j).distance);
 				}
 				DecideAndGo();
 				
@@ -172,13 +164,19 @@ public class MajsterBotFuzzy extends Bot {
 					highestIndex = i+1;
 			}
 		}
+		if(neighbours.get(highestIndex).priority > 5.5)
+			return -1;
 		return highestIndex;
 	}
 	
 	public void DecideAndGo()
 	{
 		int i = GetHighest();
-		System.out.println("HIGHEST: " + this.neighbours.get(i).type + " " + this.neighbours.get(i).priority + " " + this.neighbours.get(i).distance);
+		if(i == -1)
+		{
+			Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
+			return;
+		}
 		switch(this.neighbours.get(i).direction)
 		{
 		case 0:

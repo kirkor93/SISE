@@ -5,6 +5,7 @@ VAR_INPUT
 	actionPoints : REAL;
 	hitPoints : REAL;
 	pPoints : REAL;
+	woodPoints : REAL;
 	type : REAL;
 END_VAR
 
@@ -33,6 +34,11 @@ FUZZIFY pPoints
 	TERM high := (10, 0) (11, 1) (12, 1) ;
 END_FUZZIFY
 
+FUZZIFY woodPoints
+	TERM none := 0;
+	TERM many := (0, 0) (1, 1) (2, 1) ;
+END_FUZZIFY
+
 FUZZIFY type
 	TERM food := 0;
 	TERM wood := 2;
@@ -42,6 +48,7 @@ DEFUZZIFY priority			// Defuzzify output variable 'tip'
 	TERM low := (-1, 0) (0, 1) (2, 1) (3, 0);
 	TERM medium := (2, 0) (3, 1) (4, 1) (5, 0);
 	TERM high := (4, 0) (5, 1) (6, 1) (7, 0);
+	TERM kindle := (6, 0) (7, 1) (8, 1);
 	METHOD : COG;
 	DEFAULT := 0;
 END_DEFUZZIFY
@@ -56,6 +63,7 @@ RULEBLOCK No1
 	RULE 3 : IF hitPoints IS high AND type IS food AND distance IS close THEN priority IS medium;
 	RULE 4 : IF hitPoints IS high AND type IS food AND ((distance IS medium )OR (distance IS far)) THEN priority IS low;
 	RULE 5 : IF pPoints IS low AND type IS wood AND ((distance IS medium) OR (distance IS far)) THEN priority IS medium;
+	RULE 6 : IF woodPoints IS many AND pPoints IS low THEN priority IS kindle;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
