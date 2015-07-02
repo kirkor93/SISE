@@ -43,28 +43,28 @@ public class MajsterBotFuzzy extends Bot {
 			}
 			
 			System.out.println("AP: " + Broker.GetMyAP());
+			System.out.println("Position " + Broker.GetMyPosition());
 			
 			if(Broker.GetMyHP() <= 0)
 				return;
 			
+			CheckNeighbours(Broker.GetMyPosition().X, Broker.GetMyPosition().Y);
+			
 			if(Broker.GetMyAP() < 3)
 			{
-				Broker.Action(ActionType.MOVE, new Vector2(0,0));
-				break;
+				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 			}
-			
-			CheckNeighbours(Broker.GetMyPosition().X, Broker.GetMyPosition().Y);
 			
 			if(this.neighbours.isEmpty())
 			{
-				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 5 && Broker.GetMyWP() > 0)
+				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 10 && Broker.GetMyWP() > 0)
 					Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
 				else
 					Randomize();
 			}
 			else
 			{
-				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 5 && Broker.GetMyWP() > 0)
+				if(Broker.GetMyAP() >= 3 && Broker.GetMyPP() <= 10 && Broker.GetMyWP() > 0)
 				{
 					Broker.Action(ActionType.KINDLE_FIRE, new Vector2(0, 0));
 					break;
@@ -82,10 +82,13 @@ public class MajsterBotFuzzy extends Bot {
 					fis.setVariable("pPoints", Broker.GetMyPP());
 					fis.setVariable("type", SendType(this.neighbours.get(j).type));
 					fis.evaluate();
-					if(this.neighbours.get(j).type == "WOOD" && Broker.GetMyPP() <= 10 && Broker.GetMyHP() >= 10)
-						this.neighbours.get(j).priority = 10;
 					this.neighbours.get(j).priority += (double) fis.getVariable("priority").getLatestDefuzzifiedValue();
-					
+					//if(Broker.GetMyPP() <= 5 && this.neighbours.get(j).type == "WOOD" && this.neighbours.get(j).distance <= 3)
+					//	this.neighbours.get(j).priority += 2;
+				}
+				for(int j = 0; j<this.neighbours.size(); ++j)
+				{
+					System.out.println(this.neighbours.get(j).type + " " + this.neighbours.get(j).priority + " " + this.neighbours.get(j).distance);
 				}
 				DecideAndGo();
 				
@@ -161,27 +164,21 @@ public class MajsterBotFuzzy extends Bot {
 		int highestIndex = 0;
 		for(int i=0; i<this.neighbours.size() - 1; ++i)
 		{
-			if(this.neighbours.get(i).priority > this.neighbours.get(i+1).priority)
-				highestIndex = i;
-			else
+			if(this.neighbours.get(highestIndex).priority < this.neighbours.get(i+1).priority)
 				highestIndex = i+1;
+			else if(neighbours.get(highestIndex).priority == this.neighbours.get(i+1).priority)
+			{
+				if(neighbours.get(highestIndex).distance > this.neighbours.get(i+1).distance)
+					highestIndex = i+1;
+			}
 		}
-//		if(this.neighbours.get(highestIndex).priority > 6 &&
-//				this.neighbours.get(highestIndex).priority < 10)
-//		{
-//			return -1;
-//		}
 		return highestIndex;
 	}
 	
 	public void DecideAndGo()
 	{
 		int i = GetHighest();
-//		if(i == -1)
-//		{
-//			Broker.Action(ActionType.MOVE, new Vector2(0, 0));
-//			return;
-//		}
+		System.out.println("HIGHEST: " + this.neighbours.get(i).type + " " + this.neighbours.get(i).priority + " " + this.neighbours.get(i).distance);
 		switch(this.neighbours.get(i).direction)
 		{
 		case 0:
