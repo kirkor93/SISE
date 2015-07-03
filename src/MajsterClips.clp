@@ -58,7 +58,7 @@
 			
 (defrule kindleFire
 	(bot (actionPoints ?ap) (woodPoints ?wp) (psychicPoints ?pp))
-	(test (and (> ?ap 3) (>= ?wp 1) (< ?pp 0)))
+	(test (and (> ?ap 3) (>= ?wp 1) (< ?pp 5)))
 	=>
 	(bind ?*dir* kindle))
 	

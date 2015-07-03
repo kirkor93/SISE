@@ -75,7 +75,6 @@ public class MajsterBot extends Bot
 				}
 			}
 
-			System.out.println("Majster");
 			this.Clips.run();
 
 			String evalStr = "?*dir*";
@@ -92,16 +91,10 @@ public class MajsterBot extends Bot
 			//this.Clips.eval("(facts)");
 //			System.out.println(currentDirection);
 			
-			System.out.println("Current HP: " + Broker.GetMyHP());
 			if(Broker.GetMyHP() == 0)
 			{
-				System.out.println("Majster is dead");
 				return;
 			}
-			System.out.println("Current AP: " + Broker.GetMyAP());
-			System.out.println("Current WP: " + Broker.GetMyWP());
-			System.out.println("Current PP: " + Broker.GetMyPP());
-			System.out.println("Position: X - " + Broker.GetMyPosition().X + " Y - " + Broker.GetMyPosition().Y);
 			
 			switch(currentDirection)
 			{
@@ -138,7 +131,6 @@ public class MajsterBot extends Bot
 			default:
 				break;
 			}
-			System.out.println(currentDirection);
 			this.Clips.eval("(bind ?*dir*)");
 			//this.Clips.run();
 		}

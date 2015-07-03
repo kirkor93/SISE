@@ -124,7 +124,7 @@ public class JaniakBotFuzzy extends Bot
 			actions.add(woodPriority);
 			actions.add(attackPriority);
 			actions.add(kindlePriority);
-			actions.sort(c);
+			//actions.sort(c);
 			
 			if(actions.get(0) <= 0)
 			{
