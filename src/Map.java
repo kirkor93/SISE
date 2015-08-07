@@ -73,6 +73,7 @@ public class Map
 	@Override
 	public String toString() {
 		String toRet = "";
+		toRet += "==================================================\n";
 		Player[] players = gameController.GetPlayers();
 		boolean flag = false;
 		for(int i = 0; i < 50; ++i)
@@ -82,7 +83,7 @@ public class Map
 				flag = false;
 				for(int k = 0; k < 4; ++k)
 				{
-					if(players[k].Position.X == j && players[k].Position.Y == i)
+					if(players[k].Position.X == j && players[k].Position.Y == i && players[k].HP > 0)
 					{
 						toRet += players[k].MySymbol;
 						flag = true;
@@ -109,6 +110,7 @@ public class Map
 			}
 			toRet += "\n";
 		}
+		toRet += "==================================================\n";
 		return toRet;
 	}
 }

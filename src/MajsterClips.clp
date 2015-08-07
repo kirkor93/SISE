@@ -58,13 +58,13 @@
 			
 (defrule kindleFire
 	(bot (actionPoints ?ap) (woodPoints ?wp) (psychicPoints ?pp))
-	(test (and (> ?ap 3) (>= ?wp 1) (< ?pp 0)))
+	(test (and (> ?ap 3) (>= ?wp 1) (< ?pp 5)))
 	=>
 	(bind ?*dir* kindle))
 	
 (defrule getCloseToEnemy
 	(bot (hitPoints ?hp) (woodPoints ?wp))
-	(tile (direction ?d) (distance ?l (type neighbour) (fieldType ENEMY))
+	(tile (direction ?d) (distance ?l) (type neighbour) (fieldType ENEMY))
 	(test (and (> ?l 5) (> ?wp 1) (> ?hp 10)))
 	=>
 	(bind ?*dir* ?d))

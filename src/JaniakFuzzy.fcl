@@ -1,0 +1,102 @@
+FUNCTION_BLOCK currentaction
+
+VAR_INPUT
+	hp : REAL;
+	pp : REAL;
+	wp : REAL;
+	
+	distanceFood : REAL;
+	distanceWood : REAL;
+	enemyInRange : REAL;
+END_VAR
+
+VAR_OUTPUT
+	priorityFood : REAL;
+	priorityWood : REAL;
+	priorityAttack : REAL;
+	priorityKindle : REAL;
+END_VAR
+
+FUZZIFY hp
+	TERM low := (0, 1) (5, 1);
+	TERM medium := (4, 1) (12, 1);
+	TERM high := (9, 0) (15, 1) (666, 1);
+END_FUZZIFY
+
+FUZZIFY pp
+	TERM low := (0, 1) (5, 1);
+	TERM medium := (4, 1) (12, 1);
+	TERM high := (9, 0) (15, 1) (666, 1);
+END_FUZZIFY
+
+FUZZIFY wp
+	TERM low := (0, 0) (2, 1);
+	TERM medium := (1, 1) (4, 1);
+	TERM high := (3, 1) (666, 1);
+END_FUZZIFY
+
+FUZZIFY distanceFood
+	TERM non := 666;
+	TERM neighbour := 1;
+	TERM low := (1,0) (5,1);
+	TERM high := (3,0) (666,0);
+END_FUZZIFY
+
+FUZZIFY distanceWood
+	TERM non := 666;
+	TERM neighbour := 1;
+	TERM low := (1,0) (5,1);
+	TERM high := (3,0) (666,0);
+END_FUZZIFY
+
+FUZZIFY enemyInRange
+	TERM no := 0;
+	TERM yes := 1;
+END_FUZZIFY
+
+DEFUZZIFY priorityFood
+	TERM low := (0, 1) (5, 0);
+	TERM medium := (4, 1) (8, 0);
+	TERM high := (7, 1) (10, 1);
+END_DEFUZZIFY
+
+DEFUZZIFY priorityWood
+	TERM low := (0, 1) (4, 1);
+	TERM medium := (3, 1) (7, 0);
+	TERM high := (6, 1) (10, 1);
+END_DEFUZZIFY
+
+DEFUZZIFY priorityAttack
+	TERM low := 0;
+	TERM medium := (4, 0) (8, 1);
+	TERM high := (7, 1) (9, 1);
+END_DEFUZZIFY
+
+DEFUZZIFY priorityKindle
+	TERM low := (0, 1) (5, 0);
+	TERM medium := (4, 1) (8, 0);
+	TERM high := (7, 1) (10, 1);
+END_DEFUZZIFY
+
+RULEBLOCK ruler
+	AND : MIN;			// Use 'min' for 'and' and 'max' for 'or'
+	ACT : MIN;
+	ACCU : MAX;
+	
+	//set priority
+	RULE 1: IF distanceFood IS high AND hp IS high THEN priorityFood is low;
+	RULE 2: IF distanceFood IS low OR (hp IS medium AND pp IS medium) OR (hp IS high AND pp IS high) THEN priorityFood is medium;
+	RULE 3: IF distanceFood IS neighbour OR hp IS low OR (hp IS medium AND pp IS high) THEN priorityFood is high;
+	RULE 4: IF pp IS high THEN priorityKindle is low;
+	RULE 5: IF (pp IS medium AND hp IS medium) OR (pp IS high AND hp IS high) THEN priorityKindle is medium;
+	RULE 6: IF pp IS low OR (pp IS medium AND hp IS high) THEN priorityKindle is high;
+	RULE 7: IF distanceWood IS high AND priorityKindle IS low AND wp IS high THEN priorityFood is low;
+	RULE 8: IF distanceWood IS low OR kindleFire IS medium OR wp IS NOT high THEN priorityWood is medium;
+	RULE 9: IF distanceWood IS neighbour OR priorityKindle IS high OR wp IS low THEN priorityWood is high;	
+	RULE 10: IF enemyInRange IS no THEN priorityAttack is low;
+	RULE 11: IF enemyInRange IS yes THEN priorityAttack is medium;
+	RULE 12: IF enemyInRange IS yes AND hp IS NOT low AND pp IS NOT low THEN priorityAttack is high;
+END_RULEBLOCK
+
+
+END_FUNCTION_BLOCK

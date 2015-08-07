@@ -8,7 +8,7 @@ import CLIPSJNI.IntegerValue;
 
 public class MarcinBot extends Bot
 {
-	private static final int FIELD_OF_VIEW = 6;
+	private static final int FIELD_OF_VIEW = 16;
 	private static final int DATA_SLOTS = 8;
 	private static final int MAX_BOT_TIME = 5;
 	private static final int WOOD_TO_LAY_TRAP = 8;
@@ -67,15 +67,16 @@ public class MarcinBot extends Bot
 	}
 	
 	@Override
-	public void Play() {
+	public void Play() 
+	{
 		
 		if(Broker.GetMyHP() <= 0)
 		{
-			System.out.println("Marcin | " + 
-					"POS=" + Broker.GetMyPosition().toString() + " | " +
-					"TL=" + String.valueOf(tl) + " | " +
-					"DEAD"
-					);
+//			System.out.println("Marcin | " + 
+//					"POS=" + Broker.GetMyPosition().toString() + " | " +
+//					"TL=" + String.valueOf(tl) + " | " +
+//					"DEAD"
+//					);
 			return;
 		}
 		
@@ -84,9 +85,6 @@ public class MarcinBot extends Bot
 		
 		while(Broker.GetMyAP() > 0 && Broker.GetMyHP() > 0)
 		{
-			// so we live to see another day!
-			++tl;
-			
 			// clear CLIPS assert data
 			Clips.eval("(do-for-all-facts "
 							+ "((?f tile)) TRUE "
@@ -240,10 +238,6 @@ public class MarcinBot extends Bot
 					cY = ((IntegerValue) Clips.eval("?*throwCoordY*")).intValue();
 					Broker.Action(ActionType.THROW_SPEAR, new Vector2(cX, cY));
 				}
-				else if(maxID == 7)	// eat corpse on current field
-				{
-					System.out.println("Marcin:  I'd like to eat some flesh but somebody forgot to implement it :<");
-				}
 				else
 				{
 					cFldStr = "ERROR";
@@ -288,15 +282,21 @@ public class MarcinBot extends Bot
 			tmpAct += str + ";";
 		}
 		
-		System.out.println("Marcin | " + 
-				"POS=" + Broker.GetMyPosition().toString() + " | " +
-				"TL=" + String.valueOf(tl) + " | " +
-				"CFLD=" + cFldStr + " | " +
-				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
-				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +
-				"AP=" + String.valueOf(Broker.GetMyAP()) + " | " +
-				"WP=" + String.valueOf(Broker.GetMyWP()) + " | " +
-				"ACTS=" + String.valueOf(tmpAct)
-				);
+		if(Broker.GetMyHP() > 0)
+		{
+			// so we live to see another day!
+			++tl;
+		}
+		
+//		System.out.println("Marcin | " + 
+//				"POS=" + Broker.GetMyPosition().toString() + " | " +
+//				"TL=" + String.valueOf(tl) + " | " +
+//				"CFLD=" + cFldStr + " | " +
+//				"HP=" + String.valueOf(Broker.GetMyHP()) + " | " +
+//				"PP=" + String.valueOf(Broker.GetMyPP()) + " | " +
+//				"AP=" + String.valueOf(Broker.GetMyAP()) + " | " +
+//				"WP=" + String.valueOf(Broker.GetMyWP()) + " | " +
+//				"ACTS=" + String.valueOf(tmpAct)
+//				);
 	}
 }

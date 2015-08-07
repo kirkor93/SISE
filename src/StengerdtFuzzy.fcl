@@ -1,0 +1,124 @@
+FUNCTION_BLOCK calculate
+
+VAR_INPUT
+	HP : REAL;
+	PP : REAL;
+	AP : REAL;
+	WP : REAL;
+	
+	closestFoodDist : REAL;
+	closestWoodDist : REAL;
+END_VAR
+
+VAR_OUTPUT
+	food : REAL;
+	wood : REAL;
+	fire : REAL;
+END_VAR
+
+FUZZIFY HP
+	TERM low := (0, 1) (5, 1) (8, 0);
+	TERM medium := (5, 0) (8, 1) (12, 0);
+	TERM high := (8, 0) (12, 1) (15, 1);
+END_FUZZIFY
+
+FUZZIFY PP
+	TERM low := (0, 1) (5, 1) (8, 0);
+	TERM medium := (5, 0) (8, 1) (12, 0);
+	TERM high := (8, 0) (12, 1) (15, 1);
+END_FUZZIFY
+
+FUZZIFY AP
+	TERM none := (0, 1) (1, 0);
+	TERM low := (0, 0) (2, 1) (3, 0);
+	TERM enough := (2, 0) (3, 1) (5, 1);
+END_FUZZIFY
+
+FUZZIFY WP
+	TERM none := 0;
+	TERM low := (0.5, 0) (1, 1) (2, 1) (3, 0);
+	TERM enough := (2, 0) (3, 1) (8, 1);
+END_FUZZIFY
+
+FUZZIFY closestFoodDist
+	TERM nope := -1;
+	TERM myPlace := 0;
+	TERM neighbour := 1;
+	TERM close := (2, 1) (4, 1) (5, 0);
+	TERM far := (4, 0) (5, 1) (7, 1);
+END_FUZZIFY
+
+FUZZIFY closestWoodDist
+	TERM nope := -1;
+	TERM myPlace := 0;
+	TERM neighbour := 1;
+	TERM close := (2, 1) (4, 1) (5, 0);
+	TERM far := (4, 0) (5, 1) (7, 1);
+END_FUZZIFY
+
+DEFUZZIFY food
+	TERM nope := -1;
+	TERM maybe := (0, 0) (5, 1) (20, 0);
+	TERM interesting := (5, 0) (20, 1) (50, 1) (60, 0);
+	TERM yup := (50, 0) (60, 1) (90, 0);
+	TERM mustBe := (60, 0) (90, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY wood
+	TERM nope := -1;
+	TERM maybe := (0, 0) (5, 1) (20, 0);
+	TERM interesting := (5, 0) (20, 1) (50, 1) (60, 0);
+	TERM yup := (50, 0) (60, 1) (90, 0);
+	TERM mustBe := (60, 0) (90, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY fire
+	TERM nope := -1;
+	TERM maybe := (0, 0) (5, 1) (20, 0);
+	TERM interesting := (5, 0) (20, 1) (50, 1) (60, 0);
+	TERM yup := (50, 0) (60, 1) (90, 0);
+	TERM mustBe := (60, 0) (90, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+RULEBLOCK searchFood
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF HP IS low AND closestFoodDist IS NOT nope THEN food IS mustBe;
+	RULE 2 : IF HP IS medium AND (closestFoodDist IS neighbour OR closestFoodDist IS close) THEN food IS yup;
+	RULE 3 : IF HP IS high AND closestFoodDist IS neighbour THEN food IS interesting;
+	RULE 4 : IF HP IS high AND closestFoodDist IS close THEN food IS maybe;
+END_RULEBLOCK
+
+RULEBLOCK searchWood
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF WP IS none AND closestWoodDist IS NOT nope THEN wood IS mustBe;
+	RULE 2 : IF WP IS low AND (closestWoodDist IS neighbour OR closestWoodDist IS close) THEN wood IS yup;
+	RULE 3 : IF WP IS low AND closestWoodDist IS far THEN wood IS interesting;
+	RULE 4 : IF WP IS enough AND (closestWoodDist IS close OR closestWoodDist IS neighbour) THEN wood IS maybe;
+END_RULEBLOCK
+
+RULEBLOCK kindleFire
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF WP IS NOT none AND PP IS low THEN fire IS mustBe;
+	RULE 2 : IF WP IS enough AND PP IS medium THEN fire IS yup;
+	RULE 3 : IF WP IS enough AND PP IS high THEN fire IS maybe;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
