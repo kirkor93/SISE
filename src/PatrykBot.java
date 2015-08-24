@@ -1,6 +1,3 @@
-import java.io.IOException;
-import java.util.Scanner;
-
 import CLIPSJNI.Environment;
 import CLIPSJNI.SymbolValue;
 
@@ -84,7 +81,7 @@ public class PatrykBot extends Bot
 					+ "(WP " + Broker.GetMyWP() + ")"
 					+ "(botX " + String.valueOf(myPos.X) + ")"
 					+ "(botY " + String.valueOf(myPos.Y) + ")"
-					+ "(currentField " + Broker.GetFieldType(myPos.X, myPos.Y) + ")"
+					//+ "(currentField " + Broker.GetFieldType(myPos.X, myPos.Y) + ")"
 					+ ")");
 //			this.Clips.assertString("(tile (x " + Broker.GetMyPosition().X + ")" +
 //									"(y " + Broker.GetMyPosition().Y + ")" +
