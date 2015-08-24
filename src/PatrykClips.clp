@@ -152,7 +152,46 @@
 		)
 	)
 )
-
+;Changed to switch for testing ;c
+;(defrule findEnemies
+;	(tile (fieldX ?fX) (fieldY ?fY) (fieldType ENEMY))
+;	(bot (botX ?bX) (botY ?bY))
+;	?actionHand <- (actionHandler (enemiesCount ?eC))
+;	=>
+;	(printout t "FindEnemies rule" crlf)
+;	(modify ?actionHand (enemiesCount (+ ?eC 1)))
+;	(assert (tileEnemy (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
+;)
+;
+;(defrule findFood
+;	(tile (fieldX ?fX) (fieldY ?fY) (fieldType FOOD))
+;	(bot (botX ?bX) (botY ?bY))
+;	?actionHand <- (actionHandler (foodCount ?fC))
+;	=>
+;	(printout t "FindFood rule" crlf)
+;	(modify ?actionHand (foodCount (+ ?fC 1)))
+;	(assert (tileFood (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
+;)		
+;
+;(defrule findCorpse
+;	(tile (fieldX ?fX) (fieldY ?fY) (fieldType CORPSE))
+;	(bot (botX ?bX) (botY ?bY))
+;	?actionHand <- (actionHandler (corpseCount ?cC))
+;	=>
+;	(printout t "FindCorpse rule" crlf)
+;	(modify ?actionHand (corpseCount (+ ?cC 1)))
+;	(assert (tileCorpse (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
+;)	
+;
+;(defrule findWood
+;	(tile (fieldX ?fX) (fieldY ?fY) (fieldType WOOD))
+;	(bot (botX ?bX) (botY ?bY))
+;	?actionHand <- (actionHandler (woodCount ?wC))
+;	=>
+;	(printout t "FindWood rule" crlf)
+;	(modify ?actionHand (woodCount (+ ?wC 1)))
+;	(assert (tileWood (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
+;)
 
 (defrule prepareFood
 	(declare (salience 9))
