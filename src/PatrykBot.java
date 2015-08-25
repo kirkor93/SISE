@@ -22,7 +22,7 @@ public class PatrykBot extends Bot
 		_loopCnt = 0;
 		while(Broker.GetMyAP() > 0)
 		{
-			System.out.println("Przygotuj Clipsa");
+			//System.out.println("Przygotuj Clipsa");
 			this.Clips.eval("(do-for-all-facts ((?f tileBase)) TRUE (retract ?f))"); //refreshing tiles (deleting old neighbours)
 			this.Clips.eval("(do-for-all-facts ((?tF tileFood)) TRUE (retract ?tF))");
 			this.Clips.eval("(do-for-all-facts ((?tF tileCorpse)) TRUE (retract ?tF))");
@@ -88,15 +88,25 @@ public class PatrykBot extends Bot
 //									"(type current)"
 //									+ "(fieldType " + Broker.GetFieldType(Broker.GetMyPosition().X, Broker.GetMyPosition().Y) + "))");	//adding current tile
 //			
-			Clips.assertString("(actionHandler)");
+			Clips.assertString("(actionHandler"
+					+ "(action WAIT) "
+					+ "(distanceCorpse 1000) "
+					+ "(distanceFood 1000) "
+					+ "(distanceWood 1000) "
+					+ "(distanceEnemy 1000) "
+					+ "(foodCount 0) "
+					+ "(corpseCount 0) "
+					+ "(woodCount 0) "
+					+ "(enemiesCount 0) "
+					+ ")");
 
 			
 			
-			System.out.println("Odpal Clipsa");
+			//System.out.println("Odpal Clipsa");
 			
 			if(_loopCnt == 0 )this.Clips.run();
 
-			System.out.println("Wyci¹gnij Clipsa");
+			//System.out.println("Wyci¹gnij Clipsa");
 			
 			String evalStr = "?*action*";
 			
@@ -122,55 +132,72 @@ public class PatrykBot extends Bot
 			 * THROW
 			 * MOVERAND
 			 */
-			switch(_loopCnt)
+			
+			System.out.println(action);
+//			System.out.println(new Vector2(X, Y));
+//			System.out.println(_loopCnt);
+			if(_loopCnt == 1) 
 			{
-			case 0:
-				switch(action)
-				{
-				case "MOVE":
-					if(X!=Y)Broker.Action(ActionType.MOVE, new Vector2(X, Y));
-					else Broker.Action(ActionType.MOVE, new Vector2(X, 0));
-					break;
-				case "MOVERAND":
-					Randomize();
-					break;
-				case "WAIT":
-					Broker.Action(ActionType.MOVE, new Vector2(0, 0));
-					break;
-				case "KINDLE":
-					Broker.Action(ActionType.KINDLE_FIRE, null);
-					break;
-				case "THROW":
-					Broker.Action(ActionType.THROW_SPEAR, new Vector2(X, Y));
-					break;
-				default:
-					break;
-				}
+				action = "MOVERAND";
+			}
+			else if(_loopCnt == 2) 
+			{	
+				action = "WAIT";
+				_loopCnt = 0;
+			}
+			
+			
+			switch(action)
+			{
+			case "MOVE":
+				if(X!=Y)Broker.Action(ActionType.MOVE, new Vector2(X, Y));
+				else Broker.Action(ActionType.MOVE, new Vector2(X, 0));
 				break;
-			case 1:
+			case "MOVERAND":
 				Randomize();
 				break;
-			case 2:
+			case "WAIT":
 				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
-				break;		
-			}
+				break;
+			case "KINDLE":
+				Broker.Action(ActionType.KINDLE_FIRE, null);
+				break;
+			case "THROW":
+				Broker.Action(ActionType.THROW_SPEAR, new Vector2(X, Y));
+				break;
+			default:
+				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+				break;
+			}	
 			++_loopCnt;
-			System.out.println("Koniec ruchu");
-			//this.Clips.eval("(bind ?*dir*)");
 		}	
 	}
+	
 	public void Randomize()
 	{
+		while(true)
+		{
 		int n = (int) (Math.random()*4);
 		if(n == 0 && Broker.GetMyPosition().Y != 0)
+		{
 			Broker.Action(ActionType.MOVE, new Vector2(0, -1));
+			return;
+			}
 		else if(n == 1 && Broker.GetMyPosition().Y != 49)
+		{
 			Broker.Action(ActionType.MOVE, new Vector2(0, 1));
+			return;
+			}
 		else if(n == 2 && Broker.GetMyPosition().X != 0)
+		{
 			Broker.Action(ActionType.MOVE, new Vector2(-1, 0));
+			return;
+			}
 		else if(n == 3 && Broker.GetMyPosition().X != 49)
+		{
 			Broker.Action(ActionType.MOVE, new Vector2(1, 0));
-		else
-			Broker.Action(ActionType.MOVE, new Vector2(0, 0));
+			return;
+			}
+		}
 	}
 }
