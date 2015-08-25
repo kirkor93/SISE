@@ -75,11 +75,15 @@
 (defglobal ?*PPNeed* = 0)
 (defglobal ?*WPNeed* = 0)
 
-(deffacts startup
-	(NeedHPMult 10)
-	(NeedPPMult 9)
-	(NeedWPMult 5)
-)
+(defglobal ?*NeedHPMult* = 10)
+(defglobal ?*NeedPPMult* = 9)
+(defglobal ?*NeedWPMult* = 5)
+
+;(deffacts startup
+;	(NeedHPMult 10)
+;	(NeedPPMult 9)
+;	(NeedWPMult 5)
+;)
 
 (deffunction GetDistance
 	(?fX ?fY ?sX ?sY)
@@ -132,21 +136,28 @@
 	(switch ?fT
 		(case ENEMY 
 			then 
-			(modify ?actionHand (enemiesCount (+ ?eC 1)))
-			(assert (tileEnemy (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
+			(if (and (!= ?bX ?fX) (!= ?bY ?fY))
+			then
+				(printout t "SearchMap rule Enemy" crlf)
+				(modify ?actionHand (enemiesCount (+ ?eC 1)))
+				(assert (tileEnemy (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
+			)
 		)
 		(case WOOD 
 			then 
+			(printout t "SearchMap rule Wood" crlf)
 			(modify ?actionHand (woodCount (+ ?wC 1)))
 			(assert (tileWood (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
 		)
 		(case FOOD 
 			then 
+			(printout t "SearchMap rule Food" crlf)
 			(modify ?actionHand (foodCount (+ ?fC 1)))
 			(assert (tileFood (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
 		)
 		(case CORPSE
 			then 
+			(printout t "SearchMap rule Corpse" crlf)
 			(modify ?actionHand (corpseCount (+ ?cC 1)))
 			(assert (tileCorpse (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
 		)
@@ -245,14 +256,11 @@
 (defrule setNeeds
 	(declare (salience 8))
 	(bot (HP ?hp) (PP ?pp) (WP ?wp))
-	(NeedHPMult ?nHPM)
-	(NeedPPMult ?nPPM)
-	(NeedWPMult ?nWPM)
 	=>
 	(printout t "SetNeeds rule" crlf)
-	(bind ?*HPNeed* (* (- 15 ?hp) ?nHPM))
-	(bind ?*PPNeed* (* (- 15 ?pp) ?nPPM))
-	(bind ?*WPNeed* (* (- 15 ?wp) ?nWPM))
+	(bind ?*HPNeed* (* (- 15 ?hp) ?*NeedHPMult*))
+	(bind ?*PPNeed* (* (- 15 ?pp) ?*NeedPPMult*))
+	(bind ?*WPNeed* (* (- 15 ?wp) ?*NeedWPMult*))
 )
 	
 (defrule getMostImportantNeed

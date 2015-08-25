@@ -5,7 +5,7 @@ import CLIPSJNI.SymbolValue;
 public class PatrykBot extends Bot
 {
 	private int _loopCnt = 0;
-	private final int _C_fov = 1;
+	private final int _C_fov = 4;
 	
 	public PatrykBot()
 	{
@@ -28,11 +28,11 @@ public class PatrykBot extends Bot
 			this.Clips.eval("(do-for-all-facts ((?tF tileCorpse)) TRUE (retract ?tF))");
 			this.Clips.eval("(do-for-all-facts ((?tF tileWood)) TRUE (retract ?tF))");
 			this.Clips.eval("(do-for-all-facts ((?tF tileEnemy)) TRUE (retract ?tF))");
-			this.Clips.eval("(do-for-fact ((?b bot)) (retract ?b))"); //refreshing bot state
+			this.Clips.eval("(do-for-all-facts ((?b bot)) TRUE (retract ?b))"); //refreshing bot state
 			this.Clips.eval("(do-for-fact ((?aC actionHandler)) (retract ?aC))");
-			this.Clips.eval("(do-for-fact ((?b NeedHPMult)) (retract ?b))");
-			this.Clips.eval("(do-for-fact ((?b NeedPPMult)) (retract ?b))");
-			this.Clips.eval("(do-for-fact ((?b NeedWPMult)) (retract ?b))");
+//			this.Clips.eval("(do-for-fact ((?b NeedHPMult)) (retract ?b))");
+//			this.Clips.eval("(do-for-fact ((?b NeedPPMult)) (retract ?b))");
+//			this.Clips.eval("(do-for-fact ((?b NeedWPMult)) (retract ?b))");
 			Vector2 myPos = Broker.GetMyPosition();
 			
 			
