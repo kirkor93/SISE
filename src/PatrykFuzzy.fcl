@@ -18,16 +18,15 @@ VAR_OUTPUT
 	wood : REAL;
 	throw : REAL;
 	kindle : REAL;
-	wait : REAL;
-	moveRand : REAL;
 	
 END_VAR
 
 FUZZIFY botHP 
 	TERM none := 0;
 	TERM low := (0.5, 0)(4, 1) (7, 0);
-	TERM medium := (4, 0) (7, 1) (10, 0);
-	TERM high := (7, 0) (10, 1) (999, 1);
+	TERM enough := (7,0) (12,1) (14,0);
+	TERM medium := (12, 0) (14, 1) (16, 0);
+	TERM high := (14, 0) (16, 1) (999, 1);
 END_FUZZIFY
 
 FUZZIFY botPP 
@@ -87,5 +86,116 @@ FUZZIFY enemyDistance
 	TERM largeRange := (6,0) (8,1) (999,1);
 END_FUZZIFY
 
+DEFUZZIFY eatF
+	TERM notInteresting := -1;
+	TERM couldBeInteresting := (0, 0) (10, 1) (30, 0);
+	TERM isInteresting := (10, 0) (30, 1) (40, 1) (50, 0);
+	TERM veryInteresting := (40, 0) (50, 1) (70, 0);
+	TERM noOtherWay := (60, 0) (70, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY eatC
+	TERM notInteresting := -1;
+	TERM couldBeInteresting := (0, 0) (10, 1) (30, 0);
+	TERM isInteresting := (10, 0) (30, 1) (50, 1) (60, 0);
+	TERM veryInteresting := (50, 0) (60, 1) (80, 0);
+	TERM noOtherWay := (60, 0) (80, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY wood
+	TERM notInteresting := -1;
+	TERM couldBeInteresting := (0, 0) (10, 1) (30, 0);
+	TERM isInteresting := (10, 0) (30, 1) (50, 1) (60, 0);
+	TERM veryInteresting := (50, 0) (60, 1) (80, 0);
+	TERM noOtherWay := (60, 0) (80, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY kindle
+	TERM notInteresting := -1;
+	TERM couldBeInteresting := (0, 0) (10, 1) (30, 0);
+	TERM isInteresting := (10, 0) (30, 1) (50, 1) (60, 0);
+	TERM veryInteresting := (50, 0) (60, 1) (80, 0);
+	TERM noOtherWay := (60, 0) (80, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY throw
+	TERM notInteresting := -1;
+	TERM couldBeInteresting := (0, 0) (10, 1) (30, 0);
+	TERM isInteresting := (10, 0) (30, 1) (50, 1) (60, 0);
+	TERM veryInteresting := (50, 0) (60, 1) (80, 0);
+	TERM noOtherWay := (60, 0) (80, 1) (100, 1);
+	
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+RULEBLOCK searchFood
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF botHP IS low AND foodDistance IS NOT dontExist THEN eatF IS noOtherWay;
+	RULE 2 : IF botHP IS enough  AND foodDistance IS atNeighbour  OR foodDistance IS closeRange THEN eatF IS veryInteresting;
+	RULE 3 : IF botHP IS medium AND (foodDistance IS atNeighbour OR foodDistance IS closeRange OR foodDistance IS mediumRange) THEN eatF IS isInteresting;
+	RULE 4 : IF botHP IS high AND foodDistance IS mediumRange THEN eatF IS couldBeInteresting;
+END_RULEBLOCK
+
+RULEBLOCK searchCorpse
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF botHP IS low AND botPP IS medium AND corpseDistance IS NOT dontExist THEN eatC IS noOtherWay;
+	RULE 2 : IF botHP IS enough  AND botPP IS medium AND corpseDistance IS atNeighbour THEN eatC IS veryInteresting;
+	RULE 3 : IF botHP IS medium AND botPP IS medium AND (corpseDistance IS atNeighbour OR corpseDistance IS closeRange) THEN eatC IS isInteresting;
+	RULE 4 : IF botHP IS high AND botPP IS high AND corpseDistance IS mediumRange THEN eatC IS couldBeInteresting;
+END_RULEBLOCK
+
+RULEBLOCK searchWood
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF botWP IS low AND botHP IS NOT low AND ( woodDistance IS atNeighbour OR woodDistance IS closeRange) THEN wood IS noOtherWay;
+	RULE 2 : IF (botWP IS low OR botWP IS medium) AND botHP IS NOT low AND (woodDistance IS atNeighbour OR woodDistance IS closeRange) THEN wood IS veryInteresting;
+	RULE 3 : IF botWP IS medium AND (botHP IS NOT low AND botPP IS NOT low) AND (woodDistance IS atNeighbour OR woodDistance IS closeRange) THEN wood IS isInteresting;
+	RULE 4 : IF botWP IS high AND (botHP IS NOT low AND botPP IS NOT low)AND (woodDistance IS atNeighbour OR woodDistance IS closeRange) THEN wood IS couldBeInteresting;
+END_RULEBLOCK
+
+RULEBLOCK kindle
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF botPP IS low AND botWP IS NOT none THEN kindle IS noOtherWay;
+	RULE 2 : IF botPP IS low AND botWP IS none THEN wood IS veryInteresting;
+	RULE 3 : IF botPP IS medium AND botWP IS NOT none THEN kindle IS isInteresting;
+	RULE 4 : IF botPP IS medium AND botWP IS none THEN wood IS isInteresting;
+	RULE 5 : IF botPP IS high AND botWP IS NOT none THEN kindle IS couldBeInteresting;
+END_RULEBLOCK
+
+RULEBLOCK throw
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1 : IF botHP IS NOT low AND botPP IS NOT low AND botWP IS NOT none AND (enemyDistance IS closeRange OR enemyDistance IS atNeighbour) THEN throw IS veryInteresting;
+	RULE 2 : IF (botHP IS NOT low AND botHP IS NOT enough) AND (botPP IS NOT low) AND botWP IS NOT none AND (enemyDistance IS closeRange OR enemyDistance IS atNeighbour) THEN throw IS noOtherWay;
+	RULE 3 : IF (botHP IS NOT low AND botHP IS NOT enough) AND (botPP IS NOT low ) AND botWP IS none AND (enemyDistance IS closeRange OR enemyDistance IS atNeighbour) THEN wood IS isInteresting;
+	RULE 4 : IF (botHP IS NOT low AND botHP IS NOT enough) AND (botPP IS NOT low ) AND botWP IS medium AND (enemyDistance IS closeRange OR enemyDistance IS atNeighbour OR enemyDistance IS mediumRange) THEN throw IS couldBeInteresting;	
+	RULE 5 : IF (botHP IS NOT low AND botHP IS NOT enough) AND (botPP IS NOT low ) AND botWP IS none AND (enemyDistance IS closeRange OR enemyDistance IS atNeighbour OR enemyDistance IS mediumRange) THEN throw IS couldBeInteresting;		
+END_RULEBLOCK
 
 END_FUNCTION_BLOCK

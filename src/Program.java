@@ -12,7 +12,8 @@ public class Program {
 				+ "\n7 - Majster's fuzzy bot"
 				+ "\n8 - Maricn's fuzzy bot"
 				+ "\n9 - Stengerdt's fuzzy bot"
-				+ "\n10 - Janiak's fuzzy bot");	
+				+ "\n10 - Patryk's fuzzy bot"
+				+ "\n11 - Janiak's fuzzy bot");	
 
 		System.out.println("Pick bot");	
 		names[0] = scan.nextInt();
