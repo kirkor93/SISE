@@ -92,35 +92,44 @@
 	(?dX ?dY ?bX ?bY)
 		
 	;(printout t "GetDirection function" crlf)
-	(if	(and (> ?dY ?bY) (<= ?dX ?bX))
+	
+	(if (> (abs (- ?bY ?dY)) (abs(- ?bY ?dY)))
 	then
-		(bind ?*newX* 0)
-		(bind ?*newY* 1)
-		(return)
+		(if (> ?bY ?dY)
+		then
+			(bind ?*newX* 0)
+			(bind ?*newY* -1)
+			(return)
+		else
+			(if (< ?bY ?dY)
+			then
+				(bind ?*newX* 0)
+				(bind ?*newY* 1)
+				(return)
+			)
+		) 
+	else
+		(if (> ?bX ?dX)
+		then
+			(bind ?*newX* -1)
+			(bind ?*newY* 0)
+			(return)
+		else
+			;(if (< ?bX ?dX)
+			;then
+				(bind ?*newX* 1)
+				(bind ?*newY* 0)
+				(return)
+			;)
+		) 
 	)
-	(if	(and (<= ?dY ?bY) (< ?dX ?bX))
-	then
-		(bind ?*newX* 1)
-		(bind ?*newY* 0)
-		(return)
-	)
-	(if	(and (< ?dY ?bY) (>= ?dX ?bX))
-	then
-		(bind ?*newX* 0)
-		(bind ?*newY* -1)
-		(return)
-	)
-	(if	(and (>= ?dY ?bY) (> ?dX ?bX))
-	then
-		(bind ?*newX* -1)
-		(bind ?*newY* 0)
-		(return)
-	)
+	(bind ?*newX* 0)
+	(bind ?*newY* 0)	
 )
 
 
 (defrule searchMap
-	(declare (salience 10))
+	(declare (salience 20))
 	(bot (botX ?bX) (botY ?bY))
 	?tileB <-(tileBase (fieldX ?fX) (fieldY ?fY) (fieldType ?fT))
 	?actionHand <- (actionHandler (enemiesCount ?eC) (foodCount ?fC) (corpseCount ?cC) (woodCount ?wC))
@@ -131,7 +140,7 @@
 			then 
 			(if (and (!= ?bX ?fX) (!= ?bY ?fY))
 			then
-				(printout t "SearchMap rule Enemy" crlf)
+				;(printout t "SearchMap rule Enemy" crlf)
 				(modify ?actionHand (enemiesCount (+ ?eC 1)))
 				(assert (tileEnemy (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
 				(assert (tileE (GetDistance ?bX ?bY ?fX ?fY)))
@@ -140,7 +149,7 @@
 		)
 		(case WOOD 
 			then 
-			(printout t "SearchMap rule Wood" crlf)
+			;(printout t "SearchMap rule Wood" crlf)
 			(modify ?actionHand (woodCount (+ ?wC 1)))
 			(assert (tileWood (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
 			(assert (tileW (GetDistance ?bX ?bY ?fX ?fY)))
@@ -148,7 +157,7 @@
 		)
 		(case FOOD 
 			then 
-			(printout t "SearchMap rule Food" crlf)
+			;(printout t "SearchMap rule Food" crlf)
 			(modify ?actionHand (foodCount (+ ?fC 1)))
 			(assert (tileFood (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
 			(assert (tileF (GetDistance ?bX ?bY ?fX ?fY)))
@@ -156,7 +165,7 @@
 		)
 		(case CORPSE
 			then 
-			(printout t "SearchMap rule Corpse" crlf)
+			;(printout t "SearchMap rule Corpse" crlf)
 			(modify ?actionHand (corpseCount (+ ?cC 1)))
 			(assert (tileCorpse (fieldX  ?fX) (fieldY ?fY) (distance (GetDistance ?bX ?bY ?fX ?fY))))
 			(assert (tileC (GetDistance ?bX ?bY ?fX ?fY)))
@@ -175,7 +184,7 @@
 	?tF <- (tileF ?fD)
 	(test (= ?d ?fD))
 	=>
-	(printout t "PrepareFood rule" crlf)
+	;(printout t "PrepareFood rule" crlf)
 	(if (> ?sD ?d)
 	then 
 		(modify ?actionHand (distanceFood ?d))
@@ -190,7 +199,7 @@
 	?tC <- (tileC ?fC)
 	(test (= ?d ?fC))
 	=>
-	(printout t "PrepareCorpse rule" crlf)
+	;(printout t "PrepareCorpse rule" crlf)
 	(if (> ?sD ?d)
 	then 
 		(modify ?actionHand (distanceCorpse ?d))
@@ -206,7 +215,7 @@
 	?tW <- (tileW ?fW)
 	(test (= ?d ?fW))
 	=>
-	(printout t "PrepareWood rule" crlf)
+	;(printout t "PrepareWood rule" crlf)
 	(if (> ?sD ?d)
 	then 
 		(modify ?actionHand (distanceWood ?d))
@@ -221,7 +230,7 @@
 	?tE <- (tileE ?fE)
 	(test (= ?d ?fE))
 	=>
-	(printout t "PrepareAttack rule" crlf)
+	;(printout t "PrepareAttack rule" crlf)
 	(if (> ?sD ?d)
 	then 
 		(modify ?actionHand (distanceEnemy ?d))
@@ -233,7 +242,7 @@
 	(declare (salience 8))
 	(bot (HP ?hp) (PP ?pp) (WP ?wp))
 	=>
-	(printout t "SetNeeds rule" crlf)
+	;(printout t "SetNeeds rule" crlf)
 	(assert (NeedFlag))
 	(bind ?*HPNeed* (* (- 15 ?hp) ?*NeedHPMult*))
 	(bind ?*PPNeed* (* (- 15 ?pp) ?*NeedPPMult*))
@@ -245,30 +254,30 @@
 	?nF <- (NeedFlag)
 	?act <- (actionHandler (action ?a))
 	=>
-	(printout t "MostImportantNeed rule" crlf)
+	;(printout t "MostImportantNeed rule" crlf)
 	(if (and (> ?*HPNeed* 60) (> ?*HPNeed* ?*PPNeed*) (> ?*HPNeed* ?*WPNeed*))
 	then
 		(modify ?act (action FOOD))
 		(assert (NeedFood))
-		(printout t "FOOD" crlf)
+		;(printout t "FOOD" crlf)
 	) 
 	(if (and (> ?*PPNeed* 50) (> ?*PPNeed* ?*HPNeed*) (> ?*PPNeed* ?*WPNeed*))
 	then
 		(modify ?act (action FIRE))
 		(assert (NeedFire))
-		(printout t "FIRE" crlf)
+		;(printout t "FIRE" crlf)
 	) 
 	(if (and (> ?*WPNeed* 30) (> ?*WPNeed* ?*HPNeed*) (> ?*WPNeed* ?*PPNeed*))
 	then
 		(modify ?act (action WOOD))
 		(assert (NeedWood))
-		(printout t "WOOD" crlf)
+		;(printout t "WOOD" crlf)
 	) 	
 	(if (and (< ?*HPNeed* 30) (< ?*PPNeed* 30) (< ?*WPNeed* 20))
 	then
 		(modify ?act (action OTHER))
 		(assert (NeedOther))		
-		(printout t "OTHERD" crlf)
+		;(printout t "OTHERD" crlf)
 	)
 	(retract ?nF)	
 )
@@ -281,7 +290,7 @@
 	?act <- (actionHandler (distanceEnemy ?sD) (enemiesCount ?eC) (foodCount ?fC) (corpseCount ?cC) (woodCount ?wC))
 	(test (= ?d ?sD))
 	=>
-	(printout t "HandleOther rule" crlf)
+	;(printout t "HandleOther rule" crlf)
 	(retract ?nO)
 	(if (> ?eC 0)
 	then
@@ -356,10 +365,9 @@
 	(test (= ?d ?sD))
 	=>
 	(printout t "HandleWood rule" crlf)
-	(retract ?nW)
 	(if(> ?eC 0)
 	then
-		(if (and (= ?d ?sD) (>= ?sD 2))
+		(if (> ?sD 1)
 		then
 			(bind ?*action* MOVE)
 			(GetDirection ?fX ?fY ?bX ?bY)
@@ -375,6 +383,7 @@
 	else
 		(bind ?*action* MOVERAND)
 	)
+	(retract ?nW)
 )
 
 (defrule handleFOOD
@@ -390,7 +399,7 @@
 	(if(> ?eC 0)
 	then
 		(retract ?nF)
-		(if (and (= ?d ?sD) (>= ?sD 2))
+		(if (> ?sD 1)
 		then
 			(bind ?*action* MOVE)
 			(GetDirection ?fX ?fY ?bX ?bY)
@@ -423,7 +432,7 @@
 	then 
 		(if (and (> ?eC 0) (> ?pp 5))
 		then
-			(if (and (= ?d ?sD) (>= ?sD 2))
+			(if (> ?sD 1)
 			then
 				(bind ?*action* MOVE)
 				(GetDirection ?fX ?fY ?bX ?bY)

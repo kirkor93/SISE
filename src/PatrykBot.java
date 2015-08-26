@@ -23,6 +23,8 @@ public class PatrykBot extends Bot
 		_loopCnt = 0;
 		while(Broker.GetMyAP() > 0)
 		{
+			this.Clips.reset();
+			
 			//System.out.println("Przygotuj Clipsa");
 			this.Clips.eval("(do-for-all-facts ((?f tileBase)) TRUE (retract ?f))"); //refreshing tiles (deleting old neighbours)
 			this.Clips.eval("(do-for-all-facts ((?tF tileFood)) TRUE (retract ?tF))");
@@ -82,12 +84,15 @@ public class PatrykBot extends Bot
 					+ ")");
 
 			
-			if(_loopCnt == 0 )this.Clips.run();
+			this.Clips.run();
 
 			
 			String evalStr = "?*action*";
 			
-			SymbolValue sv = (SymbolValue) this.Clips.eval(evalStr);
+			SymbolValue sv = (SymbolValue) 
+					
+			this.Clips.eval(evalStr);
+					
 			String action = sv.stringValue();
 			
 			String evalStrX = "?*newX*";
@@ -98,7 +103,9 @@ public class PatrykBot extends Bot
 			int Y = Integer.parseInt(this.Clips.eval(evalStrY).toString());
 			
 			System.out.println(action);
+			System.out.println("AP " + this.Broker.GetMyAP());
 			System.out.println(new Vector2(X, Y));
+			System.out.println(_loopCnt);
 			
 			if(X+myPos.X > 49 || X+myPos.X < 0)
 			{
@@ -116,12 +123,9 @@ public class PatrykBot extends Bot
 				return;
 			}
 			
-
-//			System.out.println(_loopCnt);
-
-			
 			if(_loopCnt == 1) 
 			{	
+				System.out.println("dupa");
 				action = "MOVERAND";
 				_loopCnt = 0;
 			}
@@ -166,7 +170,7 @@ public class PatrykBot extends Bot
 				_loopCnt = 0;
 				break;
 			}	
-			++_loopCnt;
+			//_loopCnt+=1;
 		}	
 	}
 	
