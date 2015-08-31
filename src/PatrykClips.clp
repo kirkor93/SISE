@@ -93,7 +93,7 @@
 		
 	;(printout t "GetDirection function" crlf)
 	
-	(if (> (abs (- ?bY ?dY)) (abs(- ?bY ?dY)))
+	(if (> (abs (- ?bY ?dY)) (abs(- ?bX ?dX)))
 	then
 		(if (> ?bY ?dY)
 		then
@@ -115,12 +115,12 @@
 			(bind ?*newY* 0)
 			(return)
 		else
-			;(if (< ?bX ?dX)
-			;then
+			(if (< ?bX ?dX)
+			then
 				(bind ?*newX* 1)
 				(bind ?*newY* 0)
 				(return)
-			;)
+			)
 		) 
 	)
 	(bind ?*newX* 0)
@@ -340,7 +340,7 @@
 	;?act <- (actionHandler (action FIRE))
 	=>
 	(retract ?nF)
-	(printout t "HandleFire rule" crlf)
+	;(printout t "HandleFire rule" crlf)
 	(if (>= ?wp ?*FIRE_COST_WP*)
 	then
 		(if (>= ?ap ?*FIRE_COST_AP*) 
@@ -364,7 +364,7 @@
 	;?act <- (actionHandler (action WOOD))
 	(test (= ?d ?sD))
 	=>
-	(printout t "HandleWood rule" crlf)
+	;(printout t "HandleWood rule" crlf)
 	(if(> ?eC 0)
 	then
 		(if (> ?sD 1)
@@ -395,7 +395,7 @@
 	;?act <- (actionHandler (action FOOD))
 	(test (= ?d ?sD))
 	=>
-	(printout t "HandleFood rule" crlf)
+	;(printout t "HandleFood rule" crlf)
 	(if(> ?eC 0)
 	then
 		(retract ?nF)
@@ -426,7 +426,7 @@
 	;?act <- (actionHandler (action FOOD))
 	(test (= ?d ?sD))
 	=>
-	(printout t "HandleCoprse rule" crlf)
+	;(printout t "HandleCoprse rule" crlf)
 	(retract ?nF)
 	(if (and (< ?fC 1) (> ?pp 9))
 	then 

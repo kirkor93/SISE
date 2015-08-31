@@ -35,7 +35,7 @@ public class PatrykBot extends Bot
 			this.Clips.eval("(do-for-fact ((?aC actionHandler)) (retract ?aC))");
 			
 			Vector2 myPos = Broker.GetMyPosition();
-			
+			boolean actionFlag = false;			
 			
 			for(int i = -_C_fov; i <= _C_fov; ++i)
 			{
@@ -68,7 +68,6 @@ public class PatrykBot extends Bot
 					+ "(WP " + Broker.GetMyWP() + ")"
 					+ "(botX " + String.valueOf(myPos.X) + ")"
 					+ "(botY " + String.valueOf(myPos.Y) + ")"
-					//+ "(currentField " + Broker.GetFieldType(myPos.X, myPos.Y) + ")"
 					+ ")");
 	
 			Clips.assertString("(actionHandler"
@@ -87,25 +86,22 @@ public class PatrykBot extends Bot
 			this.Clips.run();
 
 			
-			String evalStr = "?*action*";
-			
+			String evalStr = "?*action*";			
 			SymbolValue sv = (SymbolValue) 
-					
 			this.Clips.eval(evalStr);
-					
 			String action = sv.stringValue();
 			
 			String evalStrX = "?*newX*";
 			String evalStrY = "?*newY*";
-			//SymbolValue x = (SymbolValue) this.Clips.eval(evalStrX);
 			int X = Integer.parseInt(this.Clips.eval(evalStrX).toString());
-			//SymbolValue y = (SymbolValue) this.Clips.eval(evalStrY);
 			int Y = Integer.parseInt(this.Clips.eval(evalStrY).toString());
 			
-			System.out.println(action);
-			System.out.println("AP " + this.Broker.GetMyAP());
-			System.out.println(new Vector2(X, Y));
-			System.out.println(_loopCnt);
+			
+			if(Broker.GetMyHP() == 0)
+			{
+				return;
+			}
+			
 			
 			if(X+myPos.X > 49 || X+myPos.X < 0)
 			{
@@ -115,19 +111,16 @@ public class PatrykBot extends Bot
 			{
 				action = "MOVERAND";
 			}
-
-
 			
-			if(Broker.GetMyHP() == 0)
-			{
-				return;
-			}
 			
 			if(_loopCnt == 1) 
 			{	
-				System.out.println("dupa");
 				action = "MOVERAND";
-				_loopCnt = 0;
+			}
+			if(_loopCnt == 1) 
+			{	
+				
+				action = "WAIT";
 			}
 			
 			
@@ -136,46 +129,48 @@ public class PatrykBot extends Bot
 			case "MOVE":
 				if(X!=Y)
 				{
-					Broker.Action(ActionType.MOVE, new Vector2(X, Y));
+					_loopCnt = 0;
+					actionFlag = Broker.Action(ActionType.MOVE, new Vector2(X, Y));
 					_previousMove.X = X;
 					_previousMove.Y = Y;
-					_loopCnt = 0;
 				}
 				else 
 				{
-					Broker.Action(ActionType.MOVE, new Vector2(X, 0));
+					_loopCnt = 0;
+					actionFlag = Broker.Action(ActionType.MOVE, new Vector2(X, 0));
 					_previousMove.X = X;
 					_previousMove.Y = 0;
-					_loopCnt = 0;
 				}
 				break;
 			case "MOVERAND":
-				RandomMove();
 				_loopCnt = 0;
+				actionFlag = RandomMove();
 				break;
 			case "WAIT":
-				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 				_loopCnt = 0;
+				actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 				break;
 			case "KINDLE":
-				Broker.Action(ActionType.KINDLE_FIRE, null);
 				_loopCnt = 0;
+				actionFlag = Broker.Action(ActionType.KINDLE_FIRE, null);
 				break;
 			case "THROW":
-				Broker.Action(ActionType.THROW_SPEAR, new Vector2(X, Y));
 				_loopCnt = 0;
+				actionFlag = Broker.Action(ActionType.THROW_SPEAR, new Vector2(X, Y));
 				break;
 			default:
-				Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 				_loopCnt = 0;
+				actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 				break;
 			}	
-			//_loopCnt+=1;
+			if(!actionFlag)_loopCnt+=1;
 		}	
 	}
 	
-	public void RandomMove()
+	public boolean RandomMove()
 	{
+		boolean actionFlag = false;
+		
 		while(true)
 		{
 			int n = (int) (Math.random()*4);
@@ -184,32 +179,32 @@ public class PatrykBot extends Bot
 				_previousDecision = n;
 				_previousMove.X = 0;
 				_previousMove.Y = -1;
-				Broker.Action(ActionType.MOVE, _previousMove);
-				return;
+				actionFlag = Broker.Action(ActionType.MOVE, _previousMove);
+				return actionFlag;
 			}
 			else if(n == 1 && Broker.GetMyPosition().Y != 49 && _previousDecision != 0  && _previousMove != new Vector2(0,-1))
 			{
 				_previousDecision = n;
 				_previousMove.X = 0;
 				_previousMove.Y = 1;
-				Broker.Action(ActionType.MOVE, _previousMove);
-				return;
+				actionFlag = Broker.Action(ActionType.MOVE, _previousMove);
+				return actionFlag;
 			}
 			else if(n == 2 && Broker.GetMyPosition().X != 0 && _previousDecision != 3 && _previousMove != new Vector2(1,0))
 			{
 				_previousDecision = n;
 				_previousMove.X = -1;
 				_previousMove.Y = 0;
-				Broker.Action(ActionType.MOVE, _previousMove);
-				return;
+				actionFlag = Broker.Action(ActionType.MOVE, _previousMove);
+				return actionFlag;
 			}
 			else if(n == 3 && Broker.GetMyPosition().X != 49 && _previousDecision != 2 && _previousMove != new Vector2(-1,0))
 			{
 				_previousDecision = n;
 				_previousMove.X = 1;
 				_previousMove.Y = 0;
-				Broker.Action(ActionType.MOVE, _previousMove);
-				return;
+				actionFlag = Broker.Action(ActionType.MOVE, _previousMove);
+				return actionFlag;
 			}
 		}
 	}
