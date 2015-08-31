@@ -245,8 +245,8 @@
 	;(printout t "SetNeeds rule" crlf)
 	(assert (NeedFlag))
 	(bind ?*HPNeed* (* (- 100 ?hp) ?*NeedHPMult*))
-	(bind ?*PPNeed* (* (- 60 ?pp) ?*NeedPPMult*))
-	(bind ?*WPNeed* (* (- 20 ?wp) ?*NeedWPMult*))
+	(bind ?*PPNeed* (* (- 80 ?pp) ?*NeedPPMult*))
+	(bind ?*WPNeed* (* (- 40 ?wp) ?*NeedWPMult*))
 )
 	
 (defrule getMostImportantNeed

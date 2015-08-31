@@ -3,7 +3,7 @@ import net.sourceforge.jFuzzyLogic.FIS;
 
 public class PatrykBotFuzzy extends Bot {
 
-	private final int _C_fov = 30;
+	private final int _C_fov = 20;
 	
 	private int _previousDecision;
 	private int _loopCnt = 0;
@@ -16,20 +16,25 @@ public class PatrykBotFuzzy extends Bot {
 	}
 	
 	@Override
-	public void Play() {
+	public void Play() 
+	{
+		_loopCnt = 0;
 		while(this.Broker.GetMyAP() > 0)
 		{
-			int foodDistance = Integer.MAX_VALUE;
+			//System.out.println(_loopCnt);
+			
+			boolean actionFlag = false;
+			
+			int foodDistance = 12345;
 			Vector2 foodPosition = new Vector2();
-			int corpseDistance = Integer.MAX_VALUE;
+			int corpseDistance = 12345;
 			Vector2 corpsePosition = new Vector2();
-			int woodDistance = Integer.MAX_VALUE;
+			int woodDistance = 12345;
 			Vector2 woodPosition = new Vector2();
-			int enemyDistance = Integer.MAX_VALUE;
+			int enemyDistance = 12345;
 			Vector2 enemyPosition = new Vector2();
 			
 			Vector2 myPos = Broker.GetMyPosition();
-			
 			
 			for(int i = -_C_fov; i <= _C_fov; ++i)
 			{
@@ -37,7 +42,7 @@ public class PatrykBotFuzzy extends Bot {
 				{
 					Vector2 currentPos = new Vector2(i, j);
 					currentPos.Add(myPos);
-					if(currentPos != myPos)
+					
 					{
 						if(currentPos.X >= 0 &&	currentPos.X < 50 &&
 							currentPos.Y >= 0 && currentPos.Y < 50)
@@ -72,8 +77,11 @@ public class PatrykBotFuzzy extends Bot {
 							case "ENEMY":
 								if(dist < enemyDistance)
 								{
-									enemyDistance = dist;
-									enemyPosition = currentPos;
+									if(currentPos.X != myPos.X && currentPos.Y != myPos.Y)
+									{
+										enemyDistance = dist;
+										enemyPosition = currentPos;
+									}
 								}
 								break;
 							}
@@ -82,10 +90,11 @@ public class PatrykBotFuzzy extends Bot {
 				}
 			}
 			
-			if(foodDistance == Integer.MAX_VALUE) foodDistance = -1;
-			if(corpseDistance == Integer.MAX_VALUE) corpseDistance = -1;
-			if(woodDistance == Integer.MAX_VALUE) woodDistance = -1;
-			if(enemyDistance == Integer.MAX_VALUE) enemyDistance = -1;
+			
+			if(foodDistance == 12345) foodDistance = -1;
+			if(corpseDistance == 12345) corpseDistance = -1;
+			if(woodDistance == 12345) woodDistance = -1;
+			if(enemyDistance == 12345) enemyDistance = -1;
 			
 			this.fis.setVariable("botHP", this.Broker.GetMyHP());
 			this.fis.setVariable("botWP", this.Broker.GetMyWP());
@@ -105,99 +114,99 @@ public class PatrykBotFuzzy extends Bot {
 			double kindle = this.fis.getVariable("kindle").getLatestDefuzzifiedValue();
 			
 			int myAP = this.Broker.GetMyAP();
-				
+
+
 			switch(DecideAction( eatF, eatC, wood, throW, kindle))
 			{
 			case "WAIT":
-				Broker.Action(ActionType.MOVE, new Vector2(0,0));
+				actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0,0));
 				break;
 			case "EATF":
 				if(myAP >= 3)
 				{
-					this.Broker.Action(ActionType.MOVE, GetDirection(myPos,foodPosition));
+					actionFlag = Broker.Action(ActionType.MOVE, GetDirection(myPos,foodPosition));
 				}
 				else
 				{
 					if(foodDistance > 1)
 					{
-						this.Broker.Action(ActionType.MOVE, GetDirection(myPos,foodPosition));
+						actionFlag = Broker.Action(ActionType.MOVE, GetDirection(myPos,foodPosition));
 					}
 					else
 					{
-						Broker.Action(ActionType.MOVE, new Vector2(0,0));
+						actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0,0));
 					}
 				}
 				break;
 			case "EATC":
 				if(myAP >= 3)
 				{
-					this.Broker.Action(ActionType.MOVE, GetDirection(myPos,corpsePosition));
+					actionFlag = Broker.Action(ActionType.MOVE, GetDirection(myPos,corpsePosition));
 				}
 				else
 				{
 					if(corpseDistance > 1)
 					{
-						this.Broker.Action(ActionType.MOVE, GetDirection(myPos,corpsePosition));
+						actionFlag = Broker.Action(ActionType.MOVE, GetDirection(myPos,corpsePosition));
 					}
 					else
 					{
-						Broker.Action(ActionType.MOVE, new Vector2(0,0));
+						actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0,0));
 					}
 				}
 				break;
 			case "WOOD":
 				if(myAP >= 3)
 				{
-					this.Broker.Action(ActionType.MOVE, GetDirection(myPos,woodPosition));
+					actionFlag = Broker.Action(ActionType.MOVE, GetDirection(myPos,woodPosition));
 				}
 				else
 				{
 					if(woodDistance > 1)
 					{
-						this.Broker.Action(ActionType.MOVE, GetDirection(myPos,woodPosition));
+						actionFlag = Broker.Action(ActionType.MOVE, GetDirection(myPos,woodPosition));
 					}
 					else
 					{
-						Broker.Action(ActionType.MOVE, new Vector2(0,0));
+						actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0,0));
 					}
 				}
 				break;
 			case "THROW":
 				if(myAP >= 5)
 				{
-					this.Broker.Action(ActionType.THROW_SPEAR, enemyPosition);
+					actionFlag = Broker.Action(ActionType.THROW_SPEAR, enemyPosition);
 				}
 				else
 				{
 					if(enemyDistance > 4)
 					{
-						this.Broker.Action(ActionType.MOVE, GetDirection(myPos,enemyPosition));
+						actionFlag = Broker.Action(ActionType.MOVE, GetDirection(myPos,enemyPosition));
 					}
 					else
 					{
-						Broker.Action(ActionType.MOVE, new Vector2(0,0));
+						actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0,0));
 					}
 				}
 				break;
 			case "KINDLE":
 				if(myAP >= 3)
 				{
-					this.Broker.Action(ActionType.KINDLE_FIRE, GetDirection(myPos,woodPosition));
+					actionFlag = Broker.Action(ActionType.KINDLE_FIRE, GetDirection(myPos,woodPosition));
 				}
 				else
 				{
-					Broker.Action(ActionType.MOVE, new Vector2(0,0));
+					actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0,0));
 				}
 				break;
 			case "RANDOM":
-				RandomMove();
+				actionFlag = RandomMove();
 				break;
 			}
-			if(++_loopCnt > 2)
-			{
-				RandomMove();
-			}
-			++_loopCnt;
+
+			
+			if(!actionFlag)_loopCnt+=1;
+			else _loopCnt = 0;
 		}
 	}
 	
@@ -230,6 +239,13 @@ public class PatrykBotFuzzy extends Bot {
 		{
 			decision = "RANDOM";
 		}
+		
+		if(_loopCnt > 0) 
+		{	
+			
+			decision = "WAIT";
+		}
+		
 		return decision;
 	}
 	
@@ -247,11 +263,17 @@ public class PatrykBotFuzzy extends Bot {
 			{
 				direction.X = -1;
 				direction.Y = 0;
+				_previousRand.X = -1;
+				_previousRand.Y = 0;
+				return direction;
 			}
 			else
 			{
 				direction.X = 1;
 				direction.Y = 0;
+				_previousRand.X = 1;
+				_previousRand.Y = 0;
+				return direction;
 			}
 		}
 		else
@@ -260,18 +282,25 @@ public class PatrykBotFuzzy extends Bot {
 			{
 				direction.X = 0;
 				direction.Y = -1;
+				_previousRand.X = 0;
+				_previousRand.Y = -1;
+				return direction;
 			}
 			else
 			{
 				direction.X = 0;
 				direction.Y = 1;
+				_previousRand.X = 0;
+				_previousRand.Y = 1;
+				return direction;
 			}
 		}
-		return direction;
 	}
 	
-	public void RandomMove()
+	public boolean RandomMove()
 	{
+		
+		boolean actionFlag = false;
 		while(true)
 		{
 			int n = (int) (Math.random()*4);
@@ -280,32 +309,32 @@ public class PatrykBotFuzzy extends Bot {
 			_previousDecision = n;
 			_previousRand.X = 0;
 			_previousRand.Y = -1;
-			Broker.Action(ActionType.MOVE, _previousRand);
-			return;
+			actionFlag = Broker.Action(ActionType.MOVE, _previousRand);
+			return actionFlag;
 			}
 		else if(n == 1 && Broker.GetMyPosition().Y != 49 && _previousDecision != 0)
 		{
 			_previousDecision = n;
 			_previousRand.X = 0;
 			_previousRand.Y = 1;
-			Broker.Action(ActionType.MOVE, _previousRand);
-			return;
+			actionFlag = Broker.Action(ActionType.MOVE, _previousRand);
+			return actionFlag;
 			}
 		else if(n == 2 && Broker.GetMyPosition().X != 0 && _previousDecision != 3)
 		{
 			_previousDecision = n;
 			_previousRand.X = -1;
 			_previousRand.Y = 0;
-			Broker.Action(ActionType.MOVE, _previousRand);
-			return;
+			actionFlag = Broker.Action(ActionType.MOVE, _previousRand);
+			return actionFlag;
 			}
 		else if(n == 3 && Broker.GetMyPosition().X != 49 && _previousDecision != 2)
 		{
 			_previousDecision = n;
 			_previousRand.X = 1;
 			_previousRand.Y = 0;
-			Broker.Action(ActionType.MOVE, _previousRand);
-			return;
+			actionFlag = Broker.Action(ActionType.MOVE, _previousRand);
+			return actionFlag;
 			}
 		}
 	}

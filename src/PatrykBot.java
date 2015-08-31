@@ -19,10 +19,13 @@ public class PatrykBot extends Bot
 	}
 	
 	@Override
-	public void Play() {
+	public void Play() 
+	{
 		_loopCnt = 0;
 		while(Broker.GetMyAP() > 0)
 		{
+			//System.out.println(_loopCnt);
+			
 			this.Clips.reset();
 			
 			//System.out.println("Przygotuj Clipsa");
@@ -43,13 +46,12 @@ public class PatrykBot extends Bot
 				{
 					Vector2 currentPos = new Vector2(i, j);
 					currentPos.Add(myPos);
-					if(currentPos != myPos)
 					{
 						if(currentPos.X >= 0 &&
 							currentPos.X < 50 &&
 							currentPos.Y >= 0 &&
 							currentPos.Y < 50)
-						{				
+						{	
 							Clips.assertString("(tileBase"
 									+ "(fieldX " + currentPos.X + ")"
 									+ "(fieldY " + currentPos.Y + ")"
@@ -113,11 +115,7 @@ public class PatrykBot extends Bot
 			}
 			
 			
-			if(_loopCnt == 1) 
-			{	
-				action = "MOVERAND";
-			}
-			if(_loopCnt == 1) 
+			if(_loopCnt > 0) 
 			{	
 				
 				action = "WAIT";
@@ -129,41 +127,44 @@ public class PatrykBot extends Bot
 			case "MOVE":
 				if(X!=Y)
 				{
-					_loopCnt = 0;
+					
 					actionFlag = Broker.Action(ActionType.MOVE, new Vector2(X, Y));
 					_previousMove.X = X;
 					_previousMove.Y = Y;
 				}
 				else 
 				{
-					_loopCnt = 0;
+					
 					actionFlag = Broker.Action(ActionType.MOVE, new Vector2(X, 0));
 					_previousMove.X = X;
 					_previousMove.Y = 0;
 				}
 				break;
 			case "MOVERAND":
-				_loopCnt = 0;
+				
 				actionFlag = RandomMove();
 				break;
 			case "WAIT":
-				_loopCnt = 0;
+				
 				actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 				break;
 			case "KINDLE":
-				_loopCnt = 0;
+				
 				actionFlag = Broker.Action(ActionType.KINDLE_FIRE, null);
 				break;
 			case "THROW":
-				_loopCnt = 0;
+				
 				actionFlag = Broker.Action(ActionType.THROW_SPEAR, new Vector2(X, Y));
 				break;
 			default:
-				_loopCnt = 0;
+				
 				actionFlag = Broker.Action(ActionType.MOVE, new Vector2(0, 0));
 				break;
-			}	
+			}
+			
 			if(!actionFlag)_loopCnt+=1;
+			else _loopCnt = 0;
+				
 		}	
 	}
 	
