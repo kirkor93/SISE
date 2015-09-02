@@ -85,7 +85,7 @@ public class GameController
     				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
     			case 4:
-    				_players[i].MyBot = new SzczochBot();
+    				_players[i].MyBot = new SzczechBot();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
@@ -121,6 +121,11 @@ public class GameController
     				break;
     			case 11:
     				_players[i].MyBot = new JaniakBotFuzzy();
+    				_players[i].MySymbol = _players[i].MyBot.MySymbol;
+    				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
+    				break;
+    			case 12:
+    				_players[i].MyBot = new SzczechBotFuzzy();
     				_players[i].MySymbol = _players[i].MyBot.MySymbol;
     				_map.MyFields[_players[i].Position.X][_players[i].Position.Y].MyFieldType = FieldType.ENEMY;
     				break;
