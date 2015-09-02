@@ -26,7 +26,7 @@ public class MajsterBotFuzzy extends Bot {
 	
 	public MajsterBotFuzzy()
 	{
-		this.MySymbol = "M";
+		this.MySymbol = "m";
 		this.fis = FIS.load("src/MajsterFuzzy.fcl");
 	}
 	

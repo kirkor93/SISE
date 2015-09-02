@@ -17,7 +17,7 @@ public class JaniakBotFuzzy extends Bot
 	
 	public JaniakBotFuzzy()
 	{
-		this.MySymbol = "J";
+		this.MySymbol = "j";
 		this.fis = FIS.load("src/JaniakFuzzy.fcl");
 	}
 	

@@ -20,7 +20,7 @@ public class StengerdtBotFuzzy extends Bot {
 	
 	public StengerdtBotFuzzy()
 	{
-		this.MySymbol = "S";
+		this.MySymbol = "s";
 		this.fis = FIS.load("src/StengerdtFuzzy.fcl");
 	}
 	

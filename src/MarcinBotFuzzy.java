@@ -55,7 +55,7 @@ public class MarcinBotFuzzy extends Bot {
 	
 	public MarcinBotFuzzy() 
 	{
-		this.MySymbol = "Q";
+		this.MySymbol = "q";
 		this.fis = FIS.load("src/MarcinFuzzy.fcl");
 		this.fb = fis.getFunctionBlock(MAIN_BLOCK_NAME);
 		

@@ -75,7 +75,7 @@
 (defglobal ?*WPNeed* = 0)
 
 (defglobal ?*NeedHPMult* = 10)
-(defglobal ?*NeedPPMult* = 9)
+(defglobal ?*NeedPPMult* = 10)
 (defglobal ?*NeedWPMult* = 5)
 
 (deffunction GetDistance
@@ -245,8 +245,8 @@
 	;(printout t "SetNeeds rule" crlf)
 	(assert (NeedFlag))
 	(bind ?*HPNeed* (* (- 100 ?hp) ?*NeedHPMult*))
-	(bind ?*PPNeed* (* (- 80 ?pp) ?*NeedPPMult*))
-	(bind ?*WPNeed* (* (- 40 ?wp) ?*NeedWPMult*))
+	(bind ?*PPNeed* (* (- 90 ?pp) ?*NeedPPMult*))
+	(bind ?*WPNeed* (* (- 45 ?wp) ?*NeedWPMult*))
 )
 	
 (defrule getMostImportantNeed
@@ -255,13 +255,13 @@
 	?act <- (actionHandler (action ?a))
 	=>
 	;(printout t "MostImportantNeed rule" crlf)
-	(if (and (> ?*HPNeed* 60) (> ?*HPNeed* ?*PPNeed*) (> ?*HPNeed* ?*WPNeed*))
+	(if (and (> ?*HPNeed* 60) (>= ?*HPNeed* ?*PPNeed*) (>= ?*HPNeed* ?*WPNeed*))
 	then
 		(modify ?act (action FOOD))
 		(assert (NeedFood))
 		;(printout t "FOOD" crlf)
 	) 
-	(if (and (> ?*PPNeed* 50) (> ?*PPNeed* ?*HPNeed*) (> ?*PPNeed* ?*WPNeed*))
+	(if (and (> ?*PPNeed* 50) (>= ?*PPNeed* ?*HPNeed*) (>= ?*PPNeed* ?*WPNeed*))
 	then
 		(modify ?act (action FIRE))
 		(assert (NeedFire))
