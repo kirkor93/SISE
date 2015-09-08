@@ -22,10 +22,10 @@ END_VAR
 
 FUZZIFY botHP
 	TERM dead := 0;
-	TERM veryLow := (0.5, 0)(1, 1)(5, 1)(6, 0);
-	TERM low := (6, 0)(8, 1)(10, 0);
-	TERM optimal := (10, 0)(12, 1)(18, 1)(20, 0);
-	TERM high := (15, 0)(20, 1)(999, 1);
+	TERM veryLow := (0.5, 0)(1, 1)(15, 1)(16, 0);
+	TERM low := (16, 0)(18, 1)(20, 0);
+	TERM optimal := (20, 0)(22, 1)(28, 1)(40, 0);
+	TERM high := (35, 0)(40, 1)(999, 1);
 END_FUZZIFY
 
 FUZZIFY botPP
@@ -79,38 +79,143 @@ END_FUZZIFY
 
 
 DEFUZZIFY eatFood 
-
+	TERM ignore := -1;
+	TERM lowPrior := (0, 1)(2, 1)(3, 0);
+	TERM medPrior := (2, 0)(4, 1)(6, 1)(7, 0);
+	TERM highPrior := (6, 0)(8, 1)(9, 1);
+	TERM mustHave := (8, 0)(11, 1);
 
 	METHOD : COG;
 	DEFAULT := -1;
 END_DEFUZZIFY
 
 DEFUZZIFY eatCorpse
-
+	TERM ignore := -1;
+	TERM lowPrior := (0, 1)(4, 1)(6, 0);
+	TERM medPrior := (2, 0)(4, 1)(6, 1)(7, 0);
+	TERM highPrior := (6, 0)(7, 1)(8, 1);
+	TERM mustHave := (7, 0)(8, 1);
 
 	METHOD : COG;
 	DEFAULT := -1;
 END_DEFUZZIFY
 
 DEFUZZIFY collectWood
-
+	TERM ignore := -1;
+	TERM lowPrior := (0, 1)(2, 1)(3, 0);
+	TERM medPrior := (2, 0)(4, 1)(6, 1)(7, 0);
+	TERM highPrior := (6, 0)(8, 1)(9, 1);
+	TERM mustHave := (8, 0)(9, 1);
 
 	METHOD : COG;
 	DEFAULT := -1;
 END_DEFUZZIFY
 
 DEFUZZIFY throwSpear
-
+	TERM ignore := -1;
+	TERM lowPrior := (0, 1)(4, 1)(6, 0);
+	TERM medPrior := (2, 0)(4, 1)(6, 1)(7, 0);
+	TERM highPrior := (6, 0)(7, 1)(8, 1);
 
 	METHOD : COG;
 	DEFAULT := -1;
 END_DEFUZZIFY
 
 DEFUZZIFY kindleFire
-
+	TERM ignore := -1;
+	TERM lowPrior := (0, 1)(2, 1)(3, 0);
+	TERM medPrior := (2, 0)(4, 1)(6, 1)(7, 0);
+	TERM highPrior := (6, 0)(8, 1)(9, 1);
+	TERM mustHave := (8, 0)(11, 1);
 
 	METHOD : COG;
 	DEFAULT := -1;
 END_DEFUZZIFY
 
+RULEBLOCK getFood
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1: IF botHP IS veryLow AND (foodDistance IS veryClose OR foodDistance IS close OR foodDistance IS far)
+			THEN eatFood IS mustHave;
+	RULE 2: IF botHP IS low AND foodDistance IS veryClose 
+			THEN eatFood IS mustHave;
+	RULE 3: IF (foodDistance IS veryClose OR foodDistance IS close)
+			THEN eatFood IS highPrior;
+	RULE 4: IF botHP IS low AND (foodDistance IS close OR foodDistance IS far) 
+			THEN eatFood IS highPrior;
+	RULE 5: IF botHP IS optimal AND (foodDistance IS close OR foodDistance IS far) 
+			THEN eatFood IS medPrior;
+	RULE 6: IF botHP IS high 
+			THEN eatFood IS lowPrior;
+END_RULEBLOCK
+
+RULEBLOCK getCorpse
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1: IF botHP IS veryLow
+			THEN eatCorpse IS highPrior;
+	RULE 2: IF botHP IS veryLow AND (corpseDistance IS veryClose)
+			THEN eatCorpse IS mustHave;
+	RULE 3: IF botHP IS low AND botPP IS high AND (corpseDistance IS veryClose OR corpseDistance IS close)
+			THEN eatCorpse IS highPrior;
+	RULE 4: IF botHP IS optimal OR botHP IS high
+			THEN eatCorpse IS lowPrior;
+END_RULEBLOCK
+
+RULEBLOCK getWood
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+		
+	RULE 1: IF botWP IS low AND (botPP IS veryLow OR botPP IS low)
+			THEN collectWood IS mustHave;
+	RULE 2: IF botWP IS low
+			THEN collectWood IS highPrior;
+	RULE 3: IF botWP IS medium AND (woodDistance IS veryClose OR woodDistance IS close)
+			THEN collectWood IS highPrior;
+	RULE 4: IF botWP IS medium
+			THEN collectWood IS medPrior;
+	RULE 5: IF botWP IS medium AND woodDistance IS veryClose
+			THEN collectWood IS highPrior;
+	RULE 6: IF botWP IS high
+			THEN collectWood IS lowPrior;
+END_RULEBLOCK
+
+RULEBLOCK spear
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1: IF botWP IS high AND enemyDistance IS inRange
+			THEN throwSpear IS highPrior;
+END_RULEBLOCK
+
+RULEBLOCK fire
+	AND: MIN;
+	ACT: MIN;
+	ACCU: MAX;
+	
+	RULE 1: IF botPP IS veryLow OR botPP IS low
+			THEN kindleFire IS mustHave;
+	RULE 2: IF botPP IS veryLow AND botWP IS low
+			THEN kindleFire IS highPrior;
+	RULE 3: IF (botPP IS optimal OR botPP IS high)
+			THEN kindleFire IS highPrior;
+	RULE 4: IF botWP IS none OR botWP IS low
+			THEN kindleFire IS lowPrior;
+END_RULEBLOCK
+
 END_FUNCTION_BLOCK
+
+
+
+
+
+
+
+
+

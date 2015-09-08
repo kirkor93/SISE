@@ -114,18 +114,23 @@ public class SzczechBotFuzzy extends Bot {
 			switch (getHighestIndex(output)) {
 			case 0:
 				actionPerformed = Broker.Action(ActionType.MOVE, getMovementDirection(pos, foodPosition));
+//				System.out.println("Moved towards food");
 				break;
 			case 1:
 				actionPerformed = Broker.Action(ActionType.MOVE, getMovementDirection(pos, corpsePosition));
+//				System.out.println("Moved towards corpse");
 				break;
 			case 2:
 				actionPerformed = Broker.Action(ActionType.MOVE, getMovementDirection(pos, woodPosition));
+//				System.out.println("Moved towards wood");
 				break;
 			case 3:
 				actionPerformed = Broker.Action(ActionType.THROW_SPEAR, getMovementDirection(pos, enemyPosition));
+//				System.out.println("Spear thrown");
 				break;
 			case 4:
 				actionPerformed = Broker.Action(ActionType.KINDLE_FIRE, getMovementDirection(pos, null));
+//				System.out.println("Fire kindled");
 				break;				
 			default:
 				return;
@@ -156,6 +161,11 @@ public class SzczechBotFuzzy extends Bot {
 	}
 	
 	public static Vector2 getMovementDirection(Vector2 position, Vector2 targetPosition){
+		if(position == null
+			|| targetPosition == null){
+			return new Vector2(0, 0);
+		}
+		
 		Vector2 dir = new Vector2(targetPosition.X - position.X, targetPosition.Y - position.Y);		
 		Vector2 output = new Vector2(Math.round(Math.signum(dir.X)), Math.round(Math.signum(dir.Y)));
 		
