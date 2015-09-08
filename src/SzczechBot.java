@@ -32,15 +32,13 @@ public class SzczechBot extends Bot
 			for(int i = 0 ; i < _fieldOfView ; i ++){
 				for(int j = 0 ; j < _fieldOfView ; j ++){
 					Vector2 checkedPosition = new Vector2(pos.X + i, pos.Y + j);
-					if(checkedPosition.X > 0 && checkedPosition.X < 50
-						&& checkedPosition.Y > 0 && checkedPosition.Y < 50){
+					if(SzczechBotFuzzy.checkBoundries(checkedPosition)){
 						Clips.assertString(String.format("(mapSlot (x %s) (y %s) (fieldType %s))", 
 								checkedPosition.X, checkedPosition.Y, 
 								Broker.GetFieldType(checkedPosition.X,  checkedPosition.Y)));
 					}
-					checkedPosition = new Vector2(pos.X - i, pos.Y - j);
-					if(checkedPosition.X > 0 && checkedPosition.X < 50
-						&& checkedPosition.Y > 0 && checkedPosition.Y < 50){
+					checkedPosition = new Vector2(pos.X - i - 1, pos.Y - j - 1);
+					if(SzczechBotFuzzy.checkBoundries(checkedPosition)){
 						Clips.assertString(String.format("(mapSlot (x %s) (y %s) (fieldType %s))", 
 								checkedPosition.X, checkedPosition.Y, 
 								Broker.GetFieldType(checkedPosition.X,  checkedPosition.Y)));

@@ -1,0 +1,116 @@
+FUNCTION_BLOCK action
+
+VAR_INPUT
+	botHP : REAL;
+	botPP : REAL;
+	botAP : REAL;
+	botWP : REAL;
+	
+	foodDistance : REAL;
+	corpseDistance : REAL;
+	woodDistance : REAL;
+	enemyDistance : REAL;
+END_VAR
+
+VAR_OUTPUT
+	eatFood : REAL;
+	eatCorpse : REAL;
+	collectWood : REAL;
+	throwSpear : REAL;
+	kindleFire : REAL;	
+END_VAR
+
+FUZZIFY botHP
+	TERM dead := 0;
+	TERM veryLow := (0.5, 0)(1, 1)(5, 1)(6, 0);
+	TERM low := (6, 0)(8, 1)(10, 0);
+	TERM optimal := (10, 0)(12, 1)(18, 1)(20, 0);
+	TERM high := (15, 0)(20, 1)(999, 1);
+END_FUZZIFY
+
+FUZZIFY botPP
+	TERM dead := 0;
+	TERM veryLow := (0.5, 0)(1, 1)(5, 1)(6, 0);
+	TERM low := (6, 0)(8, 1)(10, 0);
+	TERM optimal := (10, 0)(12, 1)(18, 1)(20, 0);
+	TERM high := (15, 0)(20, 1)(999, 1);
+END_FUZZIFY
+
+FUZZIFY botAP
+	TERM none := 0;
+	TERM low := (1, 1)(2, 1);
+	TERM medium := (3, 1)(4, 1);
+	TERM full := 5;
+END_FUZZIFY
+
+FUZZIFY botWP
+	TERM none := 0;
+	TERM low := (1, 1)(2, 1)(3, 0);
+	TERM medium := (2, 0)(3, 1)(9, 1)(10, 0);
+	TERM high := (9, 0)(10, 1)(999, 1);
+END_FUZZIFY
+
+FUZZIFY foodDistance
+	TERM veryClose := 1;
+	TERM close := (2, 1)(5, 1)(8, 0);
+	TERM far := (7, 0)(9, 1)(15, 1);
+	TERM unreachable := (-999, 1)(-1, 1)(15, 0)(16, 1)(999, 1);
+END_FUZZIFY
+
+FUZZIFY corpseDistance
+	TERM veryClose := 1;
+	TERM close := (2, 1)(5, 1)(8, 0);
+	TERM far := (7, 0)(9, 1)(15, 1);
+	TERM unreachable := (-999, 1)(-1, 1)(15, 0)(16, 1)(999, 1);
+END_FUZZIFY
+
+FUZZIFY woodDistance
+	TERM veryClose := 1;
+	TERM close := (2, 1)(5, 1)(8, 0);
+	TERM far := (7, 0)(9, 1)(15, 1);
+	TERM unreachable := (-999, 1)(-1, 1)(15, 0)(16, 1)(999, 1);
+END_FUZZIFY
+
+FUZZIFY enemyDistance
+	TERM inRange := (0, 1)(4, 1);
+	TERM close := (5, 1)(10, 1)(15, 0);
+	TERM unreachable := (-999, 1)(-1, 1)(10, 0)(16, 1)(999, 1);
+END_FUZZIFY
+
+
+DEFUZZIFY eatFood 
+
+
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY eatCorpse
+
+
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY collectWood
+
+
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY throwSpear
+
+
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+DEFUZZIFY kindleFire
+
+
+	METHOD : COG;
+	DEFAULT := -1;
+END_DEFUZZIFY
+
+END_FUNCTION_BLOCK

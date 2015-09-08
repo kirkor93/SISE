@@ -96,7 +96,7 @@
 )
 
 (defrule lifeInDanger 
-	(declare (salience 10))
+	(declare (salience 12))
 	(player (HP ?hp))
 	(test (< ?hp 7))
 	=>
@@ -105,7 +105,7 @@
 )
 
 (defrule lifeInDanger2 
-	(declare (salience 10))
+	(declare (salience 12))
 	(player (PP ?pp))
 	(test (< ?pp 7))
 	=>
