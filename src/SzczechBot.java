@@ -1,7 +1,6 @@
 import CLIPSJNI.Environment;
 
-public class SzczechBot extends Bot
-{
+public class SzczechBot extends Bot {
 	private int _fieldOfView = 15;
 	
 	public SzczechBot()	{
@@ -59,12 +58,10 @@ public class SzczechBot extends Bot
 			int y = Integer.parseInt(Clips.eval("?*selectedY*").toString());			
 			
 			//small check (if new coordinates are inside the map)
-			if(x < 0 || x > 49) {
-				x = -x;
-			}
-			if(y < 0 || y > 49) {
-				y = -y;
-			}
+			x = x < 0 ? 1 : x;
+			y = y < 0 ? 1 : y;
+			x = x > 49 ? 48 : x;
+			y = y > 49 ? 48 : y;
 			
 			//performing an action
 			switch (selectedAction) {
@@ -78,7 +75,7 @@ public class SzczechBot extends Bot
 				actionPerformed = Broker.Action(ActionType.THROW_SPEAR, new Vector2(x, y));
 				break;
 			case "Move":
-				actionPerformed = Broker.Action(ActionType.MOVE, new Vector2(x, y));
+				actionPerformed = Broker.Action(ActionType.MOVE, SzczechBotFuzzy.getMovementDirection(pos, new Vector2(x, y)));
 				break;
 			default:
 				return;

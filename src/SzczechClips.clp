@@ -58,7 +58,7 @@
 	(and (test (< ?newDist ?dist))
 		(test (> ?newDist 0)))
 	=>
-	(printout t "Found closest wood: " ?newPosX " " ?newPosY " " ?newDist crlf)
+	;(printout t "Found closest wood: " ?newPosX " " ?newPosY " " ?newDist crlf)
 	(modify ?closest (x ?newPosX) (y ?newPosY) (distance ?newDist))
 )
 
@@ -69,7 +69,7 @@
 	(and (test (< ?newDist ?dist))
 		(test (> ?newDist 0)))
 	=>
-	(printout t "Found closest food: " ?newPosX " " ?newPosY " " ?newDist crlf)
+	;(printout t "Found closest food: " ?newPosX " " ?newPosY " " ?newDist crlf)
 	(modify ?closest (x ?newPosX) (y ?newPosY) (distance ?newDist))
 )
 
@@ -80,7 +80,7 @@
 	(and (test (< ?newDist ?dist))
 		(test (> ?newDist 0)))
 	=>
-	(printout t "Found closest corpse: " ?newPosX " " ?newPosY " " ?newDist crlf)
+	;(printout t "Found closest corpse: " ?newPosX " " ?newPosY " " ?newDist crlf)
 	(modify ?closest (x ?newPosX) (y ?newPosY) (distance ?newDist))
 )
 
@@ -91,32 +91,116 @@
 	(and (test (< ?newDist ?dist))
 		(test (> ?newDist 0)))
 	=>
-	(printout t "Found closest enemy: " ?newPosX " " ?newPosY " " ?newDist crlf)
+	;(printout t "Found closest enemy: " ?newPosX " " ?newPosY " " ?newDist crlf)
 	(modify ?closest (x ?newPosX) (y ?newPosY) (distance ?newDist))
 )
 
 (defrule lifeInDanger 
 	(declare (salience 12))
 	(player (HP ?hp))
-	(test (< ?hp 7))
+	(test (< ?hp 20))
 	=>
-	(printout t "Life in danger rule, HP: " ?hp crlf)
+	;(printout t "Life in danger rule, HP: " ?hp crlf)
 	(assert (HPLow))
 )
 
 (defrule lifeInDanger2 
 	(declare (salience 12))
 	(player (PP ?pp))
-	(test (< ?pp 7))
+	(test (< ?pp 20))
 	=>
-	(printout t "Life in danger 2 rule, PP: " ?pp crlf)
+	;(printout t "Life in danger 2 rule, PP: " ?pp crlf)
 	(assert (PPLow))
+)
+
+(defrule getMostImportantNeed
+	(declare (salience 10))
+	(player (HP ?hp)(PP ?pp))
+	=>
+	(if (<= ?hp ?pp)
+	then
+		(assert (mostImportantNeed Food))
+	else
+		(assert (mostImportantNeed KindleFire))
+	)
+)
+
+(defrule checkShoot
+	(declare (salience 10))
+	(player (HP ?hp)(PP ?pp)(WP ?wp))
+	=>
+	(if (and (> ?hp 15)(> ?pp 15))
+	then
+		(assert (shootPossible))
+	)	
+)
+
+(defrule tryPsychicalHeal
+	(declare (salience 6))
+	?need <- (mostImportantNeed KindleFire)
+	(player (WP ?wood))
+	=>
+	;(printout t "tryPsychicalHeal" crlf)
+	(if (>= ?wood ?*KindleFireCostWP*)
+	then
+		(bind ?*selectedAction* KindleFire)
+		(retract ?need)
+	)
+)
+
+(defrule tryCollectWood
+	(declare (salience 5))
+	(mostImportantNeed KindleFire)
+	(closestSlot (fieldType WOOD) (x ?posX) (y ?posY) (distance ?dist))
+	=>
+	;(printout t "tryCollectWood" crlf)
+	(bind ?*selectedAction* Move)
+	(bind ?*selectedX* ?posX)
+	(bind ?*selectedY* ?posY)
 )
 
 (defrule tryHeal
 	(declare (salience 5))
-	?hpLow <- (HPLow)
+	(mostImportantNeed Food)
+	(closestSlot (fieldType FOOD) (x ?posX) (y ?posY) (distance ?dist))
 	=>
-	(retract ?hpLow)
-	(bind ?*selectedAction* )
+	;(printout t "tryHeal" crlf)
+	(bind ?*selectedAction* Move)
+	(bind ?*selectedX* ?posX)
+	(bind ?*selectedY* ?posY)
 )
+
+(defrule tryThrowSpear
+	(declare (salience 4))
+	(shootPossible)
+	(closestSlot (fieldType ENEMY) (x ?posX) (y ?posY) (distance ?dist))
+	=>
+	;(printout t "tryCollectWood" crlf)
+	(if (<= ?dist ?*ThrowDistance*)
+	then
+		(bind ?*selectedAction* ThrowSpear)
+		(bind ?*selectedX* ?posX)
+		(bind ?*selectedY* ?posY)
+	)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
