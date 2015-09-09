@@ -2,6 +2,8 @@ import CLIPSJNI.Environment;
 
 public class SzczechBot extends Bot {
 	private int _fieldOfView = 15;
+	private Vector2 _previousCoordinates = new Vector2(0, 0);
+	private String _previousAction = "Move";
 	
 	public SzczechBot()	{
 		MySymbol = "R";
@@ -21,6 +23,10 @@ public class SzczechBot extends Bot {
 				&& actionPerformed) {
 			
 			Clips.reset();
+			
+			Clips.assertString(String.format("(previousMove (x %s) (y %s) (move %s))", 
+					String.valueOf(_previousCoordinates.X), String.valueOf(_previousCoordinates.Y), 
+					_previousAction));
 			
 			//giving Clips some informations about current player and map state before starting it
 			Vector2 pos = Broker.GetMyPosition();			
@@ -77,10 +83,41 @@ public class SzczechBot extends Bot {
 			case "Move":
 				actionPerformed = Broker.Action(ActionType.MOVE, SzczechBotFuzzy.getMovementDirection(pos, new Vector2(x, y)));
 				break;
+			case "MoveRandomly":
+				actionPerformed = Broker.Action(ActionType.MOVE, getRandomDirection(pos));
+				break;
 			default:
 				return;
 			}
+			
+			_previousCoordinates = Broker.GetMyPosition();
+			_previousAction = selectedAction;
 		}
+	}
+	
+	public static Vector2 getRandomDirection(Vector2 position){
+		
+		Vector2 direction = null;
+		do{
+			direction = new Vector2(position);
+			double rand = Math.random();
+			
+			if(rand < 0.25f){
+				direction.X++;
+			}
+			else if(rand < 0.5f){
+				direction.X--;
+			}
+			else if(rand < 0.75f){
+				direction.Y++;
+			}
+			else{
+				direction.Y--;
+			}
+		}
+		while(!SzczechBotFuzzy.checkBoundries(direction));
+		
+		return direction;
 	}
 }
 

@@ -21,6 +21,12 @@
 	(slot distance (default 10000) (type INTEGER))
 )
 
+(deftemplate previousMove
+	(slot x (type INTEGER))
+	(slot y (type INTEGER))
+	(slot move (default Move))
+)
+
 (defglobal ?*selectedAction* = Wait)
 (defglobal ?*selectedX* = 0)
 (defglobal ?*selectedY* = 0)
@@ -199,23 +205,20 @@
 	)
 )
 
+(defrule checkIfStuck
+	(declare (salience 3))
+	(previousMove (x ?movX)(y ?movY)(move ?m))
+	=>	
+	(if (and (= ?movX ?*selectedX*)(= ?movY ?*selectedY*))
+	then
+		;(printout t "stuck px: " ?movX ", py: " ?movY ", nx: " ?*selectedX* ", ny: " ?*selectedY* crlf)
+		(assert (stuck))
+	)
+)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(defrule moveRandomly
+	(declare (salience 2))
+	(stuck)
+	=>
+	(bind ?*selectedAction* MoveRandomly)
+)
