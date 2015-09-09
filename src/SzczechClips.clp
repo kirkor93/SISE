@@ -117,7 +117,7 @@
 	(declare (salience 10))
 	(player (HP ?hp)(PP ?pp))
 	=>
-	(if (<= ?hp ?pp)
+	(if (< ?hp ?pp)
 	then
 		(assert (mostImportantNeed Food))
 	else
@@ -161,10 +161,25 @@
 
 (defrule tryHeal
 	(declare (salience 5))
-	(mostImportantNeed Food)
+	?need <- (mostImportantNeed Food)
 	(closestSlot (fieldType FOOD) (x ?posX) (y ?posY) (distance ?dist))
 	=>
 	;(printout t "tryHeal" crlf)
+	(bind ?*selectedAction* Move)
+	(bind ?*selectedX* ?posX)
+	(bind ?*selectedY* ?posY)
+	(if (< ?dist 10)
+	then
+		(retract ?need)
+	)
+)
+
+(defrule tryEatCorpse
+	(declare (salience 4))
+	(mostImportantNeed Food)
+	(closestSlot (fieldType CORPSE) (x ?posX) (y ?posY) (distance ?dist))
+	=>
+	;(printout t "tryEatCorpse" crlf)
 	(bind ?*selectedAction* Move)
 	(bind ?*selectedX* ?posX)
 	(bind ?*selectedY* ?posY)

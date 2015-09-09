@@ -53,7 +53,7 @@ public class SzczechBot extends Bot {
 			Clips.run();
 			//getting results from clips
 			String selectedAction = Clips.eval("?*selectedAction*").toString();
-			System.out.println(selectedAction);
+//			System.out.println(selectedAction);
 			int x = Integer.parseInt(Clips.eval("?*selectedX*").toString());
 			int y = Integer.parseInt(Clips.eval("?*selectedY*").toString());			
 			
